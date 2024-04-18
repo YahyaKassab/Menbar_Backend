@@ -13,6 +13,6 @@ const ScheduleDaySchema = new mongoose.Schema({
     enum: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
   },
 })
-const ScheduleDay = User.discriminator('ScheduleDay', ScheduleDaySchema)
+const ScheduleDay = mongoose.model('ScheduleDay', ScheduleDaySchema)
 
 module.exports = ScheduleDay

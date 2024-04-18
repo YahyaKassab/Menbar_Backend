@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const MCQGrade = require('./MCQGradesModel')
+const { mcqGradesSchema } = require('./MCQGradesModel')
 
 const lectureStatSchema = new mongoose.Schema({
   lecture: {
@@ -7,10 +7,7 @@ const lectureStatSchema = new mongoose.Schema({
     ref: 'Lecture',
     required: [true, 'A lectureStat must have a lecture id'],
   },
-  latestQuizGrade: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'MCQGrade',
-  },
+  latestQuizGrade: mcqGradesSchema,
   bestQuizScore: Number,
   latestQuizScore: Number,
   done: Boolean,
@@ -24,6 +21,6 @@ LectureStatSchema.pre('save', async function (next) {
   next()
 })
 
-const LectureStat = User.discriminator('LectureStat', lectureStatSchema)
+const LectureStat = mongoose.model('LectureStat', lectureStatSchema)
 
 module.exports = LectureStat

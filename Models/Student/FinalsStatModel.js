@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
-const FinalExamStudentAnswer = require('../Exams/Answers/FinalExamStudentAnswerModel')
+const {
+  finalExamStudentAnswerSchema,
+} = require('../Exams/Answers/FinalExamStudentAnswerModel')
 
-const finalsStatSchema = new mongoose.Schema({
+exports.finalsStatSchema = new mongoose.Schema({
   finalsScore: Number,
   passedAt: Date,
-  answers: Array,
+  answers: finalExamStudentAnswerSchema,
 })
 
 FinalsStatSchema.pre('save', async function (next) {
@@ -15,6 +17,4 @@ FinalsStatSchema.pre('save', async function (next) {
   next()
 })
 
-const FinalsStat = User.discriminator('FinalsStat', finalsStatSchema)
-
-module.exports = FinalsStat
+exports.FinalsStat = mongoose.model('FinalsStat', finalsStatSchema)

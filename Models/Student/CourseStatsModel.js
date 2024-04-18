@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
+const { finalsStatSchema } = require('./FinalsStatModel')
 const CourseStatsSchema = new mongoose.Schema({
   // reference to the course
   TotalScore: Number,
-  lectureQuizzesScores: Array,
+  lectureQuizzesScores: [Number],
   course: {
     type: mongoose.Schema.ObjectId,
     ref: 'Course',
@@ -16,11 +17,8 @@ const CourseStatsSchema = new mongoose.Schema({
     },
   ],
   lecturesDone: Array,
-  finalsStat: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'FinalsStat',
-  },
+  finalsStat: finalsStatSchema,
 })
-const CourseStats = User.discriminator('CourseStats', CourseStatsSchema)
+const CourseStats = mongoose.model('CourseStats', CourseStatsSchema)
 
 module.exports = CourseStats

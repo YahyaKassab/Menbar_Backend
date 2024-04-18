@@ -9,6 +9,6 @@ const certificateSchema = new mongoose.Schema({
   imageURL: String,
   Date: Date,
 })
-const Certificate = User.discriminator('Certificate', certificateSchema)
+const Certificate = mongoose.model('Certificate', certificateSchema)
 
 module.exports = Certificate

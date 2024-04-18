@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const MCQAnswer = require('../Exams/Answers/MCQAnswerModel')
 
-const mcqGradesSchema = new mongoose.Schema({
+exports.mcqGradesSchema = new mongoose.Schema({
   student: {
     type: mongoose.Schema.ObjectId,
     ref: 'Student',
@@ -24,6 +24,4 @@ mcqGradesSchema.pre('save', async function (next) {
   next()
 })
 
-const MCQGrades = User.discriminator('MCQGrades', mcqGradesSchema)
-
-module.exports = MCQGrades
+exports.MCQGrades = mongoose.model('MCQGrades', mcqGradesSchema)
