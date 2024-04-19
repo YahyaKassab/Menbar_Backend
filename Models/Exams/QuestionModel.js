@@ -6,6 +6,7 @@ exports.questionSchema = new mongoose.Schema({
     ref: 'Student',
   },
   imageURL: String,
+  time: Date,
   isTech: Boolean,
   title: String,
   description: String,
@@ -16,6 +17,7 @@ exports.questionSchema = new mongoose.Schema({
       type: mongoose.Schema.ObjectId,
       ref: 'Employee',
     },
+    date: Date,
   },
 })
 

@@ -51,17 +51,6 @@ exports.signUp = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res)
 })
 
-// 🚨🚨🚨🚨🚨🚨🚨🚨 We can implement Rate limiting, max login attempts => to maximize security
-// 🚨🚨🚨🚨🚨🚨🚨🚨 Never store token on localStorage
-// 🚨🚨🚨🚨🚨🚨🚨🚨 Search for query injection
-// UNIMPLEMENTED BY JONAS
-// 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨 NEVER EVER SAVE SENSITIVE DATA TO GIT EX:CONFIG FILE
-// 🚨🚨🚨🚨🚨🚨🚨🚨 REQUIRE RE-AUTHENTICATION WHEN HIGH-VALUE ACTION
-// 🚨🚨🚨🚨🚨🚨🚨🚨 IMPLEMENT A BLACKLIST OF UNTRUSTED JWT
-// 🚨🚨🚨🚨🚨🚨🚨🚨 CONFIRM EMAIL ADDRESS AFTER CREATING ACCOUNT
-// 🚨🚨🚨🚨🚨🚨🚨🚨 COMPLEX: KEEP USER LOGGED IN WITH REFRESH TOKENS
-// 🚨🚨🚨🚨🚨🚨🚨🚨 2 FACTOR AUTHENTICATION
-
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body
 
@@ -221,3 +210,14 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   //4) Log user in, send JWT
   createSendToken(user, 200, res)
 })
+
+// 🚨🚨🚨🚨🚨🚨🚨🚨 We can implement Rate limiting, max login attempts => to maximize security
+// 🚨🚨🚨🚨🚨🚨🚨🚨 Never store token on localStorage
+// 🚨🚨🚨🚨🚨🚨🚨🚨 Search for query injection
+// UNIMPLEMENTED BY JONAS
+// 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨 NEVER EVER SAVE SENSITIVE DATA TO GIT EX:CONFIG FILE
+// 🚨🚨🚨🚨🚨🚨🚨🚨 REQUIRE RE-AUTHENTICATION WHEN HIGH-VALUE ACTION
+// 🚨🚨🚨🚨🚨🚨🚨🚨 IMPLEMENT A BLACKLIST OF UNTRUSTED JWT
+// 🚨🚨🚨🚨🚨🚨🚨🚨 CONFIRM EMAIL ADDRESS AFTER CREATING ACCOUNT
+// 🚨🚨🚨🚨🚨🚨🚨🚨 COMPLEX: KEEP USER LOGGED IN WITH REFRESH TOKENS
+// 🚨🚨🚨🚨🚨🚨🚨🚨 2 FACTOR AUTHENTICATION
