@@ -1,7 +1,6 @@
 const crypto = require('crypto')
 const { promisify } = require('util')
 const jwt = require('jsonwebtoken')
-const User = require('../models/userModel')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/appError')
 const sendEmail = require('../utils/email')
@@ -35,48 +34,58 @@ const createSendToken = (user, statusCode, res) => {
   })
 }
 
-exports.signUp = catchAsync(async (req, res, next) => {
-  //                        ⚠⚠⚠⚠⚠
-  //we didn't use create(req.body) because if the user inputed the role we dont want it to be added.
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
-  })
-
+exports.signUp = (Model) => async (req, res, next) => {
   //                        ⚠⚠⚠⚠⚠
 
-  createSendToken(newUser, 201, res)
-})
+  try {
+    // 🚨Change to this 👇
+    // const { role, passwordResetToken, passwordResetExpires, ...otherFields } = req.body;
+    // const newUser = await Model.create(otherFields);
+    const newUser = await Model.create(req.body)
 
-exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body
+    //                        ⚠⚠⚠⚠⚠
 
-  //1) Check if email and password
-  if (!email || !password) {
-    return next(new AppError('Please provide email and password', 400))
+    createSendToken(newUser, 201, res)
+  } catch (err) {
+    next(err) // Pass any errors to the error handling middleware
   }
+}
 
-  //2) Check if user exists and password is correct
+exports.login = (Model) => async (req, res, next) => {
+  try {
+    const { email, password } = req.body
 
-  const user = await User.findOne({ email }).select('+password')
+    //1) Check if email and password
+    if (!email || !password) {
+      return next(new AppError('Please provide email and password', 400))
+    }
 
-  //!user checks email, second one checks only after user is found(correct email), checks password
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Incorrect email or password', 401))
+    //2) Check if user exists and password is correct
+
+    const _user = await Model.findOne({ 'user.email': email }).select(
+      '+user.password',
+    )
+
+    //!user checks email, second one checks only after user is found(correct email), checks password
+    if (
+      !_user ||
+      !(await _user.user.correctPassword(password, _user.user.password))
+    ) {
+      return next(new AppError('Incorrect email or password', 401))
+    }
+
+    console.log(_user)
+
+    //3) SEND TOKEN TO CLIENT IF OK
+    createSendToken(_user, 200, res)
+  } catch (err) {
+    next(err) // Pass any errors to the error handling middleware
   }
-
-  console.log(user)
-
-  //3) SEND TOKEN TO CLIENT IF OK
-  createSendToken(user, 200, res)
-})
+}
 
 //Authentication
 
-exports.protect = catchAsync(async (req, res, next) => {
+exports.protect = catchAsync((Model) => async (req, res, next) => {
   // 1) Get token and check if it exists
   let token
   if (
@@ -92,7 +101,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // console.log(decoded)
 
   // 3) Check if user exists
-  const currentUser = await User.findById(decoded.id)
+  const currentUser = await Model.findOne({ 'user._id': decoded.id })
   if (!currentUser) return next(new AppError('The user no longer exists', 401))
   // 4) Check if user changed password after token was issued
 
@@ -112,7 +121,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     //roles is an array
-    if (!roles.includes(req.user.role))
+    if (!roles.includes(req.user.user.role))
       return next(
         new AppError("You don't have permission to perform this action", 403),
       )
@@ -121,92 +130,94 @@ exports.restrictTo = (...roles) => {
   }
 }
 
-exports.forgotPassword = catchAsync(async (req, res, next) => {
+exports.forgotPassword = catchAsync((Model) => async (req, res, next) => {
   //1) Get user from email
-  const user = await User.findOne({ email: req.body.email })
+  const user = await Model.findOne({ 'user.email': req.body.email })
 
   if (!user)
     return next(new AppError('There is no user with that email address', 404))
+
   //2) Generate the random reset token
-  const resetToken = user.createPasswordResetToken()
+  const resetToken = user.user.createPasswordResetToken()
+
   //deactivate all validations
   await user.save({ validateBeforeSave: false })
-  //3) Send it to the user in an email
 
+  //3) Send it to the user in an email
   const resetUrl = `${req.protocol}://${req.get(
     'host',
   )}/api/v1/users/reset-password/${resetToken}`
 
-  const message = `Forgot password? submit a patch request with your new password to ${resetUrl}.If you didn't forget your password, ignore the email`
-  // console.log({ message }, '\nemail: ', user.email)
+  const message = `Forgot password? submit a patch request with your new password to ${resetUrl}. If you didn't forget your password, ignore the email.`
+
   try {
     await sendEmail({
-      email: user.email,
+      email: user.user.email,
       subject: 'Your password reset token valid for 10 mins',
       message,
     })
+
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email',
     })
   } catch (err) {
-    user.passwordResetToken = undefined
-    user.passwordResetExpires = undefined
+    user.user.passwordResetToken = undefined
+    user.user.passwordResetExpires = undefined
     await user.save({ validateBeforeSave: false })
-    console.log(err)
+
     return next(new AppError('There was an error sending the email', 500))
   }
 })
-exports.resetPassword = catchAsync(async (req, res, next) => {
+
+exports.resetPassword = catchAsync((Model) => async (req, res, next) => {
   //1) Get user based on the token
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex')
 
-  const user = await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+  const user = await Model.findOne({
+    'user.passwordResetToken': hashedToken,
+    'user.passwordResetExpires': { $gt: Date.now() },
   })
 
   //2) If token is not expired && user => set new password
   if (!user) return next(new AppError('Token is invalid or expired', 400))
 
-  user.password = req.body.password
-  user.passwordConfirm = req.body.passwordConfirm
-  user.passwordResetToken = undefined
-  user.passwordResetExpires = undefined
+  user.user.password = req.body.password
+  user.user.passwordConfirm = req.body.passwordConfirm
+  user.user.passwordResetToken = undefined
+  user.user.passwordResetExpires = undefined
 
   await user.save()
 
   //3) Update changedPasswordAt property
-
   //in middleware
 
   //4) Log user in
   createSendToken(user, 200, res)
 })
 
-exports.updatePassword = catchAsync(async (req, res, next) => {
-  //🚨🚨🚨
-  // Dont use findByIdAndUpdate with anything related to passwords
-  // If using findByIdAndUpdate: pre middlewares aren't going to be applied + we dont access 'this' current document
-
+exports.updatePassword = catchAsync((Model) => async (req, res, next) => {
   //1) Get user from collection
-  const user = await User.findById(req.user.id).select('+password')
-  // if(!user) return next(new AppError('')
-  //2) Check if old password is correct
-  console.log('req.user: ', req.user, 'req.body: ', req.body)
-  if (!(await user.correctPassword(req.body.currentPassword, user.password)))
-    return next(new AppError('Wrong password', 401))
+  const user = await Model.findById(req.user.id).select('+user.password')
+
+  //2) Check if POSTed password is correct
+  if (
+    !(await user.user.correctPassword(
+      req.body.passwordCurrent,
+      user.user.password,
+    ))
+  ) {
+    return next(new AppError('Your current password is wrong', 401))
+  }
 
   //3) If so, update password
-
-  user.password = req.body.password
-  user.passwordConfirm = req.body.passwordConfirm
-
+  user.user.password = req.body.password
+  user.user.passwordConfirm = req.body.passwordConfirm
   await user.save()
-  // console.log(user)
+
   //4) Log user in, send JWT
   createSendToken(user, 200, res)
 })

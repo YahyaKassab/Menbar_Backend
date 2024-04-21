@@ -1,0 +1,170 @@
+[
+  {
+    "user": {
+      "Fname": "Muhammad",
+      "Mname": "Ali",
+      "Lname": "Khan",
+      "email": "john.doe@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Cairo",
+      "createdAt": null,
+      "birthDate": "1980-01-01",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "123456789"
+      }
+    },
+    "qualifications": "Smart",
+    "educationLevel": "Islamic University of Cairo"
+  },
+  {
+    "user": {
+      "Fname": "Ahmed",
+      "Mname": "Hassan",
+      "Lname": "Mahmoud",
+      "email": "ahmed.hassan@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Cairo",
+      "createdAt": null,
+      "birthDate": "1985-03-15",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "987654321"
+      }
+    },
+    "qualifications": "Experienced",
+    "educationLevel": "Cairo University"
+  },
+  {
+    "user": {
+      "Fname": "Fatima",
+      "Mname": "Ali",
+      "Lname": "Ibrahim",
+      "email": "fatima.ali@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Alexandria",
+      "createdAt": null,
+      "birthDate": "1982-07-20",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "987654322"
+      }
+    },
+    "qualifications": "Dedicated",
+    "educationLevel": "Ain Shams University"
+  },
+  {
+    "user": {
+      "Fname": "Khaled",
+      "Mname": "Mahmoud",
+      "Lname": "Ahmed",
+      "email": "khaled.mahmoud@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Giza",
+      "createdAt": null,
+      "birthDate": "1988-11-10",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "987654323"
+      }
+    },
+    "qualifications": "Enthusiastic",
+    "educationLevel": "Helwan University"
+  },
+  {
+    "user": {
+      "Fname": "Nadia",
+      "Mname": "Hassan",
+      "Lname": "Ali",
+      "email": "nadia.hassan@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Luxor",
+      "createdAt": null,
+      "birthDate": "1983-04-25",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "987654324"
+      }
+    },
+    "qualifications": "Knowledgeable",
+    "educationLevel": "Assiut University"
+  },
+  {
+    "user": {
+      "Fname": "Tarek",
+      "Mname": "Ali",
+      "Lname": "Mahmoud",
+      "email": "tarek.ali@example.com",
+      "photo": "https://example.com/photo.jpg",
+      "role": "Teacher",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "passwordChangedAt": null,
+      "passwordResetToken": "",
+      "passwordResetExpires": null,
+      "active": true,
+      "country": "Egypt",
+      "nationality": "Egyptian",
+      "city": "Aswan",
+      "createdAt": null,
+      "birthDate": "1986-09-05",
+      "isSingle": true,
+      "phone": {
+        "countryCode": "20",
+        "number": "987654"
+      }
+    },
+    "qualifications": "Knowledgeable",
+    "educationLevel": "Assiut University"
+  }
+]

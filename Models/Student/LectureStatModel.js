@@ -13,13 +13,20 @@ const lectureStatSchema = new mongoose.Schema({
   done: Boolean,
 })
 
-LectureStatSchema.pre('save', async function (next) {
-  const latestQuizGradePromises = this.latestQuizGrade.map(
-    async (id) => await MCQGrade.findById(id),
-  )
-  this.latestQuizGrade = await Promise.all(latestQuizGradePromises)
-  next()
-})
+LectureStatSchema.pre(
+  'save',
+  async function (next) {
+    const latestQuizGradePromises = this.latestQuizGrade.map(
+      async (id) => await MCQGrade.findById(id),
+    )
+    this.latestQuizGrade = await Promise.all(latestQuizGradePromises)
+    next()
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+)
 
 const LectureStat = mongoose.model('LectureStat', lectureStatSchema)
 

@@ -9,12 +9,19 @@ exports.finalsStatSchema = new mongoose.Schema({
   answers: finalExamStudentAnswerSchema,
 })
 
-FinalsStatSchema.pre('save', async function (next) {
-  const answersPromises = this.answers.map(
-    async (id) => await FinalExamStudentAnswer.findById(id),
-  )
-  this.answers = await Promise.all(answersPromises)
-  next()
-})
+FinalsStatSchema.pre(
+  'save',
+  async function (next) {
+    const answersPromises = this.answers.map(
+      async (id) => await FinalExamStudentAnswer.findById(id),
+    )
+    this.answers = await Promise.all(answersPromises)
+    next()
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+)
 
 exports.FinalsStat = mongoose.model('FinalsStat', finalsStatSchema)

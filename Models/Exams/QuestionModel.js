@@ -1,24 +1,30 @@
 const mongoose = require('mongoose')
 
-exports.questionSchema = new mongoose.Schema({
-  asker: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Student',
-  },
-  imageURL: String,
-  time: Date,
-  isTech: Boolean,
-  title: String,
-  description: String,
-  FAQ: Boolean,
-  answer: {
-    text: String,
-    employee: {
+exports.questionSchema = new mongoose.Schema(
+  {
+    asker: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Employee',
+      ref: 'Student',
     },
-    date: Date,
+    imageURL: String,
+    time: Date,
+    isTech: Boolean,
+    title: String,
+    description: String,
+    FAQ: Boolean,
+    answer: {
+      text: String,
+      employee: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Employee',
+      },
+      date: Date,
+    },
   },
-})
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+)
 
 exports.Question = mongoose.model('Question', questionSchema)

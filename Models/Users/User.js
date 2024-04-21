@@ -3,28 +3,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 
-function isValidPassword(password) {
-  // Regular expressions for validation
-  const uppercaseRegex = /[A-Z]/
-  const lowercaseRegex = /[a-z]/
-  const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
-  const digitRegex = /[0-9]/
-
-  // Check if the password meets all criteria
-  return (
-    uppercaseRegex.test(password) &&
-    lowercaseRegex.test(password) &&
-    specialCharRegex.test(password) &&
-    digitRegex.test(password)
-  )
-}
-function isValidEmail(email) {
-  // Regular expression for validating email addresses
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-const userSchema = new mongoose.Schema(
+exports.userSchema = new mongoose.Schema(
   {
     Fname: {
       type: String,
@@ -82,49 +61,50 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
-    Country: {
+    country: {
       type: String,
       required: [true, 'Please Enter Your Country'],
     },
-    Nationality: String,
-    City: String,
+    nationality: String,
+    city: String,
     createdAt: {
       type: Date,
       default: Date.now(),
       select: false,
     },
-    BirthDate: { type: Date, required: [true, 'Please enter Your birthdate'] },
-    IsSingle: {
+    birthDate: { type: Date, required: [true, 'Please enter Your birthdate'] },
+    isSingle: {
       type: Boolean,
       default: true,
     },
-    Phone: {
-      phone: {
+    phone: {
+      countryCode: {
+        type: String,
+        required: [true, 'Please enter the country code'],
+      },
+      number: {
         type: String,
         required: [true, 'Please enter your phone number'],
       },
     },
-
-    //Check on this
-    Age: {
-      type: Number,
-      set: function (val) {
-        return Date.now() - this.BirthDate
-      },
-    },
   },
   {
+    _id: false,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 )
-userSchema.pre(/^find/, function (next) {
+
+// 🚨pre find🚨
+exports.includeActiveOnly = function (next) {
   //'this' is the current query
   this.find({ active: { $ne: false } })
   next()
-})
+}
 
-userSchema.pre('save', async function (next) {
+//🚨pre save🚨
+
+exports.hashModifiedPassword = async function (next) {
   //if the password wasnt changed, we dont need to reencrypt the password
   if (!this.isModified('password')) next()
 
@@ -135,24 +115,23 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined
 
   next()
-})
+}
 
-userSchema.pre('save', async function (next) {
+//token after password change
+exports.tokenTimeCheck = async function (next) {
   if (!this.isModified('password') || this.isNew) return next()
 
   // Insures that the token is always created after the password has been changed
   this.passwordChangedAt = Date.now() - 50000
   next()
-})
+}
 
-userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword,
-) {
+//'🚨add to schema methods✔🚨
+exports.correctPassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword)
 }
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+exports.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = this.passwordChangedAt.getTime() / 1000
     // console.log(changedTimestamp, JWTTimestamp)
@@ -164,7 +143,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false
 }
 
-userSchema.methods.createPasswordResetToken = function () {
+exports.createPasswordResetToken = function () {
   // save it to db and send it to user
   const resetToken = crypto.randomBytes(32).toString('hex')
   //encypted token to db
@@ -179,7 +158,13 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken
 }
 
-//Create the model
-const User = mongoose.model('User', userSchema)
-
-module.exports = User
+//virtual
+exports.calcAge = function () {
+  if (this.birthDate) {
+    const ageInMillis = Date.now() - this.birthDate.getTime()
+    // Convert milliseconds to years
+    return Math.floor(ageInMillis / (1000 * 60 * 60 * 24 * 365))
+  } else {
+    return undefined // Or some default value if birthDate is not set
+  }
+}

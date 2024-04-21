@@ -16,12 +16,19 @@ exports.mcqGradesSchema = new mongoose.Schema({
   scoreFrom: Number,
 })
 
-mcqGradesSchema.pre('save', async function (next) {
-  const lectureQuizzesGradesPromises = this.lectureQuizzesGrades.map(
-    async (id) => await MCQAnswer.findById(id),
-  )
-  this.lectureQuizzesGrades = await Promise.all(lectureQuizzesGradesPromises)
-  next()
-})
+mcqGradesSchema.pre(
+  'save',
+  async function (next) {
+    const lectureQuizzesGradesPromises = this.lectureQuizzesGrades.map(
+      async (id) => await MCQAnswer.findById(id),
+    )
+    this.lectureQuizzesGrades = await Promise.all(lectureQuizzesGradesPromises)
+    next()
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+)
 
 exports.MCQGrades = mongoose.model('MCQGrades', mcqGradesSchema)

@@ -9,6 +9,8 @@ const hpp = require('hpp')
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
+const teacherRouter = require('./Routes/teacherRouter')
+
 const app = express()
 
 // 1) GLOBAL MIDDLEWARES
@@ -72,7 +74,7 @@ app.use((req, res, next) => {
   next()
 })
 
-// app.use('/api/v1/users', userRouter)
+app.use('/api/v1/teachers', teacherRouter)
 // app.use('/api/v1/tours', tourRouter)
 // app.use('/api/v1/reviews', reviewRouter)
 
