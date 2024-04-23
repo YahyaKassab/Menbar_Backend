@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-exports.finalExamStudentAnswerSchema = new mongoose.Schema(
+const finalExamStudentAnswerSchema = new mongoose.Schema(
   {
     student: {
       type: mongoose.Schema.ObjectId,
@@ -12,8 +12,8 @@ exports.finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'FinalExam',
       required: [true, 'An answer must have an exam'],
     },
-    mcq: Array,
-    meq: Array,
+    mcq: Array, //MCQAnswer
+    meq: Array, //MEQAsnwer
     score: Number,
     scoreFrom: Number,
     marked: Boolean,
@@ -36,7 +36,8 @@ exports.finalExamStudentAnswerSchema = new mongoose.Schema(
   },
 )
 
-exports.FinalExamStudentAnswer = mongoose.model(
+const FinalExamStudentAnswer = mongoose.model(
   'FinalExamStudentAnswer',
   finalExamStudentAnswerSchema,
 )
+module.exports = { FinalExamStudentAnswer, finalExamStudentAnswerSchema }

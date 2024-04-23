@@ -8,10 +8,8 @@ exports.finalExamSchema = new mongoose.Schema(
       required: [true, 'An answer must have a Course'],
     },
     durationInMins: Number,
-    //MCQ
-    mcqs: Array,
-    //MEQ
-    meqs: Array,
+    mcqs: Array, //MCQ
+    meqs: Array, //MEQ
     passingPercentage: Number,
   },
   {

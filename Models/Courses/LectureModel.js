@@ -7,12 +7,6 @@ const lectureSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A lecture must have a video'],
     },
-    comments: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Comment',
-      },
-    ],
   },
   {
     toJSON: { virtuals: true },

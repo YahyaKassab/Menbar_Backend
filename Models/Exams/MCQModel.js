@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-exports.mcqSchema = new mongoose.Schema(
+const mcqSchema = new mongoose.Schema(
   {
     lecture: {
       type: mongoose.Schema.ObjectId,
@@ -16,4 +16,6 @@ exports.mcqSchema = new mongoose.Schema(
   },
 )
 
-exports.MCQ = mongoose.model('MCQ', mcqSchema)
+const MCQ = mongoose.model('MCQ', mcqSchema)
+
+module.exports = MCQ

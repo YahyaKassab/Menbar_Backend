@@ -14,9 +14,9 @@ const studentSchema = new mongoose.Schema(
     lastCertificate: String,
     educationLevel: String,
     currentJob: String,
-    certificates: Array,
-    weekSchedule: Array,
-    courseStats: Array,
+    certificates: Array, //Certificate
+    weekSchedule: Array, //ScheduleDay
+    courseStats: Array, //CourseStat
   },
   {
     toJSON: { virtuals: true },
@@ -33,15 +33,19 @@ const fillEmbedded = (fieldToFill, Model) => {
   })
 }
 studentSchema.pre(/^find/, User.includeActiveOnly)
-studentSchema.pre('save', User.hashModifiedPassword)
-studentSchema.pre('save', User.tokenTimeCheck)
+studentSchema.virtual('age').get(User.calcAge)
+studentSchema.pre(
+  'save',
+  User.hashModifiedPassword,
+  User.tokenTimeCheck,
+  //add a condition
+  // fillEmbedded(certificates, Certificate)
+  // fillEmbedded(weekSchedule, ScheduleDay)
+  // fillEmbedded(courseStats, CourseStats)
+)
 studentSchema.methods.correctPassword = User.correctPassword
 studentSchema.methods.changedPasswordAfter = User.changedPasswordAfter
 studentSchema.methods.createPasswordResetToken = User.createPasswordResetToken
-studentSchema.virtual('age').get(User.calcAge)
-studentSchema.pre('save', fillEmbedded(certificates, Certificate))
-studentSchema.pre('save', fillEmbedded(weekSchedule, ScheduleDay))
-studentSchema.pre('save', fillEmbedded(courseStats, CourseStats))
 const Student = mongoose.model('Student', studentSchema)
 
 module.exports = Student

@@ -72,7 +72,7 @@ exports.getAll = (Model) =>
     let filter = {}
 
     //get all reviews except if I put id => get all reviews for a particular tour
-    if (req.params.tourId) filter = { tour: req.params.tourId }
+    // if (req.params.tourId) filter = { tour: req.params.tourId }
 
     //EXECUTE QUERY
     const features = new APIFeatures(Model.find(filter), req.query)

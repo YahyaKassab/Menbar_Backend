@@ -1,0 +1,232 @@
+[
+  {
+    "lecture": "662844067b0843271a9c9052",
+    "question": "What is the capital of France?",
+    "choices": ["Paris", "London", "Berlin", "Rome"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904c",
+    "question": "Who wrote 'To Kill a Mockingbird'?",
+    "choices": ["Harper Lee", "J.K. Rowling", "Stephen King", "George Orwell"],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c904d",
+    "question": "Who painted the Mona Lisa?",
+    "choices": [
+      "Leonardo da Vinci",
+      "Pablo Picasso",
+      "Vincent van Gogh",
+      "Michelangelo"
+    ],
+    "answer": 2
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "What is the largest planet in our solar system?",
+    "choices": ["Jupiter", "Saturn", "Mars", "Earth"],
+    "answer": 3
+  },
+  {
+    "lecture": "662844067b0843271a9c904e",
+    "question": "Which ocean is the largest?",
+    "choices": [
+      "Pacific Ocean",
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Arctic Ocean"
+    ],
+    "answer": 2
+  },
+  {
+    "lecture": "662844067b0843271a9c9052",
+    "question": "What is the powerhouse of the cell?",
+    "choices": ["Mitochondria", "Nucleus", "Ribosome", "Endoplasmic reticulum"],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "What is the chemical symbol for water?",
+    "choices": ["H2O", "CO2", "NaCl", "C6H12O6"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c9048",
+    "question": "What is the freezing point of water?",
+    "choices": ["0°C", "100°C", "-273°C", "32°F"],
+    "answer": 3
+  },
+  {
+    "lecture": "662844067b0843271a9c9050",
+    "question": "Which gas is most abundant in the Earth's atmosphere?",
+    "choices": ["Nitrogen", "Oxygen", "Carbon dioxide", "Argon"],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "What is the chemical symbol for gold?",
+    "choices": ["Au", "Ag", "Fe", "Pb"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c9050",
+    "question": "What is the chemical symbol for sodium?",
+    "choices": ["Na", "S", "N", "Au"],
+    "answer": 2
+  },
+  {
+    "lecture": "662844067b0843271a9c904c",
+    "question": "Who wrote '1984'?",
+    "choices": [
+      "George Orwell",
+      "Aldous Huxley",
+      "Ray Bradbury",
+      "J.R.R. Tolkien"
+    ],
+    "answer": 3
+  },
+  {
+    "lecture": "662844067b0843271a9c904f",
+    "question": "What is the largest mammal in the world?",
+    "choices": ["Blue whale", "African elephant", "Giraffe", "Hippopotamus"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904a",
+    "question": "Who is the author of 'Harry Potter' series?",
+    "choices": [
+      "J.K. Rowling",
+      "Stephen King",
+      "George R.R. Martin",
+      "Tolkien"
+    ],
+    "answer": 2
+  },
+  {
+    "lecture": "662844067b0843271a9c904b",
+    "question": "Who discovered penicillin?",
+    "choices": [
+      "Alexander Fleming",
+      "Louis Pasteur",
+      "Marie Curie",
+      "Jonas Salk"
+    ],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904e",
+    "question": "Which planet is known as the Red Planet?",
+    "choices": ["Mars", "Venus", "Jupiter", "Mercury"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904d",
+    "question": "Who painted 'The Starry Night'?",
+    "choices": [
+      "Vincent van Gogh",
+      "Pablo Picasso",
+      "Leonardo da Vinci",
+      "Michelangelo"
+    ],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "How many planets are there in our solar system?",
+    "choices": ["8", "9", "7", "10"],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9052",
+    "question": "What is the largest bone in the human body?",
+    "choices": ["Femur", "Tibia", "Humerus", "Radius"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904f",
+    "question": "Which animal is known as the 'King of the Jungle'?",
+    "choices": ["Lion", "Tiger", "Leopard", "Cheetah"],
+    "answer": 2
+  },
+  {
+    "lecture": "662844067b0843271a9c904c",
+    "question": "Who is known as the 'Father of Modern Physics'?",
+    "choices": [
+      "Albert Einstein",
+      "Isaac Newton",
+      "Galileo Galilei",
+      "Nikola Tesla"
+    ],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c9048",
+    "question": "What is the chemical symbol for iron?",
+    "choices": ["Fe", "Au", "Ag", "Pb"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904e",
+    "question": "What is the smallest planet in our solar system?",
+    "choices": ["Mercury", "Venus", "Mars", "Earth"],
+    "answer": 3
+  },
+  {
+    "lecture": "662844067b0843271a9c9052",
+    "question": "What is the smallest bone in the human body?",
+    "choices": ["Stapes", "Femur", "Radius", "Tibia"],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c904a",
+    "question": "Who is the author of 'The Lord of the Rings'?",
+    "choices": [
+      "J.R.R. Tolkien",
+      "J.K. Rowling",
+      "Stephen King",
+      "George R.R. Martin"
+    ],
+    "answer": 3
+  },
+  {
+    "lecture": "662844067b0843271a9c9050",
+    "question": "What is the chemical symbol for carbon?",
+    "choices": ["C", "Ca", "Co", "Cu"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904b",
+    "question": "Who developed the theory of relativity?",
+    "choices": [
+      "Albert Einstein",
+      "Isaac Newton",
+      "Galileo Galilei",
+      "Nikola Tesla"
+    ],
+    "answer": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "What is the chemical symbol for oxygen?",
+    "choices": ["O", "H2O", "CO2", "O2"],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904d",
+    "question": "Who sculpted 'David'?",
+    "choices": [
+      "Michelangelo",
+      "Leonardo da Vinci",
+      "Pablo Picasso",
+      "Vincent van Gogh"
+    ],
+    "answer": 0
+  },
+  {
+    "lecture": "662844067b0843271a9c904f",
+    "question": "What is the tallest mammal in the world?",
+    "choices": ["Giraffe", "Elephant", "Horse", "Kangaroo"],
+    "answer": 0
+  }
+]

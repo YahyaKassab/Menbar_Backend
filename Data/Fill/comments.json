@@ -1,0 +1,101 @@
+[
+  {
+    "text": "Great job!",
+    "student": "66283dece6c01acdaa76478a",
+    "upvotes": ["66283e1be6c01acdaa76478c", "66283e1be6c01acdaa76478d"],
+    "downvotes": ["66283e1be6c01acdaa76478e"],
+    "totalScore": 1,
+    "replies": [
+      {
+        "text": "Thank you!",
+        "student": "66283e1be6c01acdaa76478f",
+        "upvotes": [],
+        "downvotes": [],
+        "totalScore": 0,
+        "replies": []
+      }
+    ],
+    "lecture": "662844067b0843271a9c9051"
+  },
+  {
+    "text": "Interesting!",
+    "student": "66283e1be6c01acdaa76478c",
+    "upvotes": ["66283e1be6c01acdaa76478d"],
+    "downvotes": [],
+    "totalScore": 1,
+    "replies": [],
+    "lecture": "662843f67b0843271a9c904e"
+  },
+  {
+    "text": "Well done!",
+    "student": "66283e1be6c01acdaa76478d",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [],
+    "lecture": "662844067b0843271a9c9051"
+  },
+  {
+    "text": "Impressive work!",
+    "student": "66283e1be6c01acdaa76478e",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [
+      {
+        "text": "Thank you!",
+        "student": "66283e1be6c01acdaa76478f",
+        "upvotes": [],
+        "downvotes": [],
+        "totalScore": 0,
+        "replies": []
+      }
+    ],
+    "lecture": "662844067b0843271a9c9051"
+  },
+  {
+    "text": "Keep it up!",
+    "student": "66283e1be6c01acdaa76478f",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [],
+    "lecture": "662844067b0843271a9c904f"
+  },
+  {
+    "text": "Nice work!",
+    "student": "66283e1be6c01acdaa764790",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [],
+    "lecture": "662844067b0843271a9c904f"
+  },
+  {
+    "text": "Bravo!",
+    "student": "66283e1be6c01acdaa764793",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [],
+    "lecture": "662844067b0843271a9c9050"
+  },
+  {
+    "text": "Well articulated!",
+    "student": "66283e1be6c01acdaa764791",
+    "upvotes": [],
+    "downvotes": [],
+    "totalScore": 0,
+    "replies": [
+      {
+        "text": "Thank you!",
+        "student": "66283e1be6c01acdaa764792",
+        "upvotes": [],
+        "downvotes": [],
+        "totalScore": 0,
+        "replies": []
+      }
+    ],
+    "lecture": "662844067b0843271a9c904a"
+  }
+]

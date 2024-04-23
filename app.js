@@ -10,6 +10,12 @@ const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
 const teacherRouter = require('./Routes/teacherRouter')
+const libraryRouter = require('./Routes/libraryRouter')
+const studentRouter = require('./Routes/studentRouter')
+const bookRouter = require('./Routes/bookRouter')
+const commentRouter = require('./Routes/commentRouter')
+const lectureRouter = require('./Routes/lectureRouter')
+const quizRouter = require('./Routes/quizRouter')
 
 const app = express()
 
@@ -74,7 +80,13 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/teachers', teacherRouter)
+app.use('/api/v1/books', bookRouter)
+app.use('/api/v1/library', libraryRouter)
+app.use('/api/v1/comments', commentRouter)
+app.use('/api/v1/quiz', quizRouter)
+app.use('/api/v1/lectures', lectureRouter)
 // app.use('/api/v1/tours', tourRouter)
 // app.use('/api/v1/reviews', reviewRouter)
 

@@ -1,0 +1,10 @@
+const catchAsync = require('../utils/catchAsync')
+const AppError = require('../utils/appError')
+const factory = require('./handlerFactory')
+const Lecture = require('../Models/Courses/LectureModel')
+const MCQ = require('../Models/Exams/MCQModel')
+const LectureQuiz = require('../Models/Exams/LectureQuizModel')
+
+exports.createMcq = factory.createOne(MCQ)
+exports.createQuiz = factory.createOne(LectureQuiz)
+exports.getAllMcq = factory.getAll(MCQ)

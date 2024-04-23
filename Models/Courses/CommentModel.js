@@ -2,15 +2,15 @@ const mongoose = require('mongoose')
 const commentSchema = new mongoose.Schema(
   {
     text: String,
-    lecture: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Lecture',
-      required: [true, 'A comment must have a lecture'],
-    },
     student: {
       type: mongoose.Schema.ObjectId,
       ref: 'Student',
       required: [true, 'A comment must have a student'],
+    },
+    lecture: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Lecture',
+      required: [true, 'A comment must have a lecture'],
     },
 
     upvotes: [
@@ -26,7 +26,7 @@ const commentSchema = new mongoose.Schema(
       },
     ],
     totalScore: { type: Number, default: 0 },
-    replies: Array,
+    replies: Array, //Comments
     createdAt: {
       type: Date,
       default: Date.now(),

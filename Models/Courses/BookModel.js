@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-exports.bookSchema = new mongoose.Schema(
+const bookSchema = new mongoose.Schema(
   {
     // reference to the course
     title: String,
@@ -9,8 +9,10 @@ exports.bookSchema = new mongoose.Schema(
     downloadLink: String,
   },
   {
+    _id: false,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 )
-exports.Book = mongoose.model('Book', bookSchema)
+// const Book = mongoose.model('Book', bookSchema)
+module.exports = bookSchema

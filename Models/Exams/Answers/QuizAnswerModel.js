@@ -22,9 +22,8 @@ exports.quizAnswerSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
-    answers: Array,
     durationInMins: Number,
-    lectureQuizzesGrades: Array,
+    lectureQuizzesGrades: Array, //MCQAnswer
     score: Number,
     scoreFrom: Number,
   },

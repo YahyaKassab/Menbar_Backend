@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { bookSchema } = require('./BookModel')
+const bookSchema = require('./BookModel')
 const libraryItemSchema = new mongoose.Schema(
   {
     course: {
@@ -8,7 +8,7 @@ const libraryItemSchema = new mongoose.Schema(
     },
     subject: {
       type: String,
-      required: [true, 'A LibraryItem must have a subject'],
+      // required: [true, 'A LibraryItem must have a subject'],
     },
     book: bookSchema,
   },
@@ -17,6 +17,22 @@ const libraryItemSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+libraryItemSchema.pre(/^find/, function (next) {
+  // this.populate({
+  //   path: 'tour',
+  //   select: 'name',
+  // }).populate({
+  //   path: 'user',
+  //   select: 'name photo',
+  // })
+  this.populate({
+    path: 'book',
+    select: 'title description',
+  })
+  next()
+})
+
 const LibraryItem = mongoose.model('LibraryItem', libraryItemSchema)
 
 module.exports = LibraryItem

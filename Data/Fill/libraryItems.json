@@ -1,102 +1,12 @@
 [
-  {
-    "subject": "aqeedah",
-    "book": {
-      "title": "البحر الرائق",
-      "imageUrl": "image.com/image",
-      "description": "Great book talking about your heart",
-      "readLink": "rarrar.com",
-      "downloadLink": "shedaf.com"
-    }
-  },
-  {
-    "subject": "hadeeth",
-    "book": {
-      "title": "The Prophetic Traditions",
-      "imageUrl": "traditions.com/cover",
-      "description": "An insightful collection of sayings and actions of the Prophet Muhammad (peace be upon him)",
-      "readLink": "traditions.com/read",
-      "downloadLink": "traditions.com/download"
-    }
-  },
-  {
-    "subject": "fiqh",
-    "book": {
-      "title": "Islamic Jurisprudence Unveiled",
-      "imageUrl": "jurisprudence.com/cover",
-      "description": "Exploring the principles and rules of Islamic law",
-      "readLink": "jurisprudence.com/read",
-      "downloadLink": "jurisprudence.com/download"
-    }
-  },
-  {
-    "subject": "tafseer",
-    "book": {
-      "title": "Unlocking the Quranic Verses",
-      "imageUrl": "quranicverses.com/cover",
-      "description": "A comprehensive guide to understanding the meanings and context of the Quran",
-      "readLink": "quranicverses.com/read",
-      "downloadLink": "quranicverses.com/download"
-    }
-  },
-  {
-    "subject": "aqeedah",
-    "book": {
-      "title": "The Essence of Belief",
-      "imageUrl": "essenceofbelief.com/cover",
-      "description": "Delving into the core tenets of faith",
-      "readLink": "essenceofbelief.com/read",
-      "downloadLink": "essenceofbelief.com/download"
-    }
-  },
-  {
-    "subject": "hadeeth",
-    "book": {
-      "title": "Hadith Pearls",
-      "imageUrl": "hadithpearls.com/cover",
-      "description": "A treasure trove of wisdom from the Prophet's sayings",
-      "readLink": "hadithpearls.com/read",
-      "downloadLink": "hadithpearls.com/download"
-    }
-  },
-  {
-    "subject": "fiqh",
-    "book": {
-      "title": "Fiqh Made Simple",
-      "imageUrl": "fiqhmadesimple.com/cover",
-      "description": "Simplifying complex legal rulings for everyday practice",
-      "readLink": "fiqhmadesimple.com/read",
-      "downloadLink": "fiqhmadesimple.com/download"
-    }
-  },
-  {
-    "subject": "tafseer",
-    "book": {
-      "title": "The Illuminated Commentary",
-      "imageUrl": "illuminatedcommentary.com/cover",
-      "description": "An enlightening exploration of Quranic exegesis",
-      "readLink": "illuminatedcommentary.com/read",
-      "downloadLink": "illuminatedcommentary.com/download"
-    }
-  },
-  {
-    "subject": "aqeedah",
-    "book": {
-      "title": "Faith Foundations",
-      "imageUrl": "faithfoundations.com/cover",
-      "description": "Building a strong understanding of Islamic beliefs",
-      "readLink": "faithfoundations.com/read",
-      "downloadLink": "faithfoundations.com/download"
-    }
-  },
-  {
-    "subject": "hadeeth",
-    "book": {
-      "title": "Hadith Unveiled",
-      "imageUrl": "hadithunveiled.com/cover",
-      "description": "Unraveling the wisdom behind the Prophet's teachings",
-      "readLink": "hadithunveiled.com/read",
-      "downloadLink": "hadithunveiled.com/download"
-    }
-  }
+  { "subject": "aqeedah", "book": "66282586036032228bf649cf" },
+  { "subject": "hadeeth", "book": "662825bd036032228bf649d1" },
+  { "subject": "fiqh", "book": "662825bd036032228bf649d2" },
+  { "subject": "tafseer", "book": "662825bd036032228bf649d3" },
+  { "subject": "aqeedah", "book": "662825bd036032228bf649d6" },
+  { "subject": "hadeeth", "book": "662825bd036032228bf649d7" },
+  { "subject": "fiqh", "book": "662825bd036032228bf649d8" },
+  { "subject": "tafseer", "book": "662825bd036032228bf649d9" },
+  { "subject": "aqeedah", "book": "662825bd036032228bf649d5" },
+  { "subject": "hadeeth", "book": "662825bd036032228bf649d4" }
 ]

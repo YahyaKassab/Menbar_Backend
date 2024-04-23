@@ -11,14 +11,9 @@ const CourseStatsSchema = new mongoose.Schema(
       required: [true, 'A stat must have a course'],
     },
 
-    lecturesStats: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'LectureStat',
-      },
-    ],
-    lecturesDone: Array,
-    finalsStat: finalsStatSchema,
+    lecturesStats: Array, //LectureStat
+    lecturesDone: Array, //Lecture
+    finalsStat: Array, //FinalsStat
   },
   {
     toJSON: { virtuals: true },

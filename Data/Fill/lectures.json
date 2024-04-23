@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Introduction to Islamic Jurisprudence",
+    "order": 1,
+    "videoLink": "https://example.com/lecture1"
+  },
+  {
+    "name": "The Life of Prophet Muhammad (PBUH)",
+    "order": 2,
+    "videoLink": "https://example.com/lecture2"
+  },
+  {
+    "name": "Islamic Theology and Creed",
+    "order": 3,
+    "videoLink": "https://example.com/lecture3"
+  },
+  {
+    "name": "Islamic Ethics and Morality",
+    "order": 4,
+    "videoLink": "https://example.com/lecture4"
+  },
+  {
+    "name": "Islamic History: The Golden Age",
+    "order": 5,
+    "videoLink": "https://example.com/lecture5"
+  },
+  {
+    "name": "Introduction to Quranic Studies",
+    "order": 6,
+    "videoLink": "https://example.com/lecture6"
+  },
+  {
+    "name": "Understanding Hadith Sciences",
+    "order": 7,
+    "videoLink": "https://example.com/lecture7"
+  },
+  {
+    "name": "Fiqh: Islamic Jurisprudence",
+    "order": 8,
+    "videoLink": "https://example.com/lecture8"
+  },
+  {
+    "name": "Islamic Spirituality and Sufism",
+    "order": 9,
+    "videoLink": "https://example.com/lecture9"
+  },
+  {
+    "name": "Islamic Art and Architecture",
+    "order": 10,
+    "videoLink": "https://example.com/lecture10"
+  }
+]

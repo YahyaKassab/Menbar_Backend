@@ -1,0 +1,244 @@
+[
+  {
+    "user": {
+      "Fname": "Ahmed",
+      "Mname": "Ali",
+      "Lname": "Khan",
+      "email": "ahmed.khan@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Pakistan",
+      "city": "Karachi",
+      "birthDate": "1995-05-15",
+      "phone": {
+        "countryCode": "+92",
+        "number": "3001234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Science in Computer Science",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Software Developer"
+  },
+  {
+    "user": {
+      "Fname": "Mohammed",
+      "Mname": "Youssef",
+      "Lname": "Abdel Rahman",
+      "email": "mohammed.abdel@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Egypt",
+      "city": "Cairo",
+      "birthDate": "1994-09-23",
+      "phone": {
+        "countryCode": "+20",
+        "number": "1001234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Arts in Economics",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Financial Analyst"
+  },
+  {
+    "user": {
+      "Fname": "Fatima",
+      "Mname": "Zahra",
+      "Lname": "Al-Farsi",
+      "email": "fatima.alfarsi@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Iran",
+      "city": "Tehran",
+      "birthDate": "1998-03-10",
+      "phone": {
+        "countryCode": "+98",
+        "number": "9121234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Science in Chemistry",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Chemist"
+  },
+  {
+    "user": {
+      "Fname": "Mustafa",
+      "Mname": "Mohammed",
+      "Lname": "El-Amin",
+      "email": "mustafa.elamin@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Sudan",
+      "city": "Khartoum",
+      "birthDate": "1997-07-05",
+      "phone": {
+        "countryCode": "+249",
+        "number": "912345678"
+      }
+    },
+    "lastCertificate": "Bachelor of Medicine",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Medical Doctor"
+  },
+  {
+    "user": {
+      "Fname": "Amina",
+      "Mname": "Fatima",
+      "Lname": "Khalifa",
+      "email": "amina.khalifa@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "United Arab Emirates",
+      "city": "Dubai",
+      "birthDate": "1996-12-18",
+      "phone": {
+        "countryCode": "+971",
+        "number": "501234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Arts in Psychology",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Psychologist"
+  },
+  {
+    "user": {
+      "Fname": "Youssef",
+      "Mname": "Amir",
+      "Lname": "Rahman",
+      "email": "youssef.rahman@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Bangladesh",
+      "city": "Dhaka",
+      "birthDate": "1993-11-02",
+      "phone": {
+        "countryCode": "+880",
+        "number": "1712345678"
+      }
+    },
+    "lastCertificate": "Bachelor of Engineering in Computer Science",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Software Engineer"
+  },
+  {
+    "user": {
+      "Fname": "Aisha",
+      "Mname": "Khadija",
+      "Lname": "Abdullah",
+      "email": "aisha.abdullah@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Saudi Arabia",
+      "city": "Riyadh",
+      "birthDate": "1996-08-12",
+      "phone": {
+        "countryCode": "+966",
+        "number": "591234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Business Administration",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Business Analyst"
+  },
+  {
+    "user": {
+      "Fname": "Ali",
+      "Mname": "Hassan",
+      "Lname": "Ismail",
+      "email": "ali.ismail@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Iraq",
+      "city": "Baghdad",
+      "birthDate": "1995-04-07",
+      "phone": {
+        "countryCode": "+964",
+        "number": "7812345678"
+      }
+    },
+    "lastCertificate": "Bachelor of Arts in Literature",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Writer"
+  },
+  {
+    "user": {
+      "Fname": "Zainab",
+      "Mname": "Fatima",
+      "Lname": "Ahmed",
+      "email": "zainab.ahmed@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Qatar",
+      "city": "Doha",
+      "birthDate": "1997-01-25",
+      "phone": {
+        "countryCode": "+974",
+        "number": "3312345678"
+      }
+    },
+    "lastCertificate": "Bachelor of Science in Physics",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Physicist"
+  },
+  {
+    "user": {
+      "Fname": "Omar",
+      "Mname": "Abdul",
+      "Lname": "Kareem",
+      "email": "omar.kareem@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Jordan",
+      "city": "Amman",
+      "birthDate": "1994-06-30",
+      "phone": {
+        "countryCode": "+962",
+        "number": "771234567"
+      }
+    },
+    "lastCertificate": "Bachelor of Engineering in Civil Engineering",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Civil Engineer"
+  },
+  {
+    "user": {
+      "Fname": "Safiya",
+      "Mname": "Aisha",
+      "Lname": "Ibrahim",
+      "email": "safiya.ibrahim@example.com",
+      "photo": "profile.jpg",
+      "role": "Student",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      "country": "Morocco",
+      "city": "Casablanca",
+      "birthDate": "1998-02-08",
+      "phone": {
+        "countryCode": "+212",
+        "number": "612345678"
+      }
+    },
+    "lastCertificate": "Bachelor of Science in Mathematics",
+    "educationLevel": "Bachelor's Degree",
+    "currentJob": "Mathematician"
+  }
+]
