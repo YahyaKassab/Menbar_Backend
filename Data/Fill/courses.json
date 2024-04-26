@@ -1,0 +1,116 @@
+[
+  {
+    "text": "Introduction to Islamic Studies",
+    "level": 1,
+    "description": "This course provides an overview of fundamental Islamic concepts and teachings.",
+    "subject": "aqeedah",
+    "libraryItem": "662839c97b99f3337924217d",
+    "students": [
+      "662af110dcc854d0a7ad04a7",
+      "662af110dcc854d0a7ad04a8",
+      "662af110dcc854d0a7ad04a9",
+      "662af110dcc854d0a7ad04aa",
+      "662af110dcc854d0a7ad04ab",
+      "662af110dcc854d0a7ad04ac",
+      "662af110dcc854d0a7ad04ad",
+      "662af110dcc854d0a7ad04ae",
+      "662af110dcc854d0a7ad04af",
+      "662af110dcc854d0a7ad04b0",
+      "662af110dcc854d0a7ad04b1"
+    ],
+    "teachers": [
+      "662589afbc0af416129f57da",
+      "662589afbc0af416129f57dd",
+      "662589afbc0af416129f57de"
+    ],
+    "lectures": [
+      "662843f67b0843271a9c9048",
+      "662844067b0843271a9c904a",
+      "662844067b0843271a9c904b",
+      "662844067b0843271a9c904c",
+      "662844067b0843271a9c904d",
+      "662844067b0843271a9c904e",
+      "662844067b0843271a9c9051",
+      "662844067b0843271a9c9052",
+      "662844067b0843271a9c904f",
+      "662844067b0843271a9c9050"
+    ],
+    "prerequisites": []
+  },
+  {
+    "text": "Advanced Hadith Studies",
+    "level": 2,
+    "description": "This course delves into the deeper meanings and interpretations of Hadith literature.",
+    "subject": "hadeeth",
+    "libraryItem": "662839c97b99f33379242182",
+    "students": [
+      "662af110dcc854d0a7ad04a7",
+      "662af110dcc854d0a7ad04a8",
+      "662af110dcc854d0a7ad04a9",
+      "662af110dcc854d0a7ad04aa",
+      "662af110dcc854d0a7ad04ab",
+      "662af110dcc854d0a7ad04ac",
+      "662af110dcc854d0a7ad04ad",
+      "662af110dcc854d0a7ad04ae",
+      "662af110dcc854d0a7ad04af",
+      "662af110dcc854d0a7ad04b0",
+      "662af110dcc854d0a7ad04b1"
+    ],
+    "teachers": [
+      "662589afbc0af416129f57df",
+      "662589afbc0af416129f57db",
+      "662589afbc0af416129f57dc"
+    ],
+    "lectures": [
+      "662843f67b0843271a9c9048",
+      "662844067b0843271a9c904a",
+      "662844067b0843271a9c904b",
+      "662844067b0843271a9c904c",
+      "662844067b0843271a9c904d",
+      "662844067b0843271a9c904e",
+      "662844067b0843271a9c9051",
+      "662844067b0843271a9c9052",
+      "662844067b0843271a9c904f",
+      "662844067b0843271a9c9050"
+    ],
+    "prerequisites": []
+  },
+  {
+    "text": "Quranic Exegesis: Unlocking the Meanings",
+    "level": 3,
+    "description": "Explore the contextual meanings and interpretations of the Quranic verses.",
+    "subject": "tafseer",
+    "libraryItem": "662839c97b99f3337924217c",
+    "students": [
+      "662af110dcc854d0a7ad04a7",
+      "662af110dcc854d0a7ad04a8",
+      "662af110dcc854d0a7ad04a9",
+      "662af110dcc854d0a7ad04aa",
+      "662af110dcc854d0a7ad04ab",
+      "662af110dcc854d0a7ad04ac",
+      "662af110dcc854d0a7ad04ad",
+      "662af110dcc854d0a7ad04ae",
+      "662af110dcc854d0a7ad04af",
+      "662af110dcc854d0a7ad04b0",
+      "662af110dcc854d0a7ad04b1"
+    ],
+    "teachers": [
+      "662589afbc0af416129f57da",
+      "662589afbc0af416129f57dd",
+      "662589afbc0af416129f57de"
+    ],
+    "lectures": [
+      "662843f67b0843271a9c9048",
+      "662844067b0843271a9c904a",
+      "662844067b0843271a9c904b",
+      "662844067b0843271a9c904c",
+      "662844067b0843271a9c904d",
+      "662844067b0843271a9c904e",
+      "662844067b0843271a9c9051",
+      "662844067b0843271a9c9052",
+      "662844067b0843271a9c904f",
+      "662844067b0843271a9c9050"
+    ],
+    "prerequisites": []
+  }
+]

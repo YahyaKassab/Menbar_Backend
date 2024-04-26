@@ -18,19 +18,20 @@ const cookieOptions = {
   // secure: true,
   httpOnly: true,
 }
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (model, statusCode, res) => {
   // secret key must be at least 32 CHARS and UNIQUE
   //sending the token = automatically sign in with the created user
-  const token = signToken(user._id)
+  const token = signToken(model._id)
+  console.log('token:', token)
   // we still are not using https
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
   res.cookie('jwt', token, cookieOptions)
   // Remove password from the output
-  user.password = undefined
+  model.password = undefined
   res.status(statusCode).json({
     status: 'success',
     token,
-    data: user,
+    data: model,
   })
 }
 

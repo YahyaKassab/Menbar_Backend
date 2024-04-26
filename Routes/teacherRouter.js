@@ -1,12 +1,13 @@
 const express = require('express')
 const authController = require('../Controllers/authController')
+const teacherController = require('../Controllers/teacherController')
 const Teacher = require('../Models/Users/TeacherModel')
 
 const router = express.Router()
 
 //signup only posts
+router.get('/', teacherController.getAllTeachers)
 router.post('/signup', authController.signUp(Teacher))
-router.post('/login', authController.login(Teacher))
 // router.post('/login', authController.login)
 // router.post('/forgot-password', authController.forgotPassword)
 // //best for reset is PATCH

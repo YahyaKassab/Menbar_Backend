@@ -16,6 +16,7 @@ const bookRouter = require('./Routes/bookRouter')
 const commentRouter = require('./Routes/commentRouter')
 const lectureRouter = require('./Routes/lectureRouter')
 const quizRouter = require('./Routes/quizRouter')
+const courseRouter = require('./Routes/courseRouter')
 
 const app = express()
 
@@ -82,6 +83,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/teachers', teacherRouter)
+app.use('/api/v1/courses', courseRouter)
 app.use('/api/v1/books', bookRouter)
 app.use('/api/v1/library', libraryRouter)
 app.use('/api/v1/comments', commentRouter)

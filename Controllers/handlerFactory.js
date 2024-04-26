@@ -66,16 +66,16 @@ exports.getOne = (Model, popOptions) =>
     })
   })
 
-exports.getAll = (Model) =>
+exports.getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     // Allow nested routes
     let filter = {}
-
+    let query = Model.find(filter)
     //get all reviews except if I put id => get all reviews for a particular tour
     // if (req.params.tourId) filter = { tour: req.params.tourId }
-
+    if (popOptions) query = query.populate(popOptions)
     //EXECUTE QUERY
-    const features = new APIFeatures(Model.find(filter), req.query)
+    const features = new APIFeatures(query, req.query)
       .filter()
       .sort()
       .limitFields()
