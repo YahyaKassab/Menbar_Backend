@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const MCQAnswer = require('./MCQAnswerModel')
 
-exports.quizAnswerSchema = new mongoose.Schema(
+const quizAnswerSchema = new mongoose.Schema(
   {
     student: {
       type: mongoose.Schema.ObjectId,
@@ -32,5 +33,19 @@ exports.quizAnswerSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+const fillEmbedded = (fieldToFill, Model) => {
+  catchAsync(async function (next) {
+    const fieldPromises = fieldToFill.map(
+      async (id) => await Model.findById(id),
+    )
+    fieldToFill = await Promise.all(fieldPromises)
+    next()
+  })
+}
 
-exports.QuizAnswer = mongoose.model('QuizAnswer', quizAnswerSchema)
+quizAnswerSchema.pre('save', () => {
+  fillEmbedded(this.lectureQuizzesGrades, MCQAnswer)
+})
+
+const QuizAnswer = mongoose.model('QuizAnswer', quizAnswerSchema)
+module.exports = QuizAnswer

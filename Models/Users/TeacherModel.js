@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('./User')
 const catchAsync = require('../../utils/catchAsync')
+const Course = require('../Courses/CourseModel')
 
 const teacherSchema = new mongoose.Schema(
   {
@@ -12,12 +13,6 @@ const teacherSchema = new mongoose.Schema(
         ref: 'FinalExamStudentAnswer',
       },
     ],
-    coursesToTeach: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Course',
-      },
-    ],
     qualifications: String,
     educationLevel: String,
   },
@@ -27,9 +22,24 @@ const teacherSchema = new mongoose.Schema(
   },
 )
 
+teacherSchema.virtual('coursesToTeach', {
+  ref: 'Course',
+  localField: '_id',
+  foreignField: 'teachers',
+})
+
 teacherSchema.pre(/^find/, User.includeActiveOnly)
-teacherSchema.pre('save', User.hashModifiedPassword)
-teacherSchema.pre('save', User.tokenTimeCheck)
+teacherSchema.pre('save', User.hashModifiedPassword, User.tokenTimeCheck)
+
+teacherSchema.post('save', async function (next) {
+  await Promise.all(
+    this.courses.map(async (course) => {
+      await Course.findByIdAndUpdate(course, {
+        $push: { teachers: this._id },
+      })
+    }),
+  )
+})
 teacherSchema.methods.correctPassword = User.correctPassword
 teacherSchema.methods.changedPasswordAfter = User.changedPasswordAfter
 teacherSchema.methods.createPasswordResetToken = User.createPasswordResetToken

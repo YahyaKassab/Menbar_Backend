@@ -13,6 +13,12 @@ const lectureSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+lectureSchema.virtual('quiz', {
+  ref: 'LectureQuiz',
+  localField: '_id',
+  foreignField: 'lecture',
+})
 const Lecture = mongoose.model('Lecture', lectureSchema)
 
 module.exports = Lecture

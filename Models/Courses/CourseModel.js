@@ -3,7 +3,7 @@ const Lecture = require('./LectureModel')
 const Teacher = require('../Users/TeacherModel')
 const Student = require('../Users/StudentModel')
 const catchAsync = require('../../utils/catchAsync')
-const LibraryItem = require('./LibraryItemModel')
+const Book = require('./BookModel')
 const courseSchema = new mongoose.Schema(
   {
     text: String,
@@ -13,10 +13,10 @@ const courseSchema = new mongoose.Schema(
       type: String,
       enum: ['aqeedah', 'hadeeth', 'fiqh', 'tafseer'],
     },
-    libraryItem: {
+    book: {
       type: mongoose.Schema.ObjectId,
-      ref: 'LibraryItem',
-      required: [true, 'A Course must have a library Item'],
+      ref: 'Book',
+      required: [true, 'A Course must have a Book'],
     },
     students: [
       {
@@ -66,7 +66,7 @@ courseSchema.post('save', async function (docs, next) {
       // .then((val) => console.log(val))
     }),
   )
-  await LibraryItem.findByIdAndUpdate(this.libraryItem, { course: course._id })
+  await Book.findByIdAndUpdate(this.book, { course: course._id })
 
   next()
 })

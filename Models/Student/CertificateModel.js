@@ -15,6 +15,12 @@ const certificateSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+certificateSchema.virtual('student', {
+  ref: 'Student',
+  localField: '_id',
+  foreignField: 'certificates',
+})
 const Certificate = mongoose.model('Certificate', certificateSchema)
 
 module.exports = Certificate

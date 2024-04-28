@@ -9,8 +9,9 @@ router
   .route('/mcq')
   .post(examController.createMcq)
   .get(examController.getAllMcq)
-//   .post(libraryController.createBook)
-
-// router.route('/:id').get(libraryController.getBook)
+router
+  .route('/meq')
+  .post(examController.createMeq)
+  .get(examController.getAllMeq)
 
 module.exports = router

@@ -13,6 +13,7 @@ const ScheduleDaySchema = new mongoose.Schema(
       type: String,
       enum: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     },
+    date: Date,
   },
   {
     toJSON: { virtuals: true },

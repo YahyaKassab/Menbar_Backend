@@ -6,6 +6,7 @@ const Student = require('../Models/Users/StudentModel')
 const router = express.Router()
 
 router.post('/signup', authController.signUp(Student))
+router.post('/login', authController.login(Student))
 router.route('/').get(studentController.getAllStudents)
 
 module.exports = router

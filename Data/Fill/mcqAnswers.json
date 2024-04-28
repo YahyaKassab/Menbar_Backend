@@ -1,0 +1,52 @@
+[
+  {
+    "student": "662af110dcc854d0a7ad04af",
+    "mcq": "662848fc02073c5914b0950e",
+    "answer": 1
+  },
+  {
+    "student": "662af110dcc854d0a7ad04a8",
+    "mcq": "662848fc02073c5914b09501",
+    "answer": 3
+  },
+  {
+    "student": "662af110dcc854d0a7ad04b1",
+    "mcq": "66284954723183cf8ba8f17b",
+    "answer": 0
+  },
+  {
+    "student": "662af110dcc854d0a7ad04aa",
+    "mcq": "66284954723183cf8ba8f17b",
+    "answer": 3
+  },
+  {
+    "student": "662af110dcc854d0a7ad04a8",
+    "mcq": "662848fc02073c5914b09507",
+    "answer": 2
+  },
+  {
+    "student": "662af110dcc854d0a7ad04af",
+    "mcq": "662848fc02073c5914b09507",
+    "answer": 1
+  },
+  {
+    "student": "662af110dcc854d0a7ad04aa",
+    "mcq": "662848fc02073c5914b09503",
+    "answer": 0
+  },
+  {
+    "student": "662af110dcc854d0a7ad04a7",
+    "mcq": "66284954723183cf8ba8f18d",
+    "answer": 1
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ac",
+    "mcq": "66284954723183cf8ba8f17f",
+    "answer": 3
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ab",
+    "mcq": "66284954723183cf8ba8f182",
+    "answer": 2
+  }
+]

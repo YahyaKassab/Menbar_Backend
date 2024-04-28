@@ -70,7 +70,7 @@ exports.login = (Model) => async (req, res, next) => {
     //!user checks email, second one checks only after user is found(correct email), checks password
     if (
       !_user ||
-      !(await _user.user.correctPassword(password, _user.user.password))
+      !(await _user.correctPassword(password, _user.user.password))
     ) {
       return next(new AppError('Incorrect email or password', 401))
     }

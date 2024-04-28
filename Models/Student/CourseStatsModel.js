@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const { finalsStatSchema } = require('./FinalsStatModel')
-const CourseStatsSchema = new mongoose.Schema(
+const courseStatsSchema = new mongoose.Schema(
   {
     // reference to the course
     TotalScore: Number,
@@ -20,6 +20,13 @@ const CourseStatsSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-const CourseStats = mongoose.model('CourseStats', CourseStatsSchema)
+courseStatsSchema.pre('save', async function (next) {
+  // const answersPromises = this.answers.map(
+  //   async (id) => await FinalExamStudentAnswer.findById(id),
+  // )
+  // this.answers = await Promise.all(answersPromises)
+  // next()
+})
+const CourseStats = mongoose.model('CourseStats', courseStatsSchema)
 
 module.exports = CourseStats

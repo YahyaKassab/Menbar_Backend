@@ -21,12 +21,10 @@ const lectureStatSchema = new mongoose.Schema(
   },
 )
 
-lectureStatSchema.pre('save', async function (next) {
-  const latestQuizGradePromises = this.latestQuizGrade.map(
-    async (id) => await MCQGrade.findById(id),
-  )
-  this.latestQuizGrade = await Promise.all(latestQuizGradePromises)
-  next()
+lectureStatSchema.virtual('student',{
+  ref:'Student',
+  localField:'_id',
+  foreignField:''
 })
 
 const LectureStat = mongoose.model('LectureStat', lectureStatSchema)

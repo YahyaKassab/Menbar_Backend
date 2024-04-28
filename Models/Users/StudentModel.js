@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('./User')
 const Certificate = require('../Student/CertificateModel')
+const Course = require('../Courses/CourseModel')
 const ScheduleDay = require('../Student/ScheduleDayModel')
 const CourseStats = require('../Student/CourseStatsModel')
 const catchAsync = require('../../utils/catchAsync')
@@ -39,9 +40,9 @@ studentSchema.pre(
   User.hashModifiedPassword,
   User.tokenTimeCheck,
   //add a condition
-  // fillEmbedded(certificates, Certificate)
-  // fillEmbedded(weekSchedule, ScheduleDay)
-  // fillEmbedded(courseStats, CourseStats)
+  fillEmbedded(this.certificates, Certificate),
+  fillEmbedded(this.weekSchedule, ScheduleDay),
+  fillEmbedded(this.courseStats, CourseStats),
 )
 studentSchema.methods.correctPassword = User.correctPassword
 studentSchema.methods.changedPasswordAfter = User.changedPasswordAfter

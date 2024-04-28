@@ -9,4 +9,6 @@ router
   .post(courseController.createCourse)
   .get(courseController.getAllCourses)
 
+router.get('/ids', courseController.getIds)
+
 module.exports = router

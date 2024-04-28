@@ -1,0 +1,32 @@
+[
+  {
+    "lecture": "662844067b0843271a9c904b",
+    "question": "Sample question 1",
+    "optimalAnswer": "Sample optimal answer 1",
+    "scoreFrom": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c904f",
+    "question": "Sample question 2",
+    "optimalAnswer": "Sample optimal answer 2",
+    "scoreFrom": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "Sample question 3",
+    "optimalAnswer": "Sample optimal answer 3",
+    "scoreFrom": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c9051",
+    "question": "Sample question 4",
+    "optimalAnswer": "Sample optimal answer 4",
+    "scoreFrom": 1
+  },
+  {
+    "lecture": "662844067b0843271a9c904d",
+    "question": "Sample question 5",
+    "optimalAnswer": "Sample optimal answer 5",
+    "scoreFrom": 1
+  }
+]

@@ -4,7 +4,7 @@
     "level": 1,
     "description": "This course provides an overview of fundamental Islamic concepts and teachings.",
     "subject": "aqeedah",
-    "libraryItem": "662839c97b99f3337924217d",
+    "book": "662b8f35d303a4fc3e0d2ee1",
     "students": [
       "662af110dcc854d0a7ad04a7",
       "662af110dcc854d0a7ad04a8",
@@ -42,7 +42,7 @@
     "level": 2,
     "description": "This course delves into the deeper meanings and interpretations of Hadith literature.",
     "subject": "hadeeth",
-    "libraryItem": "662839c97b99f33379242182",
+    "book": "662b8f35d303a4fc3e0d2ee0",
     "students": [
       "662af110dcc854d0a7ad04a7",
       "662af110dcc854d0a7ad04a8",
@@ -80,7 +80,7 @@
     "level": 3,
     "description": "Explore the contextual meanings and interpretations of the Quranic verses.",
     "subject": "tafseer",
-    "libraryItem": "662839c97b99f3337924217c",
+    "book": "662b8f35d303a4fc3e0d2ee4",
     "students": [
       "662af110dcc854d0a7ad04a7",
       "662af110dcc854d0a7ad04a8",

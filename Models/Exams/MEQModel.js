@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-exports.meqSchema = new mongoose.Schema(
+const meqSchema = new mongoose.Schema(
   {
     lecture: {
       type: mongoose.Schema.ObjectId,
@@ -16,4 +16,5 @@ exports.meqSchema = new mongoose.Schema(
   },
 )
 
-exports.MEQ = mongoose.model('MEQ', meqSchema)
+const MEQ = mongoose.model('MEQ', meqSchema)
+module.exports = MEQ
