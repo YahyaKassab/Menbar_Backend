@@ -5,3 +5,6 @@ const Student = require('../Models/Users/StudentModel')
 
 exports.createStudent = factory.createOne(Student)
 exports.getAllStudents = factory.getAll(Student)
+exports.getOneStudent = factory.getOne(Student)
+exports.updateStudent = factory.getOne(Student)
+exports.deleteStudent = factory.deleteOne(Student)

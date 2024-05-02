@@ -7,8 +7,6 @@ const router = express.Router()
 
 router.post('/signup', authController.signUp(Student))
 router.post('/login', authController.login(Student))
-router
-  .route('/')
-  .get(authController.protect(Student), studentController.getAllStudents)
+router.route('/').get(studentController.getAllStudents)
 
 module.exports = router

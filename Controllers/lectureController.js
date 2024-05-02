@@ -5,3 +5,6 @@ const Lecture = require('../Models/Courses/LectureModel')
 
 exports.createLecture = factory.createOne(Lecture)
 exports.getAllLecture = factory.getAll(Lecture)
+exports.getOneLecture = factory.getOne(Lecture)
+exports.updateLecture = factory.updateOne(Lecture)
+exports.deleteLecture = factory.deleteOne(Lecture)
