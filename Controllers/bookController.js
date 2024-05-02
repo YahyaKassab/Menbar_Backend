@@ -11,3 +11,7 @@ exports.getAllBooks = factory.getAll(Book, {
   select: 'text subject',
 })
 exports.getBook = factory.getOne(Book)
+
+exports.updateBook=factory.updateOne(Book)
+exports.deleteBook=factory.deleteOne(Book)
+

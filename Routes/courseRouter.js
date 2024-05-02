@@ -10,5 +10,9 @@ router
   .get(courseController.getAllCourses)
 
 router.get('/ids', courseController.getIds)
-
+router
+  .get('/:id')
+  .patch(courseController.updateCourse)
+  .delete(courseController.deleteCourse)
+  .get(courseController.getOneCourse)
 module.exports = router

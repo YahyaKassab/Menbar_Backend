@@ -14,6 +14,11 @@ router
   .post(lectureController.createLecture)
   .get(lectureController.getAllLecture)
 
+router
+  .route('/:id')
+  .get(lectureController.getOneLecture)
+  .patch(lectureController.updateLecture)
+  .delete(lectureController.deleteLecture)
 // router.route('/:id').get()
 
 module.exports = router

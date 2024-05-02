@@ -16,3 +16,6 @@ exports.getIds = async (req, res) => {
     data: { data: allDocs },
   })
 }
+exports.getOneCourse = factory.getOne(Course)
+exports.deleteCourse = factory.deleteOne(Course)
+exports.updateCourse = factory.updateOne(Course)
