@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const {
-  finalExamStudentAnswerSchema,
-} = require('../Exams/Answers/FinalExamStudentAnswerModel')
+const FinalExamStudentAnswer = require('../Exams/Answers/FinalExamStudentAnswerModel')
 
 const finalsStatSchema = new mongoose.Schema(
   {

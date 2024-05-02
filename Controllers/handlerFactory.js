@@ -82,7 +82,7 @@ exports.getAll = (Model, popOptions) =>
       .paginate()
     // const allDocs = await features.query.explain()
     // console.log(req.query)
-    console.log('fe.qe: ', features.query)
+    // console.log('fe.qe: ', features.query)
     const allDocs = await features.query
 
     //SEND RESPONSE

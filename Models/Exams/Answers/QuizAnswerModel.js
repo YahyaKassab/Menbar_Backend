@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const MCQAnswer = require('./MCQAnswerModel')
+const catchAsync = require('../../../utils/catchAsync')
 
 const quizAnswerSchema = new mongoose.Schema(
   {
@@ -23,16 +24,31 @@ const quizAnswerSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
-    durationInMins: Number,
     lectureQuizzesGrades: Array, //MCQAnswer
-    score: Number,
     scoreFrom: Number,
+    tries: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 )
+quizAnswerSchema.virtual('durationInMins').get(function () {
+  // Calculate duration in minutes
+  const beginAtTime = this.beginAtTime.getTime() // Convert to milliseconds
+  const endAtTime = this.endAtTime.getTime() // Convert to milliseconds
+  const durationInMilliseconds = endAtTime - beginAtTime
+  return Math.round(durationInMilliseconds / (1000 * 60)) // Convert milliseconds to minutes
+})
+quizAnswerSchema.virtual('score').get(function () {
+  return (correctCount = this.lectureQuizzesGrades.filter(
+    (quiz) => quiz.correct,
+  ).length)
+})
+
 const fillEmbedded = (fieldToFill, Model) => {
   catchAsync(async function (next) {
     const fieldPromises = fieldToFill.map(

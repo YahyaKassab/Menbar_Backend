@@ -19,3 +19,20 @@ exports.getIds = async (req, res) => {
 exports.getOneCourse = factory.getOne(Course)
 exports.deleteCourse = factory.deleteOne(Course)
 exports.updateCourse = factory.updateOne(Course)
+<<<<<<< HEAD
+=======
+
+exports.getCoursesForGuest = catchAsync(async (req, res, next) => {
+  const courses = await Course.find()
+  // console.log(courses)
+  const coursesForGuest = courses.map((course) => ({
+    text: course.text,
+    description: course.description,
+  }))
+  res.status(200).json({
+    status: 'Success',
+    results: coursesForGuest.length,
+    data: { data: coursesForGuest },
+  })
+})
+>>>>>>> origin/main

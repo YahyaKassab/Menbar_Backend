@@ -40,4 +40,4 @@ const FinalExamStudentAnswer = mongoose.model(
   'FinalExamStudentAnswer',
   finalExamStudentAnswerSchema,
 )
-module.exports = { FinalExamStudentAnswer, finalExamStudentAnswerSchema }
+module.exports = FinalExamStudentAnswer

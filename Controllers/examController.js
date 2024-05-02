@@ -8,9 +8,8 @@ const LectureQuiz = require('../Models/Exams/LectureQuizModel')
 const MCQAnswer = require('../Models/Exams/Answers/MCQAnswerModel')
 
 exports.createMcq = factory.createOne(MCQ)
-exports.createMeq = factory.createOne(MEQ)
-exports.createQuiz = factory.createOne(LectureQuiz)
 exports.getAllMcq = factory.getAll(MCQ)
+exports.createQuiz = factory.createOne(LectureQuiz)
+exports.getAllQuizzes = factory.getAll(LectureQuiz)
+exports.createMeq = factory.createOne(MEQ)
 exports.getAllMeq = factory.getAll(MEQ)
-
-exports.createMcqAnswer = factory.createOne(MCQAnswer)

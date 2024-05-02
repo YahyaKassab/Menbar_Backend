@@ -9,6 +9,11 @@ router
   .post(courseController.createCourse)
   .get(courseController.getAllCourses)
 
+<<<<<<< HEAD
+=======
+router.route('/guest').get(courseController.getCoursesForGuest)
+
+>>>>>>> origin/main
 router.get('/ids', courseController.getIds)
 router
   .get('/:id')

@@ -1,0 +1,59 @@
+{
+  "student": "662af110dcc854d0a7ad04a7",
+  "quiz": "66284ab8ab39842e1f7ec713",
+  "beginAtTime": "2024-04-30T12:00:00Z",
+  "endAtTime": "2024-04-30T12:30:00Z",
+  "lectureQuizzesGrades": [
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f177",
+      "answer": 2
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f178",
+      "answer": 0
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f179",
+      "answer": 1
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17a",
+      "answer": 3
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17b",
+      "answer": 2
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17c",
+      "answer": 0
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17d",
+      "answer": 1
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17e",
+      "answer": 3
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f17f",
+      "answer": 2
+    },
+    {
+      "student": "662af110dcc854d0a7ad04a7",
+      "mcq": "66284954723183cf8ba8f180",
+      "answer": 0
+    }
+  ],
+  "scoreFrom": 10
+}
