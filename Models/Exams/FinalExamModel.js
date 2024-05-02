@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const FinalExamStudentAnswer = require('./Answers/FinalExamStudentAnswerModel')
 
 exports.finalExamSchema = new mongoose.Schema(
   {
@@ -10,6 +11,8 @@ exports.finalExamSchema = new mongoose.Schema(
     durationInMins: Number,
     mcqs: Array, //MCQ
     meqs: Array, //MEQ
+    // opensAt: Date,
+    // closesAt: Date,
     passingPercentage: Number,
   },
   {
@@ -17,5 +20,8 @@ exports.finalExamSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-
+finalExamSchema.virtual('numberOfAnswers').get(async function () {
+  const count = await FinalExamStudentAnswer.countDocuments({ exam: this._id })
+  return count
+})
 exports.FinalExam = mongoose.model('FinalExam', finalExamSchema)

@@ -8,7 +8,7 @@ router.route('/mcq').get(answerController.getAllMcqAnswers).post(
   //authController.restrictTo(''),
   answerController.createMcqAnswer,
 )
-router.route('/:id').get(answerController.markAnswer)
+// router.route('/:id').get(answerController.markAnswer)
 
 //   .patch(
 //     authController.protect,

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const catchAsync = require('../../../utils/catchAsync')
 
 const mcqAnswerSchema = new mongoose.Schema(
   {
@@ -19,22 +20,27 @@ const mcqAnswerSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+//mark
+mcqAnswerSchema.methods.mark = async function () {
+  try {
+    // Ensure that the mcq field is populated
+    await this.populate('mcq')
 
-mcqAnswerSchema.methods.markAnswer = async function () {
-  // Ensure that the mcq field is populated
-  await this.populate('mcq')
+    // Check if the student's answer matches the correct answer
+    if (this.answer === this.mcq.answer) {
+      this.correct = true
+    } else {
+      this.correct = false
+    }
+    // console.log('correct:', this.correct)
 
-  // Check if the student's answer matches the correct answer
-  if (this.answer === this.mcq.answer) {
-    this.correct = true
-  } else {
-    this.correct = false
+    // Save the updated thisument
+    await this.save()
+  } catch (error) {
+    // Handle errors here if needed
+    console.error('Error occurred during marking:', error)
+    throw error // Rethrow the error for the caller to handle
   }
-  console.log('correct:', this.correct)
-  // Save the updated document
-  await this.save()
-
-  return this.correct
 }
 
 const MCQAnswer = mongoose.model('MCQAnswer', mcqAnswerSchema)
