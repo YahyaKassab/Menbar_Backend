@@ -86,35 +86,41 @@ exports.login = (Model) => async (req, res, next) => {
 
 //Authentication
 
-exports.protect = catchAsync((Model) => async (req, res, next) => {
-  // 1) Get token and check if it exists
-  let token
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    //get the second element splitted by spaces
-    token = req.headers.authorization.split(' ')[1]
-  }
-  if (!token) return next(new AppError('Your are not logged in', 401))
-  // 2) Verify token
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
-  // console.log(decoded)
+exports.protect = (Model) => async (req, res, next) => {
+  try {
+    // 1) Get token and check if it exists
+    let token
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      // Get the second element split by spaces
+      token = req.headers.authorization.split(' ')[1]
+    }
+    if (!token) throw new AppError('You are not logged in', 401)
 
-  // 3) Check if user exists
-  const currentUser = await Model.findOne({ 'user._id': decoded.id })
-  if (!currentUser) return next(new AppError('The user no longer exists', 401))
-  // 4) Check if user changed password after token was issued
+    // 2) Verify token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new AppError('User recently changed password. Please login again.', 401),
-    )
+    // 3) Check if user exists
+    const currentUser = await Model.findOne({ 'user._id': decoded.id })
+    if (!currentUser) throw new AppError('The user no longer exists', 401)
+
+    // 4) Check if user changed password after token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      throw new AppError(
+        'User recently changed password. Please login again.',
+        401,
+      )
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    req.user = currentUser
+    next()
+  } catch (error) {
+    next(error)
   }
-  //GRANT ACCESS TO PROTECTED ROUTE 🎉🎊
-  req.user = currentUser
-  next()
-})
+}
 
 //specify many number of arguments
 
