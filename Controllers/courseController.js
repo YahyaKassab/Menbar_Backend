@@ -19,8 +19,6 @@ exports.getIds = async (req, res) => {
 exports.getOneCourse = factory.getOne(Course)
 exports.deleteCourse = factory.deleteOne(Course)
 exports.updateCourse = factory.updateOne(Course)
-<<<<<<< HEAD
-=======
 
 exports.getCoursesForGuest = catchAsync(async (req, res, next) => {
   const courses = await Course.find()
@@ -35,4 +33,3 @@ exports.getCoursesForGuest = catchAsync(async (req, res, next) => {
     data: { data: coursesForGuest },
   })
 })
->>>>>>> origin/main
