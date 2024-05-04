@@ -33,6 +33,10 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    // Allow nested routes
+    // if (!req.body.tour) req.body.tour = req.params.tourId
+    // req.user.id comes from protect middleware
+    if (!req.body.user) req.body.user = req.user.id
     // //Check if trying to assign a role and
     // const bodyWithoutRole = { ...req.body }
     // if ('role' in bodyWithoutRole) {
@@ -51,7 +55,9 @@ exports.createOne = (Model) =>
 
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    // console.log('req.params.id:', req.params.id)
     let query = Model.findById(req.params.id)
+    console.log(query)
     // populate gets guides from Users using its reference id
     if (popOptions) query = query.populate(popOptions)
     const doc = await query
