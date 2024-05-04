@@ -13,19 +13,19 @@ const commentSchema = new mongoose.Schema(
       required: [true, 'A comment must have a lecture'],
     },
 
-    // upvotes: [
-    //   {
-    //     type: mongoose.Schema.ObjectId,
-    //     ref: 'Student',
-    //   },
-    // ],
-    // downvotes: [
-    //   {
-    //     type: mongoose.Schema.ObjectId,
-    //     ref: 'Student',
-    //   },
-    // ],
-    // totalScore: { type: Number, default: 0 },
+    upvotes: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Student',
+      },
+    ],
+    downvotes: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Student',
+      },
+    ],
+    totalScore: { type: Number, default: 0 },
     replies: Array, //Comments
     createdAt: {
       type: Date,

@@ -36,7 +36,7 @@ exports.createOne = (Model) =>
     // Allow nested routes
     // if (!req.body.tour) req.body.tour = req.params.tourId
     // req.user.id comes from protect middleware
-    if (!req.body.user) req.body.user = req.user.id
+
     // //Check if trying to assign a role and
     // const bodyWithoutRole = { ...req.body }
     // if ('role' in bodyWithoutRole) {
@@ -44,6 +44,7 @@ exports.createOne = (Model) =>
     // }
 
     // const newDoc = await Model.create(bodyWithoutRole)
+    console.log('req.body: ', req.body)
 
     const newDoc = await Model.create(req.body)
 
