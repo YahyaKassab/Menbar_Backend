@@ -158,7 +158,6 @@ exports.createPasswordResetToken = function () {
   return resetToken
 }
 
-//virtual
 exports.calcAge = function () {
   if (this.user.birthDate) {
     const ageInMillis = Date.now() - this.user.birthDate.getTime()

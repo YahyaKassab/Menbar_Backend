@@ -3,6 +3,7 @@ const authController = require('../Controllers/authController')
 const bookController = require('../Controllers/bookController')
 
 const router = express.Router()
+router.route('/guest').get(bookController.getBookssForGuest)
 
 router
   .route('/')

@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.use('/:lectureId/comments', commentRouter)
 router.use('/:lectureId/quiz', quizRouter)
+router.route('/guest').get(lectureController.getLecturesForGuests)
 
 router
   .route('/')
