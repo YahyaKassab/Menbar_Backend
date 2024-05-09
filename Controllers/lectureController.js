@@ -9,16 +9,6 @@ exports.getOneLecture = factory.getOne(Lecture, { path: 'comments' })
 exports.updateLecture = factory.updateOne(Lecture)
 exports.deleteLecture = factory.deleteOne(Lecture)
 
-// exports.getOneLecture = async (req, res, next) => {
-//   const lec = await Lecture.findById(req.params.id).populate('comments')
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       lec,
-//     },
-//   })
-// }
-
 exports.getLecturesForGuests = catchAsync(async (req, res, next) => {
   const lectures = await Lecture.find()
   // console.log(courses)
