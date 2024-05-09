@@ -13,19 +13,19 @@ const commentSchema = new mongoose.Schema(
       required: [true, 'A comment must have a lecture'],
     },
 
-    upvotes: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Student',
-      },
-    ],
-    downvotes: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Student',
-      },
-    ],
-    totalScore: { type: Number, default: 0 },
+    // upvotes: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Student',
+    //   },
+    // ],
+    // downvotes: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Student',
+    //   },
+    // ],
+    // totalScore: { type: Number, default: 0 },
     replies: Array, //Comments
     createdAt: {
       type: Date,
@@ -41,7 +41,11 @@ const commentSchema = new mongoose.Schema(
 commentSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'student',
+<<<<<<< HEAD
     select: 'user.Fname',
+=======
+    select: 'name',
+>>>>>>> abdo
   })
   next()
 })
