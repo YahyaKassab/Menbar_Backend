@@ -13,4 +13,5 @@ exports.setLectureCommentIds = (req, res, next) => {
 
 exports.createComment = factory.createOne(Comment)
 exports.getAllComments = factory.getAll(Comment)
+exports.getOneComments = factory.getOne(Comment, { path: 'replay' })
 exports.deleteComment = factory.deleteOne(Comment)

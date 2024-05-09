@@ -26,7 +26,10 @@ const commentSchema = new mongoose.Schema(
       },
     ],
     totalScore: { type: Number, default: 0 },
-    replies: Array, //Comments
+    // replies: {
+    //   type: mongoose.Schema.ObjectId,
+    //   ref: 'Reply',
+    // }, //Comments
     createdAt: {
       type: Date,
       default: Date.now(),
@@ -41,9 +44,15 @@ const commentSchema = new mongoose.Schema(
 commentSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'student',
-    select: 'user.name',
+    select: 'user.Fname',
   })
   next()
+})
+
+commentSchema.virtual('replay', {
+  ref: 'replies',
+  localField: '_id',
+  foreignField: 'comment',
 })
 const Comment = mongoose.model('Comment', commentSchema)
 
