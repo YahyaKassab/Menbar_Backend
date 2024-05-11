@@ -1,5 +1,5 @@
 const mongose = require('mongoose')
-const Reply = require('./../Models/Courses/replyModel')
+const Reply = require('../Models/Courses/ReplyModel')
 const factory = require('./../Controllers/handlerFactory')
 
 exports.setReplyCommentIds = (req, res, next) => {

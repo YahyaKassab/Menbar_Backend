@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-exports.meqAnswerSchema = new mongoose.Schema(
+const meqAnswerSchema = new mongoose.Schema(
   {
     student: {
       type: mongoose.Schema.ObjectId,
@@ -15,7 +15,9 @@ exports.meqAnswerSchema = new mongoose.Schema(
     score: Number,
     feedback: {
       text: String,
-      date: Date,
+      date: {
+        type: Date,
+      },
     },
   },
   {
@@ -24,4 +26,5 @@ exports.meqAnswerSchema = new mongoose.Schema(
   },
 )
 
-exports.MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
+const MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
+module.exports = MEQAnswer

@@ -1,0 +1,52 @@
+[
+  {
+    "student": "662af110dcc854d0a7ad04a7",
+    "meq": "662c38f38e29e55c74a87d14",
+    "answer": "This is a sample answer to MEQ 1."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04a8",
+    "meq": "662c38f38e29e55c74a87d15",
+    "answer": "Here is my response to MEQ 2."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04a9",
+    "meq": "662c38f38e29e55c74a87d16",
+    "answer": "Answering MEQ 3."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04aa",
+    "meq": "662c38f38e29e55c74a87d17",
+    "answer": "Sample answer for MEQ 4."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ab",
+    "meq": "662c38f38e29e55c74a87d18",
+    "answer": "Here is my response to MEQ 5."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ac",
+    "meq": "662c38f38e29e55c74a87d14",
+    "answer": "Answering MEQ 1 differently."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ad",
+    "meq": "662c38f38e29e55c74a87d15",
+    "answer": "Another response to MEQ 2."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04ae",
+    "meq": "662c38f38e29e55c74a87d16",
+    "answer": "Different approach to MEQ 3."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04af",
+    "meq": "662c38f38e29e55c74a87d17",
+    "answer": "My response to MEQ 4."
+  },
+  {
+    "student": "662af110dcc854d0a7ad04b0",
+    "meq": "662c38f38e29e55c74a87d18",
+    "answer": "Yet another answer to MEQ 5."
+  }
+]

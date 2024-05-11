@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const ReviewSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
   review: {
     type: String,
     required: [true, 'Review can not be empty'],
@@ -20,7 +20,7 @@ const ReviewSchema = new mongoose.Schema({
   },
 })
 
-ReviewSchema.pre(/^find/, function (next) {
+reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'student',
     select: 'user.Fname user.email',
@@ -28,5 +28,5 @@ ReviewSchema.pre(/^find/, function (next) {
   next()
 })
 
-const Review = mongoose.model('Review', ReviewSchema)
+const Review = mongoose.model('Review', reviewSchema)
 module.exports = Review
