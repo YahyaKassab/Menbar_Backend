@@ -5,9 +5,10 @@ const helmet = require('helmet')
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
 const hpp = require('hpp')
+const cors = require('cors')
 
 const AppError = require('./utils/appError')
-const globalErrorHandler = require('./controllers/errorController')
+const globalErrorHandler = require('./Controllers/errorController')
 
 const teacherRouter = require('./Routes/teacherRouter')
 const bookRouter = require('./Routes/bookRouter')
@@ -23,6 +24,8 @@ const reviewRouter = require('./Routes/reviewRoute')
 const feedbackRouter = require('./Routes/feedbackRoute')
 
 const app = express()
+app.use(cors())
+app.options('*', cors())
 
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
