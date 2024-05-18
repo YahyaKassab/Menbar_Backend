@@ -21,12 +21,15 @@ const lectureStatSchema = new mongoose.Schema(
   },
 )
 
-lectureStatSchema.virtual('student',{
-  ref:'Student',
-  localField:'_id',
-  foreignField:''
+lectureStatSchema.virtual('student', {
+  ref: 'Student',
+  localField: '_id',
+  foreignField: '',
 })
-
+lectureStatSchema.pre(/^find/, function (next) {
+  this.populate('lecture').populate('latestQuizGrade')
+  next()
+})
 const LectureStat = mongoose.model('LectureStat', lectureStatSchema)
 
 module.exports = LectureStat

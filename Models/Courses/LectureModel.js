@@ -16,13 +16,18 @@ const lectureSchema = new mongoose.Schema(
 
 lectureSchema.virtual('quiz', {
   ref: 'LectureQuiz',
-  localField: '_id',
   foreignField: 'lecture',
+  localField: '_id',
 })
 
 lectureSchema.virtual('comments', {
   ref: 'Comment',
   foreignField: 'lecture',
+  localField: '_id',
+})
+lectureSchema.virtual('course', {
+  ref: 'Course',
+  foreignField: 'lectures',
   localField: '_id',
 })
 const Lecture = mongoose.model('Lecture', lectureSchema)

@@ -49,6 +49,12 @@ quizAnswerSchema.virtual('score').get(function () {
   ).length)
 })
 
+quizAnswerSchema.pre(/^find/, function (next) {
+  this.populate('quiz')
+
+  next()
+})
+
 const fillEmbedded = (fieldToFill, Model) => {
   catchAsync(async function (next) {
     const fieldPromises = fieldToFill.map(
@@ -59,9 +65,9 @@ const fillEmbedded = (fieldToFill, Model) => {
   })
 }
 
-quizAnswerSchema.pre('save', () => {
-  fillEmbedded(this.lectureQuizzesGrades, MCQAnswer)
-})
+quizAnswerSchema.pre('save', () =>
+  fillEmbedded(this.lectureQuizzesGrades, MCQAnswer),
+)
 
 const QuizAnswer = mongoose.model('QuizAnswer', quizAnswerSchema)
 module.exports = QuizAnswer

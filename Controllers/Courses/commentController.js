@@ -1,7 +1,7 @@
-const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/appError')
-const factory = require('./handlerFactory')
-const Comment = require('../Models/Courses/CommentModel')
+const catchAsync = require('../../utils/catchAsync')
+const AppError = require('../../utils/appError')
+const factory = require('../Handlers/handlerFactory')
+const Comment = require('../../Models/Courses/CommentModel')
 
 exports.setLectureCommentIds = (req, res, next) => {
   // Allow nested routes

@@ -12,18 +12,14 @@ const commentSchema = new mongoose.Schema(
       ref: 'Lecture',
       required: [true, 'A comment must have a lecture'],
     },
-    upvotes: [
+    replies: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'Student',
+        ref: 'Comment',
       },
     ],
-    downvotes: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Student',
-      },
-    ],
+    upvotes: Number,
+    downvotes: Number,
     totalScore: { type: Number, default: 0 },
 
     createdAt: {
@@ -42,14 +38,12 @@ commentSchema.pre(/^find/, function (next) {
     path: 'student',
     select: 'user.Fname',
   })
+  this.populate({
+    path: 'replies',
+  })
   next()
 })
 
-commentSchema.virtual('replay', {
-  ref: 'replies',
-  localField: '_id',
-  foreignField: 'comment',
-})
 const Comment = mongoose.model('Comment', commentSchema)
 
 module.exports = Comment

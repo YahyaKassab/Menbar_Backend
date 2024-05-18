@@ -1,8 +1,8 @@
-const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/appError')
-const factory = require('./handlerFactory')
-const Course = require('../Models/Courses/CourseModel')
-const Book = require('../Models/Courses/BookModel')
+const catchAsync = require('../../utils/catchAsync')
+const AppError = require('../../utils/appError')
+const factory = require('../Handlers/handlerFactory')
+const Course = require('../../Models/Courses/CourseModel')
+const Book = require('../../Models/Courses/BookModel')
 
 exports.createBook = factory.createOne(Book)
 
@@ -28,3 +28,4 @@ exports.getBookssForGuest = catchAsync(async (req, res, next) => {
     data: { data: booksForGuest },
   })
 })
+exports.ids = factory.getIds(Book)

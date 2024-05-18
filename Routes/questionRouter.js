@@ -1,9 +1,11 @@
 const express = require('express')
-const authController = require('../Controllers/authController')
-const bookController = require('../Controllers/bookController')
+const questionController = require('../Controllers/Reviews/questionController')
+const bookController = require('../Controllers/Courses/bookController')
 
 const router = express.Router()
 router.route('/guest').get(bookController.getBookssForGuest)
+
+router.get('/ids', questionController.ids)
 
 router
   .route('/')

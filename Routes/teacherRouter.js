@@ -1,34 +1,19 @@
 const express = require('express')
-const authController = require('../Controllers/authController')
-const teacherController = require('../Controllers/teacherController')
+const authController = require('../Controllers/Handlers/authController')
+const teacherController = require('../Controllers/Users/teacherController')
 const Teacher = require('../Models/Users/TeacherModel')
 
 const router = express.Router()
 
 //signup only posts
+// #region Guest
+router.get('/guest', teacherController.getTeacherGuest)
+router.get('/:id/guest', teacherController.getAllTeachersGuest)
+// #endregion
+
+router.get('/ids', teacherController.ids)
 router.get('/', teacherController.getAllTeachers)
 router.post('/signup', authController.signUp(Teacher))
-// router.post('/login', authController.login)
-// router.post('/forgot-password', authController.forgotPassword)
-// //best for reset is PATCH
-// router.patch('/reset-password/:token', authController.resetPassword)
 
-// // runs in sequence, all next routes are protected
-// // 🚨
-// router.use(authController.protect)
-
-// router.patch('/update-password', authController.updatePassword)
-// router.get('/me', userController.getMe, userController.getUserById)
-// router.delete('/delete-me', userController.deleteMe)
-// router.patch('/update-me', userController.updateMe)
-
-// router.use(authController.restrictTo('admin'))
-
-// router.route('/').get(userController.getAllUsers)
-
-// router
-//   .route('/:id')
-//   .get(userController.getUserById)
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser)
+router.route('/:teacherId/guest')
 module.exports = router

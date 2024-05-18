@@ -1,7 +1,7 @@
 const express = require('express')
-const authController = require('../Controllers/authController')
-const examController = require('../Controllers/examController')
-const answerController = require('../Controllers/answerController')
+const authController = require('../../Controllers/Handlers/authController')
+const examController = require('../../Controllers/Courses/examController')
+const answerController = require('../../Controllers/Courses/answerController')
 
 const router = express.Router()
 

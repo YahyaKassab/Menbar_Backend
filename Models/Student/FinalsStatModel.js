@@ -5,12 +5,10 @@ const finalsStatSchema = new mongoose.Schema(
   {
     finalsScore: Number,
     passedAt: Date,
-    answers: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'FinalExamStudentAnswer',
-      },
-    ],
+    answers: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'FinalExamStudentAnswer',
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -18,11 +16,9 @@ const finalsStatSchema = new mongoose.Schema(
   },
 )
 
-finalsStatSchema.pre('save', async function (next) {
-  const answersPromises = this.answers.map(
-    async (id) => await FinalExamStudentAnswer.findById(id),
-  )
-  this.answers = await Promise.all(answersPromises)
+finalsStatSchema.pre(/^find/, function (next) {
+  this.populate('answers')
+
   next()
 })
 

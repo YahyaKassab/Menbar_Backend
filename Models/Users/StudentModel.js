@@ -17,7 +17,12 @@ const studentSchema = new mongoose.Schema(
     currentJob: String,
     certificates: Array, //Certificate
     weekSchedule: Array, //ScheduleDay
-    courseStats: Array, //CourseStat
+    courseStats: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'CourseStat',
+      },
+    ], //CourseStat
   },
   {
     toJSON: { virtuals: true },
@@ -42,7 +47,6 @@ studentSchema.pre(
   //add a condition
   fillEmbedded(this.certificates, Certificate),
   fillEmbedded(this.weekSchedule, ScheduleDay),
-  fillEmbedded(this.courseStats, CourseStats),
 )
 studentSchema.methods.correctPassword = User.correctPassword
 studentSchema.methods.changedPasswordAfter = User.changedPasswordAfter
