@@ -3,20 +3,31 @@ const authController = require('../../Controllers/Handlers/authController')
 const examController = require('../../Controllers/Courses/examController')
 const answerController = require('../../Controllers/Courses/answerController')
 
-const router = express.Router()
-
+const router = express.Router({ mergeParams: true })
+//params.lectureId
+router.use(authController.protect)
+// #region Student
+router.post(
+  '/answers/submit',
+  authController.restrictTo('student'),
+  answerController.submitQuiz,
+)
+router.get(
+  '/',
+  answerController.checkLectureOpen,
+  examController.getQuizStudent,
+)
+// #endregion
+router.use(authController.restrictTo('teacher', 'admin'))
+// #region Teacher
 router
   .route('/')
   .post(examController.createQuiz)
-  .get(examController.getAllQuizzes)
-router.route('/answer').post(answerController.createQuizAnswer)
-router
-  .route('/mcq')
-  .post(examController.createMcq)
-  .get(examController.getAllMcq)
-router
-  .route('/meq')
-  .post(examController.createMeq)
-  .get(examController.getAllMeq)
-
+  .get(examController.getQuizTeacher)
+  .patch(examController.updateQuiz)
+  .delete(examController.deleteQuiz)
+// #endregion
+// #region Admin
+router.delete('/answers', examController.deleteQuiz)
+// #endregion
 module.exports = router

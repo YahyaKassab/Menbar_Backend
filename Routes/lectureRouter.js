@@ -1,11 +1,12 @@
 const express = require('express')
 const authController = require('../Controllers/Handlers/authController')
+const factory = require('../Controllers/Handlers/handlerFactory')
 const lectureController = require('../Controllers/Courses/lectureController')
 const examController = require('../Controllers/Courses/examController')
 const quizRouter = require('./Secondary/quizRouter')
 const commentRouter = require('./Secondary/commentRouter')
 
-const router = express.Router({ mergeParams: true })
+const router = express.Router()
 
 router.use('/:lectureId/comments', commentRouter)
 router.use('/:lectureId/quiz', quizRouter)
@@ -14,38 +15,26 @@ router.use(authController.protect)
 router.route('/ids').get(lectureController.ids)
 // #region Student
 router.get('/:id', lectureController.getLectureStudent)
-router.get('/:lectureId/mcq', lectureController.getLectureStudent)
 // #endregion
-
+router.use(authController.restrictTo('admin', 'teacher'))
 // #region Teacher
 router
   .route('/')
-  .post(
-    authController.restrictTo('admin', 'teacher'),
-    lectureController.createLecture,
-  )
-  .get(
-    authController.restrictTo('admin', 'teacher'),
-    lectureController.getAllLectures,
-  )
+  .post(lectureController.createLecture)
+  .get(lectureController.getAllLectures)
 router
   .route('/:id')
-  .patch(
-    authController.restrictTo('admin', 'teacher'),
-    lectureController.updateLecture,
-  )
+  .patch(lectureController.updateLecture)
   .delete(authController.restrictTo('admin'), lectureController.deleteLecture)
+router.use(factory.setLectureIds)
 router
   .route('/:lectureId/mcq')
-  .post(authController.restrictTo('admin', 'teacher'), examController.createMcq)
-  .patch(
-    authController.restrictTo('admin', 'teacher'),
-    examController.updateMcq,
-  )
-  .delete(
-    authController.restrictTo('admin', 'teacher'),
-    examController.deleteMcq,
-  )
+  .post(examController.createMcq)
+  .get(examController.getAllMcqForLecture)
+router
+  .route('/:lectureId/mcq/:id')
+  .patch(examController.updateMcq)
+  .delete(examController.deleteMcq)
 // #endregion
 
 module.exports = router

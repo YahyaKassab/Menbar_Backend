@@ -3,7 +3,7 @@ const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Teacher = require('../../Models/Users/TeacherModel')
 
-exports.createTeacher = factory.createOne(Teacher)
+exports.createTeacher = factory.createOne(Teacher, ['examsMarked'])
 exports.getAllTeachers = factory.getAll(Teacher, { path: 'coursesToTeach' })
 exports.getAllTeachersGuest = factory.getAll(
   Teacher,
@@ -17,4 +17,9 @@ exports.getTeacherGuest = factory.getOneExclude(
   { path: 'coursesToTeach' },
   ['examsMarked'],
 )
+
+exports.getTeacher = factory.getOne(Teacher, { path: 'coursesToTeach' })
+
+exports.updateTeacher = factory.updateOne(Teacher)
+exports.deleteTeacher = factory.deleteOne(Teacher)
 exports.ids = factory.getIds(Teacher)

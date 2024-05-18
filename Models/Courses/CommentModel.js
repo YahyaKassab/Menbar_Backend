@@ -18,8 +18,6 @@ const commentSchema = new mongoose.Schema(
         ref: 'Comment',
       },
     ],
-    upvotes: Number,
-    downvotes: Number,
     totalScore: { type: Number, default: 0 },
 
     createdAt: {

@@ -6,6 +6,10 @@ const meqSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Lecture',
     },
+    course: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course',
+    },
     question: String,
     optimalAnswer: String,
     scoreFrom: Number,

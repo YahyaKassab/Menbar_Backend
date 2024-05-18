@@ -22,6 +22,7 @@ const LectureQuizSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
 LectureQuizSchema.virtual('numberOfAnswers').get(async function () {
   const count = await QuizAnswer.countDocuments({ quiz: this._id })
   return count
@@ -37,5 +38,6 @@ LectureQuizSchema.virtual('avgTries').get(async function () {
 
   return avgTries
 })
+
 const LectureQuiz = mongoose.model('LectureQuiz', LectureQuizSchema)
 module.exports = LectureQuiz

@@ -2,12 +2,18 @@ const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Student = require('../../Models/Users/StudentModel')
+const authController = require('../Handlers/authController')
 
 //middleware to set the input id from the logged in user
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id
   next()
 }
+
+exports.signupStudent = authController.signUp(Student)
+exports.loginStudent = authController.login(Student)
+exports.forgetPasswordStudent = authController.forgotPassword(Student)
+exports.resetPasswordStudent = authController.resetPassword(Student)
 
 exports.createStudent = factory.createOne(Student)
 exports.getAllStudents = factory.getAll(Student)

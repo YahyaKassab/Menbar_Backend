@@ -6,14 +6,21 @@ const Teacher = require('../Models/Users/TeacherModel')
 const router = express.Router()
 
 //signup only posts
-// #region Guest
-router.get('/guest', teacherController.getTeacherGuest)
-router.get('/:id/guest', teacherController.getAllTeachersGuest)
+// #region Guest and Student
+router.get('/', teacherController.getAllTeachersGuest)
+router.get('/:id', teacherController.getTeacherGuest)
 // #endregion
+router.use(authController.protect, authController.restrictTo('Admin'))
 
 router.get('/ids', teacherController.ids)
-router.get('/', teacherController.getAllTeachers)
-router.post('/signup', authController.signUp(Teacher))
 
-router.route('/:teacherId/guest')
+// #region Admin
+router.get('/admin', teacherController.getAllTeachers)
+router.post('/signup', authController.signUp(Teacher))
+router
+  .route('/:id/admin')
+  .patch(teacherController.updateTeacher)
+  .delete(teacherController.deleteTeacher)
+// #endregion
+
 module.exports = router

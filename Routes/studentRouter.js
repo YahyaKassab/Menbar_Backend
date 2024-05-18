@@ -5,10 +5,10 @@ const Student = require('../Models/Users/StudentModel')
 
 const router = express.Router()
 // #region Guest
-router.post('/signup', authController.signUp(Student))
-router.post('/login', authController.login(Student))
-router.post('/forgot-password', authController.forgotPassword(Student))
-router.patch('/reset-password/:token', authController.resetPassword(Student))
+router.post('/signup', studentController.signupStudent)
+router.post('/login', studentController.loginStudent)
+router.post('/forgot-password', studentController.forgetPasswordStudent)
+router.patch('/reset-password/:token', studentController.resetPasswordStudent)
 
 // #endregion
 

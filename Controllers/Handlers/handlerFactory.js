@@ -326,3 +326,17 @@ exports.getIds = (Model) =>
       data: { [modelName]: ids },
     })
   })
+exports.setLectureIds = (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.lecture) req.body.lecture = req.params.lectureId
+  console.log('lecture: ', req.body.lecture)
+  if (!req.body.user) req.body.user = req.user.id
+  next()
+}
+exports.setCourseIds = (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.course) req.body.course = req.params.courseId
+  console.log('course: ', req.body.course)
+  // if (!req.body.user) req.body.user = req.user.id
+  next()
+}

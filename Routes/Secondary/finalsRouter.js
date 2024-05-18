@@ -36,7 +36,7 @@ router
   )
   .patch(
     authController.restrictTo('teacher', 'admin'),
-    answerController.markFinalAnswer,
+    answerController.markMeq,
   )
 
 // #endregion
@@ -45,9 +45,9 @@ router
 
 router.use(authController.restrictTo('admin'))
 
+router.route('/').post(examController.createFinal)
 router
-  .route('/')
-  .post(examController.createFinal)
+  .route('/:id')
   .patch(examController.updateFinal)
   .delete(examController.deleteFinal)
 

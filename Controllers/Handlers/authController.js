@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken')
 const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const sendEmail = require('../../utils/email')
+const Course = require('../../Models/Courses/CourseModel')
+const LectureStat = require('../../Models/Student/LectureStatModel')
+const CourseStat = require('../../Models/Student/CourseStatModel')
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -36,15 +39,66 @@ const createSendToken = (model, statusCode, res) => {
 }
 
 exports.signUp = (Model) => async (req, res, next) => {
-  //                        ⚠⚠⚠⚠⚠
-
   try {
-    // 🚨Change to this 👇
-    // const { role, passwordResetToken, passwordResetExpires, ...otherFields } = req.body;
-    // const newUser = await Model.create(otherFields);
+    // Set the role based on the Model
+    if (Model.modelName === 'Student') {
+      req.body.user.role = 'student'
+
+      // Static course IDs (replace these with actual course IDs)
+      const courseIds = ['662b8f35d303a4fc3e0d2ee0']
+
+      req.body.courseStats = []
+
+      // Loop through each course ID
+      for (const courseId of courseIds) {
+        const course = await Course.findById(courseId).populate('lectures')
+
+        if (!course) {
+          throw new Error(`Course with ID ${courseId} not found`)
+        }
+
+        // Create LectureStats for each lecture in the course
+        const lectureStats = []
+        for (const lecture of course.lectures) {
+          const lectureStat = await LectureStat.create({ lecture: lecture._id })
+          lectureStats.push(lectureStat._id)
+        }
+
+        // Create CourseStat
+        const courseStat = await CourseStat.create({
+          course: courseId,
+          lecturesStats: lectureStats,
+          lecturesDone: course.lectures.map((lecture) => lecture._id),
+        })
+
+        req.body.courseStats.push(courseStat._id)
+      }
+    }
     const newUser = await Model.create(req.body)
 
-    //                        ⚠⚠⚠⚠⚠
+    // Populate newUser with courseStats and lectureStats
+    await newUser
+      .populate({
+        path: 'courseStats',
+        populate: {
+          path: 'lecturesStats',
+          model: 'LectureStat',
+        },
+      })
+      .execPopulate()
+
+    // Iterate over newUser's courseStats
+    for (const courseStat of newUser.courseStats) {
+      // Iterate over lecturesStats of each courseStat
+      for (const lectureStat of courseStat.lecturesStats) {
+        // Assign the student property to newUser's ID
+        lectureStat.student = newUser._id
+        // Save the modified lectureStat
+        await lectureStat.save()
+      }
+      // Save the modified courseStat
+      await courseStat.save()
+    }
 
     createSendToken(newUser, 201, res)
   } catch (err) {
@@ -127,11 +181,15 @@ exports.protect = (Model) => async (req, res, next) => {
 //Authorization
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    //roles is an array
-    if (!roles.includes(req.user.user.role))
+    // Convert roles to lowercase for case-insensitive comparison
+    const rolesLowerCase = roles.map((role) => role.toLowerCase())
+    const userRoleLowerCase = req.user.user.role.toLowerCase()
+
+    if (!rolesLowerCase.includes(userRoleLowerCase)) {
       return next(
         new AppError("You don't have permission to perform this action", 403),
       )
+    }
 
     next()
   }

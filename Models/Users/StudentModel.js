@@ -2,8 +2,7 @@ const mongoose = require('mongoose')
 const User = require('./User')
 const Certificate = require('../Student/CertificateModel')
 const Course = require('../Courses/CourseModel')
-const ScheduleDay = require('../Student/ScheduleDayModel')
-const CourseStats = require('../Student/CourseStatsModel')
+const CourseStats = require('../Student/CourseStatModel')
 const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const modelsFeatures = require('../../utils/modelsFeatures')
@@ -12,11 +11,11 @@ const studentSchema = new mongoose.Schema(
   {
     user: User.userSchema,
     // Additional fields specific to students
+    level: String,
     lastCertificate: String,
     educationLevel: String,
     currentJob: String,
     certificates: Array, //Certificate
-    weekSchedule: Array, //ScheduleDay
     courseStats: [
       {
         type: mongoose.Schema.ObjectId,
@@ -46,7 +45,6 @@ studentSchema.pre(
   User.tokenTimeCheck,
   //add a condition
   fillEmbedded(this.certificates, Certificate),
-  fillEmbedded(this.weekSchedule, ScheduleDay),
 )
 studentSchema.methods.correctPassword = User.correctPassword
 studentSchema.methods.changedPasswordAfter = User.changedPasswordAfter

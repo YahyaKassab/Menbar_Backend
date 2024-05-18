@@ -9,21 +9,13 @@ const quizAnswerSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'A grade must have a student'],
     },
-    quiz: {
+    lecture: {
       type: mongoose.Schema.ObjectId,
-      ref: 'LectureQuiz',
+      ref: 'Lecture',
+      required: [true, 'Answer must have a lecture'],
     },
     //MCQAnswer[]
-    beginAtTime: {
-      type: Date,
-      default: Date.now(),
-      select: false,
-    },
-    endAtTime: {
-      type: Date,
-      default: Date.now(),
-      select: false,
-    },
+    durationInMins: Number,
     lectureQuizzesGrades: Array, //MCQAnswer
     scoreFrom: Number,
     tries: {
@@ -36,13 +28,7 @@ const quizAnswerSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-quizAnswerSchema.virtual('durationInMins').get(function () {
-  // Calculate duration in minutes
-  const beginAtTime = this.beginAtTime.getTime() // Convert to milliseconds
-  const endAtTime = this.endAtTime.getTime() // Convert to milliseconds
-  const durationInMilliseconds = endAtTime - beginAtTime
-  return Math.round(durationInMilliseconds / (1000 * 60)) // Convert milliseconds to minutes
-})
+
 quizAnswerSchema.virtual('score').get(function () {
   return (correctCount = this.lectureQuizzesGrades.filter(
     (quiz) => quiz.correct,
@@ -56,15 +42,20 @@ quizAnswerSchema.pre(/^find/, function (next) {
 })
 
 const fillEmbedded = (fieldToFill, Model) => {
-  catchAsync(async function (next) {
-    const fieldPromises = fieldToFill.map(
-      async (id) => await Model.findById(id),
-    )
-    fieldToFill = await Promise.all(fieldPromises)
+  return catchAsync(async function (req, res, next) {
+    const fieldPromises = fieldToFill.map(async (item) => {
+      if (typeof item === 'string' || item instanceof mongoose.Types.ObjectId) {
+        // Assume item is an ID and fetch the corresponding document
+        return await Model.findById(item)
+      }
+      // Assume item is already an object, return it as is
+      return item
+    })
+
+    req.body[fieldToFill] = await Promise.all(fieldPromises)
     next()
   })
 }
-
 quizAnswerSchema.pre('save', () =>
   fillEmbedded(this.lectureQuizzesGrades, MCQAnswer),
 )

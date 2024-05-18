@@ -16,6 +16,8 @@ const studentRouter = require('./Routes/studentRouter')
 const lectureRouter = require('./Routes/lectureRouter')
 const courseRouter = require('./Routes/courseRouter')
 const reviewRouter = require('./Routes/reviewRouter')
+const mcqRouter = require('./Routes/mcqRouter')
+const meqRouter = require('./Routes/meqRouter')
 
 const app = express()
 app.use(cors())
@@ -82,12 +84,14 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/api/v1/students', studentRouter)
-app.use('/api/v1/teachers', teacherRouter)
 app.use('/api/v1/courses', courseRouter)
 app.use('/api/v1/lectures', lectureRouter)
-app.use('/api/v1/reviews', reviewRouter)
+app.use('/api/v1/mcqs', mcqRouter)
+app.use('/api/v1/meqs', meqRouter)
 app.use('/api/v1/questions', questionRouter)
+app.use('/api/v1/reviews', reviewRouter)
+app.use('/api/v1/students', studentRouter)
+app.use('/api/v1/teachers', teacherRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))

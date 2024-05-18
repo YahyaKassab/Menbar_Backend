@@ -6,6 +6,10 @@ const mcqSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Lecture',
     },
+    course: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course',
+    },
     question: String,
     choices: [String],
     answer: Number,
