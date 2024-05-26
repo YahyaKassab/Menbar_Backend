@@ -41,7 +41,7 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
   }
 
   // Check if the student matches the user id
-  if (comment.student.toString() !== req.student.id) {
+  if (comment.student.id !== req.student.id) {
     return next(
       new AppError('You are not authorized to delete this comment', 403),
     )
@@ -53,7 +53,7 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
 })
 
 exports.addReply = catchAsync(async (req, res, next) => {
-  console.log('body', req.body)
+  req.body.lecture = req.params.lectureId
   const newReply = new Comment(req.body)
   await newReply.save()
 
