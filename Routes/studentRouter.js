@@ -5,32 +5,32 @@ const Student = require('../Models/Users/StudentModel')
 
 const router = express.Router()
 // #region Guest
-router.post('/signup', studentController.signupStudent)
+router.post('/signup', studentController.signUp)
 router.post('/login', studentController.loginStudent)
 router.post('/forgot-password', studentController.forgetPasswordStudent)
 router.patch('/reset-password/:token', studentController.resetPasswordStudent)
 
 // #endregion
 
-router.use(authController.protect)
+router.use(authController.protect(Student))
 router.get('/ids', studentController.ids)
 
 // #region Student
 router.get(
   '/me',
-  authController.restrictTo('student'),
+  authController.restrictTo('Student'),
   studentController.getMe,
   studentController.getOneStudent,
 )
 router.patch(
   '/update-me',
-  authController.restrictTo('student'),
+  authController.restrictTo('Student'),
   studentController.getMe,
   studentController.updateStudentByStudent,
 )
 router.patch(
   '/delete-me',
-  authController.restrictTo('student'),
+  authController.restrictTo('Student'),
   studentController.deleteMe,
 )
 router.get(
@@ -44,20 +44,20 @@ router.get(
 router
   .route('/')
   .get(
-    authController.restrictTo('admin', 'teacher'),
+    authController.restrictTo('Admin', 'Teacher'),
     studentController.getAllStudents,
   )
 router
   .route('/:id')
   .get(
-    authController.restrictTo('admin', 'teacher'),
+    authController.restrictTo('Admin', 'Teacher'),
     studentController.getOneStudent,
   )
   // #endregion
 
   //#region Admin
-  .patch(authController.restrictTo('admin'), studentController.updateStudent)
-  .delete(authController.restrictTo('admin'), studentController.deleteStudent)
+  .patch(authController.restrictTo('Admin'), studentController.updateStudent)
+  .delete(authController.restrictTo('Admin'), studentController.deleteStudent)
 // #endregion
 
 module.exports = router

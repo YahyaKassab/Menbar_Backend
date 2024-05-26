@@ -13,29 +13,7 @@ const courseSchema = new mongoose.Schema(
       type: String,
       enum: ['aqeedah', 'hadeeth', 'fiqh', 'tafseer'],
     },
-    book: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Book',
-      required: [true, 'A Course must have a Book'],
-    },
-    students: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Student',
-      },
-    ],
-    teachers: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Teacher',
-      },
-    ], //Teacher
-    lectures: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Lecture',
-      },
-    ], //Lecture
+    //Lecture
     prerequisites: [
       {
         type: mongoose.Schema.ObjectId,
@@ -49,40 +27,35 @@ const courseSchema = new mongoose.Schema(
   },
 )
 
-courseSchema.post('save', async function (docs, next) {
-  // Fetch all enrolled students
-  const course = this
-  await Promise.all(
-    this.students.map(async (student) => {
-      await Student.findByIdAndUpdate(student, {
-        $push: { courseStats: { course: course._id } },
-      })
-      // .then((val) => console.log(val))
-    }),
-    this.teachers.map(async (teacher) => {
-      await Teacher.findByIdAndUpdate(teacher, {
-        $push: { coursesToTeach: course._id },
-      })
-      // .then((val) => console.log(val))
-    }),
-  )
-  await Book.findByIdAndUpdate(this.book, { course: course._id })
-
-  next()
+courseSchema.virtual('teachers', {
+  ref: 'Teacher',
+  localField: '_id',
+  foreignField: 'coursesToTeach',
+})
+courseSchema.virtual('book', {
+  ref: 'Book',
+  localField: '_id',
+  foreignField: 'course',
+})
+courseSchema.virtual('lectures', {
+  ref: 'Lecture',
+  localField: '_id',
+  foreignField: 'course',
+})
+courseSchema.virtual('students', {
+  ref: 'Student', // Reference to the Student model
+  localField: '_id', // Field from Course model
+  foreignField: 'courseStats.course', // Field from CourseStat model
+  justOne: false, // We expect multiple students
+  options: {
+    // Populate the 'courseStats' field in the Student model
+    ref: 'CourseStat',
+    localField: 'courseStats',
+    foreignField: '_id',
+    select: 'course', // Select only the 'course' field for matching
+  },
 })
 
-// Embed document on Saving
-// courseSchema.pre('save', async function (next) {
-//   const lecturesPromises = this.lectures.map(
-//     async (id) => await Lecture.findById(id),
-//   )
-//   const teachersPromises = this.teachers.map(
-//     async (id) => await Teacher.findById(id),
-//   )
-//   this.teachers = await Promise.all(teachersPromises)
-//   this.lectures = await Promise.all(lecturesPromises)
-//   next()
-// })
 const Course = mongoose.model('Course', courseSchema)
 
 module.exports = Course

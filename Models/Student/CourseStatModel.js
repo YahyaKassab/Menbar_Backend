@@ -8,13 +8,12 @@ const courseStatsSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'A stat must have a course'],
     },
-
-    lecturesStats: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'LectureStat',
-      },
-    ], //LectureStat
+    student: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Student',
+      required: [true, 'A stat must have a student'],
+    },
+//LectureStat
     lecturesDone: [
       {
         type: mongoose.Schema.ObjectId,
@@ -29,33 +28,44 @@ const courseStatsSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    strictPopulate: false,
   },
 )
 
-courseStatsSchema.pre(/^find/, function (next) {
-  this.populate('course').populate('lecturesStats').populate('answers')
-  next()
+courseStatsSchema.virtual('lectureStats', {
+  ref: 'LectureStat',
+  localField: '_id',
+  foreignField: 'courseStat',
 })
+
 // Virtual for totalLecturesScore
-courseStatsSchema.virtual('totalLecturesScore').get(function () {
+courseStatsSchema.virtual('totalLecturesScore').get(async function () {
+  // Populate lecturesStats
+  await this.populate('lecturesStats')
+
+  // Check if lecturesStats exists and is populated
   if (this.lecturesStats && this.lecturesStats.length > 0) {
+    // Sum up the bestQuizScore of each lectureStat
     return this.lecturesStats.reduce((total, lectureStat) => {
-      return total + (lectureStat.bestQuizScore || 0)
-    }, 0)
+      return total + (lectureStat.bestQuizScore || 0);
+    }, 0);
   }
-  return 0
-})
+  // If lecturesStats doesn't exist or is empty, return 0
+  return 0;
+});
+
+
 courseStatsSchema.virtual('totalScore').get(function () {
-  // Ensure finalAnswers is populated
-  if (this.finalAnswers && this.finalAnswers.score) {
-    return (this.totalLecturesScore || 0) + this.finalAnswers.score
-  }
-  // If finalAnswers is not populated or does not have a score, return totalLecturesScore only
-  return this.totalLecturesScore || 0
-})
+  // Ensure finalAnswers is populated and has a score
+  const finalAnswersScore = this.finalAnswers && this.finalAnswers.score ? this.finalAnswers.score : 0;
+  const totalLecturesScore = this.totalLecturesScore || 0;
+  
+  return totalLecturesScore + finalAnswersScore;
+});
+
 courseStatsSchema.virtual('passed').get(function () {
-  return this.totalScore >= 50
-})
+  return this.totalScore >= 50;
+});
 
 const CourseStat = mongoose.model('CourseStats', courseStatsSchema)
 

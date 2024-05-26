@@ -7,6 +7,13 @@ const certificateSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'A certificate must have a course'],
     },
+    
+    student: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Student',
+      required: [true, 'A certificate must have a student'],
+    },
+
     imageURL: String,
     Date: Date,
   },
@@ -16,11 +23,7 @@ const certificateSchema = new mongoose.Schema(
   },
 )
 
-certificateSchema.virtual('student', {
-  ref: 'Student',
-  localField: '_id',
-  foreignField: 'certificates',
-})
+
 const Certificate = mongoose.model('Certificate', certificateSchema)
 
 module.exports = Certificate

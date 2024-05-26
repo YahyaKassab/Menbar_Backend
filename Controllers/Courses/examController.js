@@ -58,26 +58,133 @@ exports.deleteFinal = factory.deleteOne(FinalExam)
 // #endregion
 
 // #region Quiz
-exports.getQuizTeacher = factory.getOne(LectureQuiz, [
-  { path: 'lecture', select: 'name' },
-  { path: 'mcq' },
-  { path: 'numberOfAnswers' },
-  { path: 'avgTries' },
-])
+exports.getQuizTeacher = catchAsync(async (req, res, next) => {
+  const { lectureId } = req.params
+
+  console.log('lectureId:', lectureId)
+
+  if (!lectureId) {
+    return next(new AppError('Lecture ID is required', 400))
+  }
+
+  const lectureQuiz = await LectureQuiz.findOne({ lecture: lectureId })
+
+  if (!lectureQuiz) {
+    return next(new AppError('No document found with that ID', 404))
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: lectureQuiz,
+  })
+})
 //check if student lecture opened
-exports.getQuizStudent = factory.getOne(LectureQuiz, [
-  { path: 'lecture', select: 'name' },
-  { path: 'mcq' },
-])
-exports.createQuiz = factory.createOne(LectureQuiz)
+
+exports.getQuizStudent = catchAsync(async (req, res, next) => {
+  console.log('params', req.params)
+  const quiz = await LectureQuiz.find({ lecture: req.params.lectureId })
+    .populate({
+      path: 'lecture',
+      select: 'name',
+    })
+    .populate('mcq')
+  res.status(200).json({
+    status: 'success',
+    data: quiz,
+  })
+})
+// exports.setQuizId = catchAsync(async (req, res, next) => {
+//   // Find the lecture by ID and populate the 'quiz' virtual property
+//   const lecture = await Lecture.findById(req.params.lectureId).populate('quiz')
+
+//   if (!lecture || !lecture.quiz) {
+//     return next(new AppError('Lecture or quiz not found', 404))
+//   }
+//   // Set the quiz ID in req.params
+//   req.params.id = lecture.quiz[0]._id
+//   console.log('quiz:', req.params.id)
+
+//   // Proceed to the next middleware or route handler
+//   next()
+// })
+
+exports.createQuiz = catchAsync(async (req, res, next) => {
+  // Check if the lecture exists
+  const lecture = await Lecture.findById(req.body.lecture)
+  if (!lecture) {
+    return next(new AppError('No lecture found with that ID', 404))
+  }
+
+  // Check if the lecture already has a quiz
+  const existingQuiz = await LectureQuiz.findOne({ lecture: req.body.lecture })
+  if (existingQuiz) {
+    return next(new AppError('Lecture already has a quiz', 400))
+  }
+
+  // Create the new quiz
+  const newDoc = await LectureQuiz.create(req.body)
+
+  res.status(201).json({
+    status: 'success',
+    data: newDoc,
+  })
+})
 exports.getAllQuizzes = factory.getAll(LectureQuiz)
-exports.updateQuiz = factory.updateOne(LectureQuiz)
-exports.deleteQuiz = factory.deleteOne(LectureQuiz)
+exports.updateQuiz = catchAsync(async (req, res, next) => {
+  const doc = await LectureQuiz.findOneAndUpdate(
+    { lecture: req.body.lecture },
+    {
+      new: true, // Return the updated document
+      runValidators: true, // Run validators on update
+    },
+  )
+
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: doc,
+  })
+})
+exports.deleteQuiz = catchAsync(async (req, res, next) => {
+  const doc = await LectureQuiz.findOneAndDelete({ lecture: req.body.lecture })
+
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404))
+  }
+  res.status(204).json({ status: 'success', data: null })
+})
 // #endregion
 
 // #region MCQ
 
 exports.createMcq = factory.createOne(MCQ)
+exports.createMcqOnLecture = catchAsync(async (req, res, next) => {
+  // Find the lecture by ID
+  console.log('body', req.body)
+  const lecture = await Lecture.findById(req.body.lecture)
+
+  // If the lecture is not found, throw an error
+  if (!lecture) {
+    return next(new AppError('Lecture not found', 404))
+  }
+
+  // Set the course ID in the request body to be the same as the lecture's course
+  req.body.course = lecture.course
+
+  // Create the MCQ
+  const mcq = await MCQ.create(req.body)
+
+  // Send a response with the created MCQ
+  res.status(201).json({
+    status: 'success',
+    data: {
+      mcq,
+    },
+  })
+})
 exports.updateMcq = factory.updateOne(MCQ)
 exports.deleteMcq = factory.deleteOne(MCQ)
 exports.getAllMcq = factory.getAll(MCQ)
@@ -94,8 +201,7 @@ exports.getAllMcqForCourse = catchAsync(async (req, res, next) => {
   })
 })
 exports.getAllMcqForLecture = catchAsync(async (req, res, next) => {
-  const { lectureId } = req.params
-  const mcqs = await MCQ.find({ lecture: lectureId })
+  const mcqs = await MCQ.find({ lecture: req.params.lectureId })
   res.status(200).json({
     status: 'Success',
     results: mcqs.length,

@@ -9,49 +9,33 @@ const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const Student = require('../../Models/Users/StudentModel')
 const Certificate = require('../../Models/Student/CertificateModel')
+const Lecture = require('../../Models/Courses/LectureModel')
+const CourseStat = require('../../Models/Student/CourseStatModel')
 
 // #region Final
+
 exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
-  const body = req.body
-  const studentId = body.student
+  const { body } = req
+  const { student: studentId } = body
 
-  // Create MCQ answers
+  // Create and mark MCQ answers
   const answers = await MCQAnswer.create(body.mcqs)
-
-  // Mark MCQ answers
-  for (const answer of answers) {
-    await answer.mark()
-  }
+  await Promise.all(answers.map((answer) => answer.mark()))
 
   // Update body with created MCQ answers
   body.mcqs = answers
 
   // Create final exam answer
-  const newBody = factory.exclude(body, ['score', 'scoreFrom', 'marked'])
-  const finalAnswer = await FinalExamStudentAnswer.create(newBody)
+  const finalAnswer = await FinalExamStudentAnswer.createFinalAnswer(body)
 
   // Find student and populate courseStats
   const student = await Student.findById(studentId).populate('courseStats')
 
   // Assign final answer to courseStats
-  student.courseStats.finalAnswers = finalAnswer.id
-  await student.save()
-  await student.populate('courseStats')
-  // Check if student has passed the course
-  if (student.courseStats.passed) {
-    // Create certificate
-    const certificate = await Certificate.create({
-      course: student.courseStats.course, // Assuming courseStats contains course information
-      imageURL: 'URL_of_the_certificate_image',
-      Date: new Date(),
-    })
+  await student.assignFinalAnswer(finalAnswer.id)
 
-    // Add certificate to student.certificates
-    student.certificates.push(certificate)
-  }
-
-  // Save student changes
-  await student.save()
+  // Check if student has passed the course and create certificate if needed
+  await student.checkAndCreateCertificate()
 
   // Respond with success
   res.status(201).json({
@@ -62,7 +46,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
 exports.getAllFinalAnswers = factory.getAll(FinalExamStudentAnswer, {
   path: 'student',
-  select: 'user.Fname',
+  select: 'Fname',
 })
 
 exports.getFinalAnswer = factory.getOne(FinalExamStudentAnswer, [
@@ -102,81 +86,77 @@ exports.markMeq = catchAsync(async function (req, res, next) {
 
 // #region Quiz
 exports.submitQuiz = catchAsync(async (req, res, next) => {
-  const studentId = req.body.student
-  const quizId = req.params.id
-  const lectureId = req.body.lecture
-
-  // #region Create and mark MCQ answers
-  const mcqAnswers = await MCQAnswer.create(req.body.lectureQuizzesGrades)
-  for (const answer of mcqAnswers) {
-    await answer.mark()
-  }
-  // #endregion
-
-  // #region Create the quiz answer
-  const quizAnswer = await QuizAnswer.create({
-    ...factory.exclude(req.body, excludedFields),
-    lectureQuizzesGrades: mcqAnswers,
-    quiz: quizId,
-  }).populate({
-    path: 'lecture',
-    populate: {
-      path: 'quiz',
-      model: 'LectureQuiz',
-    },
-  })
-  // #endregion
-
-  const quiz = quizAnswer.lecture.quiz
-
   // #region Find the student and populate courseStats and lecturesStats
-  const student = await Student.findById(studentId).populate({
-    path: 'courseStats',
-    populate: {
-      path: 'lecturesStats',
-    },
+  const student = await Student.findById(req.body.student)
+  const courseStats = await CourseStat.find({
+    _id: { $in: student.courseStats }
   })
-
+  
   if (!student) {
     return next(new AppError('No student found with that ID', 404))
   }
   // #endregion
 
-  // #region Update lecture grades, scores, done?
-  let currentLectureStat
-  for (const courseStat of student.courseStats) {
-    currentLectureStat = courseStat.lecturesStats.find(
-      (lectureStat) => lectureStat.lecture.toString() === lectureId.toString(),
-    )
-    if (currentLectureStat) break
-  }
+  // #region Check if the lecture is open for the student
+  const lectureId = req.body.lecture
+  const lectureStat = await LectureStat.findOne({
+    lecture: lectureId,
+    student: req.body.student,
+  });
 
-  if (!currentLectureStat) {
-    return next(new AppError('No lectureStat found with that lecture ID', 404))
+  if (!lectureStat || !lectureStat.open) {
+    return next(new AppError('The lecture is not open for the student', 403))
   }
+  // #endregion
 
-  currentLectureStat.latestQuizGrade = quizAnswer
-  currentLectureStat.latestQuizScore = quizAnswer.score
-  currentLectureStat.bestQuizScore = Math.max(
-    currentLectureStat.bestQuizScore,
-    quizAnswer.score,
+  // #region Create and mark MCQ answers
+  req.body.lectureQuizzesGrades = req.body.lectureQuizzesGrades.map(
+    (grade) => ({
+      ...grade,
+      student: req.body.student,
+    }),
   )
-  currentLectureStat.done = quizAnswer.score === quizAnswer.scoreFrom
 
-  await currentLectureStat.save()
+  const mcqAnswers = await MCQAnswer.create(req.body.lectureQuizzesGrades)
+  for (const answer of mcqAnswers) {
+    await answer.mark()
+
+  }
+  // #endregion
+
+  // #region Create the quiz answer
+  const fields = factory.exclude(req.body,['score'])
+  const body = {
+    ...fields,
+    lectureQuizzesGrades: mcqAnswers,
+  }
+  const quizAnswer = await QuizAnswer.create(body)
+  // #endregion
+
+  const quiz = await LectureQuiz.findById(quizAnswer.quiz)
+
+  // #region Update lecture grades, scores, done?
+  lectureStat.latestQuizGrade = quizAnswer
+  lectureStat.latestQuizScore = quizAnswer.score
+  lectureStat.bestQuizScore = Math.max(
+    lectureStat.bestQuizScore || 0, 
+    quizAnswer.score || 0,
+  )
+  lectureStat.done = lectureStat.bestQuizScore === quizAnswer.scoreFrom
+
+  await lectureStat.save()
   // #endregion
 
   // #region Update open property in the next lecture
-  const nextOrder = currentLectureStat.order + 1
-  let nextLectureStat
-  for (const courseStat of student.courseStats) {
-    nextLectureStat = courseStat.lecturesStats.find(
-      (lectureStat) => lectureStat.order === nextOrder,
-    )
-    if (nextLectureStat) break
-  }
+const lecture = await Lecture.findById(req.body.lecture)
+  const nextOrder = lecture.order + 1
+  const nextLectureStat = await LectureStat.findOne({
+    student: req.body.student,
+    order: nextOrder,
+    courseStat:lectureStat.courseStat
+  });
 
-  if (nextLectureStat) {
+  if (nextLectureStat && lectureStat.done ) {
     nextLectureStat.open = true
     await nextLectureStat.save()
   }
@@ -190,39 +170,6 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   // #endregion
 })
 
-exports.checkLectureOpen = catchAsync(async (req, res, next) => {
-  const { lectureId } = req.params
-  const studentId = req.user.id
-
-  // Find the lectureStat for the student and the lecture
-  const student = await Student.findById(studentId).populate({
-    path: 'courseStats',
-    populate: {
-      path: 'lecturesStats',
-      match: { lecture: lectureId }, // Only match the specific lecture
-    },
-  })
-
-  if (!student) {
-    return next(new AppError('No student found with that ID', 404))
-  }
-
-  let lectureStat
-  for (const courseStat of student.courseStats) {
-    lectureStat = courseStat.lecturesStats.find(
-      (stat) => stat.lecture.toString() === lectureId.toString(),
-    )
-    if (lectureStat) break
-  }
-
-  if (!lectureStat || !lectureStat.open) {
-    return next(
-      new AppError('You do not have permission to access this lecture', 403),
-    )
-  }
-
-  next()
-})
 
 // #endregion
 
@@ -258,7 +205,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   const lectureId = req.body.lecture
   let currentLectureStat
 
-  for (const courseStat of student.courseStats) {
+  for (const courseStat of courseStats) {
     currentLectureStat = courseStat.lecturesStats.find(
       (lectureStat) => lectureStat.lecture.toString() === lectureId.toString(),
     )
@@ -349,10 +296,37 @@ exports.deleteAnswer = factory.deleteOne(QuizAnswer)
 // #region MEQ
 // #endregion
 
-exports.createMcqAnswer = factory.createOne(MCQAnswer, ['correct'])
+exports.createMcqAnswer = factory.createOneExclude(MCQAnswer, ['correct'])
 
 exports.getAllMcqAnswers = factory.getAll(MCQAnswer)
 
 exports.getAllMeqAnswers = factory.getAll(MEQAnswer)
 
-exports.createMeqAnswer = factory.createOne(MEQAnswer, ['score', 'feedback'])
+exports.createMeqAnswer = factory.createOneExclude(MEQAnswer, [
+  'score',
+  'feedback',
+])
+exports.setQuizAnswerIds = async (req, res, next) => {
+  try {
+    // Set req.body.student to req.student.id
+    req.body.student = req.student.id
+
+    // Set req.body.lecture to req.params.lectureId
+    req.body.lecture = req.params.lectureId
+
+    // Fetch the lecture to get the quiz ID
+    const lecture = await Lecture.findById(req.params.lectureId).populate([
+      'quiz',
+    ])
+    if (!lecture) {
+      throw new Error('Lecture not found')
+    }
+    // Set req.body.quiz to the quiz ID fetched from the lecture
+    req.body.quiz = lecture.quiz[0].id
+
+    // Continue to the next middleware
+    next()
+  } catch (error) {
+    next(error)
+  }
+}

@@ -3,7 +3,7 @@ const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Comment = require('../../Models/Courses/CommentModel')
 
-exports.createComment = factory.createOne(Comment, [
+exports.createComment = factory.createOneExclude(Comment, [
   'replies',
   'totalScore',
   'createdAt',
@@ -59,8 +59,8 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
 })
 
 exports.addReply = catchAsync(async (req, res, next) => {
-  const replyData = req.body.reply
-  const newReply = new Comment(replyData)
+  console.log('body', req.body)
+  const newReply = new Comment(req.body)
   await newReply.save()
 
   const comment = await Comment.findByIdAndUpdate(
@@ -82,3 +82,18 @@ exports.addReply = catchAsync(async (req, res, next) => {
   })
 })
 exports.getAllComments = factory.getAll(Comment)
+exports.assignUserToBody = (req, res, next) => {
+  // Check if req.user is a student
+  if (req.student) {
+    // Assign req.user to req.body.student
+    req.body.student = req.student._id
+  }
+  // Check if req.user is a teacher
+  else if (req.teacher) {
+    // Assign req.user to req.body.teacher
+    req.body.teacher = req.teacher._id
+  }
+  console.log('body', req.body)
+  // Continue to the next middleware
+  next()
+}

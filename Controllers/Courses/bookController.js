@@ -4,7 +4,23 @@ const factory = require('../Handlers/handlerFactory')
 const Course = require('../../Models/Courses/CourseModel')
 const Book = require('../../Models/Courses/BookModel')
 
-exports.createBook = factory.createOne(Book)
+exports.createBook = catchAsync(async (req, res, next) => {
+  // Extract courseId from request parameters
+  const { courseId } = req.params
+  console.log('courseId', courseId)
+  req.body.course = courseId
+  console.log('body', req.body)
+  // Create a new book using the request body
+  const newBook = await Book.create(req.body)
+
+  // Send success response
+  res.status(201).json({
+    status: 'success',
+    data: {
+      book: newBook,
+    },
+  })
+})
 
 exports.getAllBooks = factory.getAll(Book, {
   path: 'course',

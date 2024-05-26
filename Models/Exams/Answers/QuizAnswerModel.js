@@ -14,14 +14,15 @@ const quizAnswerSchema = new mongoose.Schema(
       ref: 'Lecture',
       required: [true, 'Answer must have a lecture'],
     },
+    quiz: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Quiz',
+      required: [true, 'Answer must have a quiz'],
+    },
     //MCQAnswer[]
     durationInMins: Number,
     lectureQuizzesGrades: Array, //MCQAnswer
     scoreFrom: Number,
-    tries: {
-      type: Number,
-      default: 1,
-    },
   },
   {
     toJSON: { virtuals: true },
@@ -35,11 +36,10 @@ quizAnswerSchema.virtual('score').get(function () {
   ).length)
 })
 
-quizAnswerSchema.pre(/^find/, function (next) {
-  this.populate('quiz')
-
-  next()
-})
+// quizAnswerSchema.pre(/^find/, function (next) {
+//   this.populate('quiz')
+//   next()
+// })
 
 const fillEmbedded = (fieldToFill, Model) => {
   return catchAsync(async function (req, res, next) {
@@ -56,9 +56,9 @@ const fillEmbedded = (fieldToFill, Model) => {
     next()
   })
 }
-quizAnswerSchema.pre('save', () =>
-  fillEmbedded(this.lectureQuizzesGrades, MCQAnswer),
-)
+// quizAnswerSchema.pre('save', () =>
+//   fillEmbedded(this.lectureQuizzesGrades, MCQAnswer),
+// )
 
 const QuizAnswer = mongoose.model('QuizAnswer', quizAnswerSchema)
 module.exports = QuizAnswer

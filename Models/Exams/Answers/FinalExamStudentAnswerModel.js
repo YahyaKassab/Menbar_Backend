@@ -36,6 +36,11 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+finalExamStudentAnswerSchema.statics.createFinalAnswer = async function (body) {
+  const newBody = factory.exclude(body, ['score', 'scoreFrom', 'marked'])
+  return await this.create(newBody)
+}
 // Virtual for mcqScore
 finalExamStudentAnswerSchema.virtual('mcqScore').get(function () {
   if (this.mcqs && Array.isArray(this.mcqs)) {

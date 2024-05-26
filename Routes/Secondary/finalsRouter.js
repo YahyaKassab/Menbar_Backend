@@ -19,14 +19,14 @@ router
 
 // #region Teacher
 router.get(
-  '/answers',
-  authController.restrictTo('teacher', 'admin'),
-  answerController.getAllFinalAnswers,
-)
-router.get(
   '/',
   authController.restrictTo('teacher', 'admin'),
   examController.getAllFinals,
+)
+router.get(
+  '/answers',
+  authController.restrictTo('teacher', 'admin'),
+  answerController.getAllFinalAnswers,
 )
 router
   .route('/answers/:id')
@@ -34,10 +34,11 @@ router
     authController.restrictTo('teacher', 'admin'),
     answerController.getFinalAnswer,
   )
-  .patch(
-    authController.restrictTo('teacher', 'admin'),
-    answerController.markMeq,
-  )
+router.patch(
+  '/answers/:id/mark',
+  authController.restrictTo('teacher', 'admin'),
+  answerController.markMeq,
+)
 
 // #endregion
 

@@ -14,4 +14,8 @@ exports.updateLecture = factory.updateOne(Lecture)
 exports.deleteLecture = factory.deleteOne(Lecture)
 exports.ids = factory.getIds(Lecture)
 
-exports.getLectureStudent = factory.getOne(Lecture, ['comments', 'course'])
+exports.getLectureStudent = factory.getOne(Lecture, [
+  'comments',
+  'course',
+  'quiz',
+])

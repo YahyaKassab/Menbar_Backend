@@ -3,7 +3,7 @@ const catchAsync = require('../../utils/catchAsync')
 const factory = require('../Handlers/handlerFactory')
 
 exports.ids = factory.getIds(Question)
-exports.askQuestion = factory.createOne(Question, ['answer'])
+exports.askQuestion = factory.createOneExclude(Question, ['answer'])
 exports.answerQuestion = factory.updateOneFields(Question, ['answer'])
 exports.updateQuestionAsker = catchAsync(async (req, res, next) => {
   const id = req.params.id

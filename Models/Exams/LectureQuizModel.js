@@ -14,6 +14,8 @@ const LectureQuizSchema = new mongoose.Schema(
         ref: 'MCQ',
       },
     ],
+    avgTries: Number,
+    numberOfAnswers: Number,
     durationInMins: Number,
     scoreFrom: Number,
   },
@@ -23,20 +25,29 @@ const LectureQuizSchema = new mongoose.Schema(
   },
 )
 
-LectureQuizSchema.virtual('numberOfAnswers').get(async function () {
-  const count = await QuizAnswer.countDocuments({ quiz: this._id })
-  return count
+LectureQuizSchema.pre('findOne', async function (next) {
+  this.populate([{ path: 'lecture', select: 'name' }, { path: 'mcq' }])
+  next()
 })
-LectureQuizSchema.virtual('avgTries').get(async function () {
-  const answers = await QuizAnswer.find({ quiz: this._id })
-  // console.log('answer:', answers)
-  // Calculate the total number of tries
-  const totalTries = answers.reduce((total, answer) => total + answer.tries, 0)
 
-  // Calculate the average tries
-  const avgTries = answers.length > 0 ? totalTries / answers.length : 0
+LectureQuizSchema.post('findOne', async function (doc, next) {
+  if (doc) {
+    const count = await QuizAnswer.countDocuments({ quiz: doc._id })
+    const answers = await QuizAnswer.find({ quiz: doc._id })
 
-  return avgTries
+    // Calculate the total number of tries
+    const totalTries = answers.reduce(
+      (total, answer) => total + answer.tries,
+      0,
+    )
+
+    // Calculate the average tries
+    const avgTries = answers.length > 0 ? totalTries / answers.length : 0
+
+    doc.numberOfAnswers = count
+    doc.avgTries = avgTries
+  }
+  next()
 })
 
 const LectureQuiz = mongoose.model('LectureQuiz', LectureQuizSchema)

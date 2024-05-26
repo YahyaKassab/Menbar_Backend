@@ -2,6 +2,7 @@ const rateLimit = require('express-rate-limit')
 const express = require('express')
 const morgan = require('morgan')
 const helmet = require('helmet')
+const bodyParser = require('body-parser')
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
 const hpp = require('hpp')
@@ -18,6 +19,8 @@ const courseRouter = require('./Routes/courseRouter')
 const reviewRouter = require('./Routes/reviewRouter')
 const mcqRouter = require('./Routes/mcqRouter')
 const meqRouter = require('./Routes/meqRouter')
+const bookRouter = require('./Routes/bookRouter')
+const quizRouter = require('./Routes/Secondary/quizRouter')
 
 const app = express()
 app.use(cors())
@@ -28,6 +31,7 @@ app.options('*', cors())
 app.use(helmet())
 
 //middleware applies to all the routes because it is before it in the code
+app.use(bodyParser.json())
 
 // Development logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))
@@ -84,6 +88,7 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/api/v1/books', bookRouter)
 app.use('/api/v1/courses', courseRouter)
 app.use('/api/v1/lectures', lectureRouter)
 app.use('/api/v1/mcqs', mcqRouter)
@@ -92,6 +97,7 @@ app.use('/api/v1/questions', questionRouter)
 app.use('/api/v1/reviews', reviewRouter)
 app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/teachers', teacherRouter)
+app.use('/api/v1/quizzes', quizRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))

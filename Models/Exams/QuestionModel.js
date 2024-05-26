@@ -14,9 +14,9 @@ const questionSchema = new mongoose.Schema(
     FAQ: Boolean,
     answer: {
       text: String,
-      employee: {
+      teacher: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Employee',
+        ref: 'Teacher',
       },
       date: Date,
     },

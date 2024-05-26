@@ -72,7 +72,7 @@ exports.include = (reqBody, fieldsToInclude) => {
 // #region Update
 exports.updateOne = (Model, excludedFields) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id || req.params.lectureId
+    const id = req.params.id
     const doc = await Model.findByIdAndUpdate(
       id,
       this.exclude(req.body, excludedFields),
@@ -94,7 +94,7 @@ exports.updateOne = (Model, excludedFields) =>
 
 exports.updateOneFields = (Model, fields) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id || req.params.lectureId
+    const id = req.params.id
     const doc = await Model.findByIdAndUpdate(
       id,
       this.include(req.body, fields),
@@ -120,10 +120,21 @@ exports.updateOneFields = (Model, fields) =>
 // #endregion
 
 // #region Create
-exports.createOne = (Model, excludedFields) =>
+exports.createOneExclude = (Model, excludedFields) =>
   catchAsync(async (req, res, next) => {
-    const newDoc = await Model.create(this.exclude(req.body, excludedFields))
+    console.log('req.body:', req.body)
+    let newDoc = null
+    if (!excludedFields) newDoc = await Model.create(req.body)
+    newDoc = await Model.create(this.exclude(req.body, excludedFields))
 
+    res.status(201).json({
+      status: 'Success',
+      data: newDoc,
+    })
+  })
+exports.createOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    newDoc = await Model.create(req.body)
     res.status(201).json({
       status: 'Success',
       data: newDoc,
@@ -146,9 +157,9 @@ exports.createOneFields = (Model, fields) =>
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     // console.log('req.params.id:', req.params.id)
-    const id = req.params.id || req.params.lectureId
+    const id = req.params.id
     let query = Model.findById(id)
-    console.log(query)
+    console.log('id:', id)
     // populate gets guides from Users using its reference id
     if (popOptions) query = query.populate(popOptions)
     const doc = await query
@@ -163,9 +174,9 @@ exports.getOne = (Model, popOptions) =>
     })
   })
 
-exports.getOneExclude = (Model, popOptions, excludedFields = []) =>
+exports.getOneExclude = (Model, popOptions, excludedFields) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id || req.params.lectureId
+    const id = req.params.id
     let query = Model.findById(id)
 
     // populate gets guides from Users using its reference id
@@ -186,9 +197,9 @@ exports.getOneExclude = (Model, popOptions, excludedFields = []) =>
     })
   })
 
-exports.getOneInclude = (Model, popOptions, includedFields = []) =>
+exports.getOneInclude = (Model, popOptions, includedFields) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id || req.params.lectureId
+    const id = req.params.id
     let query = Model.findById(id)
 
     // populate gets guides from Users using its reference id
@@ -210,6 +221,7 @@ exports.getOneInclude = (Model, popOptions, includedFields = []) =>
   })
 exports.getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    console.log('getAll:')
     // Allow nested routes
     let filter = {}
     let query = Model.find(filter)
@@ -234,7 +246,7 @@ exports.getAll = (Model, popOptions) =>
       data: { data: allDocs },
     })
   })
-exports.getAllExclude = (Model, popOptions, excludedFields = []) =>
+exports.getAllExclude = (Model, popOptions, excludedFields) =>
   catchAsync(async (req, res, next) => {
     // Allow nested routes
     let filter = {}
@@ -267,7 +279,7 @@ exports.getAllExclude = (Model, popOptions, excludedFields = []) =>
     })
   })
 
-exports.getAllInclude = (Model, popOptions, includedFields = []) =>
+exports.getAllInclude = (Model, popOptions, includedFields) =>
   catchAsync(async (req, res, next) => {
     // Allow nested routes
     let filter = {}
@@ -328,15 +340,15 @@ exports.getIds = (Model) =>
   })
 exports.setLectureIds = (req, res, next) => {
   // Allow nested routes
+  console.log('params:', req.params)
   if (!req.body.lecture) req.body.lecture = req.params.lectureId
   console.log('lecture: ', req.body.lecture)
-  if (!req.body.user) req.body.user = req.user.id
+
   next()
 }
 exports.setCourseIds = (req, res, next) => {
   // Allow nested routes
   if (!req.body.course) req.body.course = req.params.courseId
-  console.log('course: ', req.body.course)
   // if (!req.body.user) req.body.user = req.user.id
   next()
 }

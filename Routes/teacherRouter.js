@@ -8,9 +8,13 @@ const router = express.Router()
 //signup only posts
 // #region Guest and Student
 router.get('/', teacherController.getAllTeachersGuest)
+router.post('/login', teacherController.loginTeacher)
+router.post('/forgot-password', teacherController.forgetPasswordTeacher)
+router.patch('/reset-password/:token', teacherController.resetPasswordTeacher)
+
 router.get('/:id', teacherController.getTeacherGuest)
 // #endregion
-router.use(authController.protect, authController.restrictTo('Admin'))
+router.use(authController.protect(Teacher), authController.restrictTo('Admin'))
 
 router.get('/ids', teacherController.ids)
 

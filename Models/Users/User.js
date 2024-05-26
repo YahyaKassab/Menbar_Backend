@@ -78,14 +78,17 @@ exports.userSchema = new mongoose.Schema(
       default: true,
     },
     phone: {
-      countryCode: {
-        type: String,
-        required: [true, 'Please enter the country code'],
+      type: {
+        countryCode: {
+          type: String,
+          required: [true, 'Please enter the country code'],
+        },
+        number: {
+          type: String,
+          required: [true, 'Please enter your phone number'],
+        },
       },
-      number: {
-        type: String,
-        required: [true, 'Please enter your phone number'],
-      },
+      required: false,
     },
   },
   {
@@ -106,23 +109,29 @@ exports.includeActiveOnly = function (next) {
 
 exports.hashModifiedPassword = async function (next) {
   //if the password wasnt changed, we dont need to reencrypt the password
-  if (!this.user.isModified('password')) next()
+  if (!this.isModified('password')) {
+    console.log('not modified')
+    next()
+  }
 
   //the second parameter is the intensiveness of the computation power used for encryption
-  this.user.password = await bcrypt.hash(this.user.password, 12)
+  this.password = await bcrypt.hash(this.password, 12)
 
   //required means that it must be inputed in the body, not necessarily saved in the database
-  this.user.passwordConfirm = undefined
+  this.passwordConfirm = undefined
 
   next()
 }
 
 //token after password change
 exports.tokenTimeCheck = async function (next) {
-  if (!this.user.isModified('password') || this.isNew) return next()
+  if (!this.isModified('password') || this.isNew) {
+    console.log('not modified')  
+    return next()
+  }
 
   // Insures that the token is always created after the password has been changed
-  this.user.passwordChangedAt = Date.now() - 50000
+  this.passwordChangedAt = Date.now() - 50000
   next()
 }
 
@@ -132,8 +141,8 @@ exports.correctPassword = async function (candidatePassword, userPassword) {
 }
 
 exports.changedPasswordAfter = function (JWTTimestamp) {
-  if (this.user.passwordChangedAt) {
-    const changedTimestamp = this.user.passwordChangedAt.getTime() / 1000
+  if (this.passwordChangedAt) {
+    const changedTimestamp = this.passwordChangedAt.getTime() / 1000
     // console.log(changedTimestamp, JWTTimestamp)
     //if changed timestamp greater than jwtTimestamp => password changed after token was signed
     return JWTTimestamp < changedTimestamp
@@ -147,20 +156,20 @@ exports.createPasswordResetToken = function () {
   // save it to db and send it to user
   const resetToken = crypto.randomBytes(32).toString('hex')
   //encypted token to db
-  this.user.passwordResetToken = crypto
+  this.passwordResetToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex')
 
   // console.log({ resetToken }, this.passwordResetToken)
   //10 mins
-  this.user.passwordResetExpires = Date.now() + 10 * 1000 * 60
+  this.passwordResetExpires = Date.now() + 10 * 1000 * 60
   return resetToken
 }
 
 exports.calcAge = function () {
-  if (this.user.birthDate) {
-    const ageInMillis = Date.now() - this.user.birthDate.getTime()
+  if (this.birthDate) {
+    const ageInMillis = Date.now() - this.birthDate.getTime()
     // Convert milliseconds to years
     return Math.floor(ageInMillis / (1000 * 60 * 60 * 24 * 365))
   } else {

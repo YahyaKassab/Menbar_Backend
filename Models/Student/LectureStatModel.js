@@ -12,6 +12,11 @@ const lectureStatSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'A lectureStat must have a student id'],
     },
+    courseStat:{
+      type: mongoose.Schema.ObjectId,
+      ref: 'CourseStat',
+      required: [true, 'A lectureStat must have a course Stat id'],
+    },
     latestQuizGrade: {
       type: mongoose.Schema.ObjectId,
       ref: 'QuizAnswer',
@@ -27,15 +32,10 @@ const lectureStatSchema = new mongoose.Schema(
   },
 )
 
-// lectureStatSchema.virtual('student', {
-//   ref: 'Student',
-//   localField: '_id',
-//   foreignField: '',
+// lectureStatSchema.pre(/^find/, function (next) {
+//   this.populate('lecture').populate('latestQuizGrade')
+//   next()
 // })
-lectureStatSchema.pre(/^find/, function (next) {
-  this.populate('lecture').populate('latestQuizGrade')
-  next()
-})
 const LectureStat = mongoose.model('LectureStat', lectureStatSchema)
 
 module.exports = LectureStat

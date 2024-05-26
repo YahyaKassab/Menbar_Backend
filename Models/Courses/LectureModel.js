@@ -1,8 +1,13 @@
 const mongoose = require('mongoose')
+const Course = require('./CourseModel')
 const lectureSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, 'A lecture must have a name'] },
     order: Number,
+    course: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course',
+    },
     videoLink: {
       type: String,
       required: [true, 'A lecture must have a video'],
@@ -25,11 +30,7 @@ lectureSchema.virtual('comments', {
   foreignField: 'lecture',
   localField: '_id',
 })
-lectureSchema.virtual('course', {
-  ref: 'Course',
-  foreignField: 'lectures',
-  localField: '_id',
-})
+
 const Lecture = mongoose.model('Lecture', lectureSchema)
 
 module.exports = Lecture

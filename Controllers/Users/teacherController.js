@@ -2,8 +2,13 @@ const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Teacher = require('../../Models/Users/TeacherModel')
+const authController = require('../Handlers/authController')
 
-exports.createTeacher = factory.createOne(Teacher, ['examsMarked'])
+exports.loginTeacher = authController.login(Teacher)
+exports.forgetPasswordTeacher = authController.forgotPassword(Teacher)
+exports.resetPasswordTeacher = authController.resetPassword(Teacher)
+
+exports.createTeacher = factory.createOneExclude(Teacher)
 exports.getAllTeachers = factory.getAll(Teacher, { path: 'coursesToTeach' })
 exports.getAllTeachersGuest = factory.getAll(
   Teacher,

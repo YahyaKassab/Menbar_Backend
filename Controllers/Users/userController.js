@@ -2,6 +2,7 @@ const User = require('../models/userModel')
 const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
+const Student = require('../../Models/Users/StudentModel')
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {}
@@ -31,7 +32,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   //2) Filter out unwanted fields
   const filteredBody = filterObj(req.body, 'name', 'email')
   //3 ) Update user document
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+  const updatedUser = await Student.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   })
@@ -43,7 +44,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 })
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false })
+  await Student.findByIdAndUpdate(req.user.id, { active: false })
   res.status(204).json({ status: 'success', data: null })
 })
 

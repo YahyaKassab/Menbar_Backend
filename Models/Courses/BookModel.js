@@ -7,6 +7,11 @@ const bookSchema = new mongoose.Schema(
     description: String,
     readLink: String,
     downloadLink: String,
+    course: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course',
+      required: [true, 'A Book must have a Course'],
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -14,10 +19,5 @@ const bookSchema = new mongoose.Schema(
   },
 )
 
-bookSchema.virtual('course', {
-  ref: 'Course',
-  localField: '_id',
-  foreignField: 'book',
-})
 const Book = mongoose.model('Book', bookSchema)
 module.exports = Book
