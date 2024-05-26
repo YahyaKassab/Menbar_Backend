@@ -8,12 +8,12 @@ const factory = require('../../Controllers/Handlers/handlerFactory')
 
 const router = express.Router({ mergeParams: true })
 
-router.use(factory.setLectureIds)
 // #region Student
 router.route('/:id').get(commentController.getOneComment)
 router
   .route('/')
   .post(
+    factory.setLectureIds,
     authController.protect(Student),
     commentController.assignUserToBody,
     commentController.createComment,
@@ -38,6 +38,7 @@ router.use(
 // #region Teacher
 router.post(
   '/teacher',
+  factory.setLectureIds,
   commentController.assignUserToBody,
   commentController.createComment,
 )

@@ -9,91 +9,91 @@ const catchAsync = require('../../utils/catchAsync')
 const studentSchema = new mongoose.Schema(
   {
     // #region User
-      Fname: {
-        type: String,
-        required: [true, 'A user must have a First name'],
-      },
-      Mname: {
-        type: String,
-      },
-      Lname: {
-        type: String,
-        required: [true, 'A user must have a Last name'],
-      },
-  
-      email: {
-        type: String,
-        trim: true,
-        unique: true,
-        lowercase: true,
-        required: [true, 'A user must have an email address'],
-        validate: [validator.isEmail, 'Please enter a valid email address'],
-  
-        //   maxLength: [100, 'A email  must be Less than 60 characters'],
-        //   minLength: [10, 'A email  must be at least 10 characters'],
-      },
-      photo: String,
-      role: {
-        type: String,
-        enum: ['Student', 'TeachLead', 'Teacher', 'Tech', 'Admin'],
-        default: 'Student',
-      },
-      password: {
-        type: String,
-        required: [true, 'Please enter the password'],
-        minLength: [5, 'A password must be at least 5 characters'],
-        select: false,
-      },
-      passwordConfirm: {
-        type: String,
-        required: [true, 'Please confirm the password'],
-        validate: [
-          function (conf) {
-            //not arrow function because we need the 'this' keyword
-  
-            //only works on CREATE and SAVE!!
-            return conf === this.password
-          },
-          'Confirmation is not equal to password',
-        ],
-      },
-      passwordChangedAt: Date,
-      passwordResetToken: String,
-      passwordResetExpires: Date,
-      active: {
-        type: Boolean,
-        default: true,
-        select: false,
-      },
-      country: {
-        type: String,
-        required: [true, 'Please Enter Your Country'],
-      },
-      nationality: String,
-      city: String,
-      createdAt: {
-        type: Date,
-        default: Date.now(),
-        select: false,
-      },
-      birthDate: { type: Date, required: [true, 'Please enter Your birthdate'] },
-      isSingle: {
-        type: Boolean,
-        default: true,
-      },
-      phone: {
-        type: {
-          countryCode: {
-            type: String,
-            required: [true, 'Please enter the country code'],
-          },
-          number: {
-            type: String,
-            required: [true, 'Please enter your phone number'],
-          },
+    Fname: {
+      type: String,
+      required: [true, 'A user must have a First name'],
+    },
+    Mname: {
+      type: String,
+    },
+    Lname: {
+      type: String,
+      required: [true, 'A user must have a Last name'],
+    },
+
+    email: {
+      type: String,
+      trim: true,
+      unique: true,
+      lowercase: true,
+      required: [true, 'A user must have an email address'],
+      validate: [validator.isEmail, 'Please enter a valid email address'],
+
+      //   maxLength: [100, 'A email  must be Less than 60 characters'],
+      //   minLength: [10, 'A email  must be at least 10 characters'],
+    },
+    photo: String,
+    role: {
+      type: String,
+      enum: ['Student', 'TeachLead', 'Teacher', 'Tech', 'Admin'],
+      default: 'Student',
+    },
+    password: {
+      type: String,
+      required: [true, 'Please enter the password'],
+      minLength: [5, 'A password must be at least 5 characters'],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm the password'],
+      validate: [
+        function (conf) {
+          //not arrow function because we need the 'this' keyword
+
+          //only works on CREATE and SAVE!!
+          return conf === this.password
         },
-        required: false,
+        'Confirmation is not equal to password',
+      ],
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    country: {
+      type: String,
+      required: [true, 'Please Enter Your Country'],
+    },
+    nationality: String,
+    city: String,
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+      select: false,
+    },
+    birthDate: { type: Date, required: [true, 'Please enter Your birthdate'] },
+    isSingle: {
+      type: Boolean,
+      default: true,
+    },
+    phone: {
+      type: {
+        countryCode: {
+          type: String,
+          required: [true, 'Please enter the country code'],
+        },
+        number: {
+          type: String,
+          required: [true, 'Please enter your phone number'],
+        },
       },
+      required: false,
+    },
     // #endregion
     level: String,
     lastCertificate: String,
@@ -125,6 +125,7 @@ studentSchema.virtual('certificates', {
   localField: '_id',
   foreignField: 'student',
 })
+studentSchema.virtual('age').get(User.calcAge)
 studentSchema.methods.assignFinalAnswer = async function (finalAnswerId) {
   this.courseStats.finalAnswers = finalAnswerId
   await this.save()
@@ -167,19 +168,7 @@ studentSchema.methods.executeStudentSignupLogic = async function () {
 }
 
 studentSchema.pre(/^find/, User.includeActiveOnly)
-studentSchema.virtual('age').get(User.calcAge)
-studentSchema.pre(
-  'save',
-
-  User.hashModifiedPassword,
-  User.tokenTimeCheck,
-  function (next) {
-    // Set the role to 'Student'
-    this.role = 'Student'
-    next()
-  },
-  //add a condition
-)
+studentSchema.pre('save', User.hashModifiedPassword, User.tokenTimeCheck)
 studentSchema.methods.correctPassword = User.correctPassword
 studentSchema.methods.changedPasswordAfter = User.changedPasswordAfter
 studentSchema.methods.createPasswordResetToken = User.createPasswordResetToken

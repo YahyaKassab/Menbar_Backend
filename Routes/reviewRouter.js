@@ -1,16 +1,18 @@
 const reviewController = require('../Controllers/Reviews/reviewController')
 const authController = require('../Controllers/Handlers/authController')
+const studentController = require('../Controllers//Users/studentController')
 const Student = require('../Models/Users/StudentModel')
 const express = require('express')
 const router = express.Router()
 
-router.use(authController.protect)
 router.get('/ids', reviewController.ids)
 
 // #region Student
 router.post(
   '/',
-  authController.restrictTo('student'),
+  authController.protect(Student),
+  authController.restrictTo('Student'),
+  studentController.getMe,
   reviewController.createReview,
 )
 // #endregion

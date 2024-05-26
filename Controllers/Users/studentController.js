@@ -14,46 +14,82 @@ exports.getMe = (req, res, next) => {
 }
 
 exports.signUp = catchAsync(async (req, res, next) => {
+  const {
+    Fname,
+    Mname,
+    Lname,
+    email,
+    photo,
+    role,
+    password,
+    passwordConfirm,
+    country,
+    nationality,
+    city,
+    birthDate,
+    isSingle,
+    phone,
+    lastCertificate,
+    educationLevel,
+    currentJob,
+  } = req.body
+
   try {
     // Set the role based on the Model
-    const role = 'Student'
     const level = 1
-
+    const body = {
+      Fname,
+      Mname,
+      Lname,
+      email,
+      photo,
+      role,
+      password,
+      passwordConfirm,
+      country,
+      nationality,
+      city,
+      birthDate,
+      isSingle,
+      phone,
+      lastCertificate,
+      educationLevel,
+      currentJob,
+      level, // Add level here
+    }
     // Create the user with the specified role
-    const newUser = await Student.create({ ...req.body, role, level })
+    const newUser = await Student.create(body)
 
     // Execute additional logic specific to students
-    if (role === 'Student') {
-      // Static course IDs (replace these with actual course IDs)
-      const courseIds = ['664a74f2ebbbd514dcef3189']
 
-      // Loop through each course ID
-      for (const courseId of courseIds) {
-        const course = await Course.findById(courseId).populate('lectures')
+    // Static course IDs (replace these with actual course IDs)
+    const courseIds = ['664a74f2ebbbd514dcef3189']
 
-        if (!course) {
-          throw new Error(`Course with ID ${courseId} not found`)
+    // Loop through each course ID
+    for (const courseId of courseIds) {
+      const course = await Course.findById(courseId).populate('lectures')
+
+      if (!course) {
+        throw new Error(`Course with ID ${courseId} not found`)
+      }
+
+      // Create CourseStat
+      const courseStat = await CourseStat.create({
+        course: courseId,
+        lecturesDone: [],
+        student: newUser._id,
+      })
+      // Create LectureStats for lectures with level 1 in the course
+
+      for (const lecture of course.lectures) {
+        if (lecture.order === 1) {
+          await LectureStat.create({
+            lecture: lecture._id,
+            student: newUser._id,
+            courseStat: courseStat._id,
+            open: true, // Set the open property to true
+          })
         }
-
-        // Create CourseStat
-        const courseStat = await CourseStat.create({
-          course: courseId,
-          lecturesDone: [],
-          student:newUser._id
-        })
-        // Create LectureStats for lectures with level 1 in the course
-  
-        for (const lecture of course.lectures) {
-          if (lecture.order === 1) {
-            await LectureStat.create({
-              lecture: lecture._id,
-              student: newUser._id,
-              courseStat: courseStat._id ,
-              open: true, // Set the open property to true
-            })
-          }
-        }
-
       }
     }
 
@@ -72,26 +108,29 @@ exports.getAllStudents = factory.getAll(Student)
 exports.getOneStudent = factory.getOne(Student)
 exports.updateStudent = factory.updateOne(Student)
 
-
 exports.getCourseStats = catchAsync(async (req, res, next) => {
   // Get student ID from request
-  const studentId = req.student.id;
+  const studentId = req.student.id
 
   // Get course ID from request parameters
-  const { courseId } = req.params;
+  const { courseId } = req.params
 
   // Check if student ID and course ID are available
   if (!studentId || !courseId) {
-    return next(new AppError('Student ID and Course ID are required', 400));
+    return next(new AppError('Student ID and Course ID are required', 400))
   }
 
   // Find course stat where student ID matches and course ID matches
-  const courseStat = await CourseStat.findOne({ student: studentId, course: courseId })
-  .populate(['lectureStats'])
+  const courseStat = await CourseStat.findOne({
+    student: studentId,
+    course: courseId,
+  }).populate(['lectureStats'])
 
   // Check if course stat was found
   if (!courseStat) {
-    return next(new AppError('No course stat found for this student and course', 404));
+    return next(
+      new AppError('No course stat found for this student and course', 404),
+    )
   }
 
   // Send response with course stat
@@ -100,27 +139,31 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
     data: {
       courseStat,
     },
-  });
-});
+  })
+})
 
-  exports.updateStudentByStudent = factory.updateOne(Student, [
-    'role',
-    'password',
-    'createdAt',
-    'active',
-    'passwordResetExpires',
-    'passwordResetToken',
-    'passwordChangedAt',
-    'passwordConfirm',
-    'email',
-    'courseStats',
-  ])
+exports.updateStudentByStudent = factory.updateOne(Student, [
+  'role',
+  'password',
+  'createdAt',
+  'active',
+  'passwordResetExpires',
+  'passwordResetToken',
+  'passwordChangedAt',
+  'passwordConfirm',
+  'email',
+  'courseStats',
+])
 exports.deleteStudent = factory.deleteOne(Student)
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await Student.findByIdAndUpdate(req.user.id, {
-    $set: { 'active': false },
+  await Student.findByIdAndUpdate(req.student.id, {
+    $set: { active: false },
   })
   res.status(204).json({ status: 'success', data: null })
 })
 
 exports.ids = factory.getIds(Student)
+exports.setStudentId = (req, res, next) => {
+  req.body.student = req.student.id
+  next()
+}

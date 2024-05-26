@@ -14,13 +14,13 @@ router.patch('/reset-password/:token', teacherController.resetPasswordTeacher)
 
 router.get('/:id', teacherController.getTeacherGuest)
 // #endregion
-router.use(authController.protect(Teacher), authController.restrictTo('Admin'))
+// router.use(authController.protect(Teacher), authController.restrictTo('Admin'))
 
 router.get('/ids', teacherController.ids)
 
 // #region Admin
 router.get('/admin', teacherController.getAllTeachers)
-router.post('/signup', authController.signUp(Teacher))
+router.post('/signup', teacherController.createTeacher)
 router
   .route('/:id/admin')
   .patch(teacherController.updateTeacher)

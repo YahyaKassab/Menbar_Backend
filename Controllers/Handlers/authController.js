@@ -41,19 +41,7 @@ exports.createSendToken = (model, statusCode, res) => {
 
 exports.signUp = (Model) => async (req, res, next) => {
   try {
-    // Set the role based on the Model
-    let role
-    if (Model.modelName === 'Student') {
-      role = 'Student'
-    }
-
-    // Create the user with the specified role
-    const newUser = await Model.create({ ...req.body, role })
-
-    // Execute additional logic specific to students
-    if (role === 'Student') {
-      await newUser.executeStudentSignupLogic()
-    }
+    const newUser = await Model.create(req.body)
 
     // Send token and user data
     this.createSendToken(newUser, 201, res)
@@ -73,15 +61,10 @@ exports.login = (Model) => async (req, res, next) => {
 
     //2) Check if user exists and password is correct
 
-    const _user = await Model.findOne({ 'email': email }).select(
-      '+password',
-    )
+    const _user = await Model.findOne({ email: email }).select('+password')
 
     //!user checks email, second one checks only after user is found(correct email), checks password
-    if (
-      !_user ||
-      !(await _user.correctPassword(password, _user.password))
-    ) {
+    if (!_user || !(await _user.correctPassword(password, _user.password))) {
       return next(new AppError('Incorrect email or password', 401))
     }
 
@@ -99,27 +82,27 @@ exports.login = (Model) => async (req, res, next) => {
 exports.protect = (Model) => async (req, res, next) => {
   try {
     // 1) Get token and check if it exists
-    const token = req.headers.authorization.split(' ')[1];
-    
+    const token = req.headers.authorization.split(' ')[1]
+
     if (!token) {
-      throw new Error('Token not provided');
+      throw new Error('Token not provided')
     }
 
     // Wrap jwt.verify in a promise
     const decoded = await new Promise((resolve, reject) => {
       jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-          return reject(err);
+          return reject(err)
         }
-        resolve(decoded);
-      });
-    });
+        resolve(decoded)
+      })
+    })
 
     // Now you can safely access properties of decoded
-    req.userId = decoded.id;
+    req.userId = decoded.id
 
     // 3) Check if user exists
-    const currentUser = await Model.findById(req.userId)
+    const currentUser = await Model.findOne({ _id: req.userId })
     if (!currentUser) throw new AppError('The user no longer exists', 401)
 
     // 4) Check if user changed password after token was issued
@@ -165,7 +148,7 @@ exports.restrictTo = (...roles) => {
 exports.forgotPassword = (Model) =>
   catchAsync(async (req, res, next) => {
     //1) Get user from email
-    const user = await Model.findOne({ 'email': req.body.email })
+    const user = await Model.findOne({ email: req.body.email })
 
     if (!user)
       return next(new AppError('There is no user with that email address', 404))
@@ -241,12 +224,7 @@ exports.updatePassword = catchAsync((Model) => async (req, res, next) => {
   const user = await Model.findById(req.user.id).select('+password')
 
   //2) Check if POSTed password is correct
-  if (
-    !(await user.correctPassword(
-      req.body.passwordCurrent,
-      user.password,
-    ))
-  ) {
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError('Your current password is wrong', 401))
   }
 

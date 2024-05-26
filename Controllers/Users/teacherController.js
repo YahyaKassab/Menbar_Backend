@@ -8,7 +8,7 @@ exports.loginTeacher = authController.login(Teacher)
 exports.forgetPasswordTeacher = authController.forgotPassword(Teacher)
 exports.resetPasswordTeacher = authController.resetPassword(Teacher)
 
-exports.createTeacher = factory.createOneExclude(Teacher)
+exports.createTeacher = factory.createOne(Teacher)
 exports.getAllTeachers = factory.getAll(Teacher, { path: 'coursesToTeach' })
 exports.getAllTeachersGuest = factory.getAll(
   Teacher,
@@ -17,6 +17,7 @@ exports.getAllTeachersGuest = factory.getAll(
   },
   ['examsMarked'],
 )
+
 exports.getTeacherGuest = factory.getOneExclude(
   Teacher,
   { path: 'coursesToTeach' },

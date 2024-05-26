@@ -2,6 +2,7 @@ const express = require('express')
 const authController = require('../Controllers/Handlers/authController')
 const studentController = require('../Controllers/Users/studentController')
 const Student = require('../Models/Users/StudentModel')
+const Teacher = require('../Models/Users/TeacherModel')
 
 const router = express.Router()
 // #region Guest
@@ -12,29 +13,40 @@ router.patch('/reset-password/:token', studentController.resetPasswordStudent)
 
 // #endregion
 
-router.use(authController.protect(Student))
 router.get('/ids', studentController.ids)
 
 // #region Student
 router.get(
   '/me',
+  authController.protect(Student),
   authController.restrictTo('Student'),
   studentController.getMe,
   studentController.getOneStudent,
 )
 router.patch(
   '/update-me',
+  authController.protect(Student),
   authController.restrictTo('Student'),
   studentController.getMe,
   studentController.updateStudentByStudent,
 )
 router.patch(
   '/delete-me',
+  authController.protect(Student),
   authController.restrictTo('Student'),
+  studentController.getMe,
   studentController.deleteMe,
 )
+router
+  .route('/')
+  .get(
+    authController.protect(Teacher),
+    authController.restrictTo('Admin', 'Teacher'),
+    studentController.getAllStudents,
+  )
 router.get(
   '/:courseId/stats',
+  authController.protect(Student),
   studentController.getMe,
   studentController.getCourseStats,
 )
@@ -42,14 +54,9 @@ router.get(
 
 // #region Teacher
 router
-  .route('/')
-  .get(
-    authController.restrictTo('Admin', 'Teacher'),
-    studentController.getAllStudents,
-  )
-router
   .route('/:id')
   .get(
+    authController.protect(Teacher),
     authController.restrictTo('Admin', 'Teacher'),
     studentController.getOneStudent,
   )

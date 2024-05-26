@@ -13,11 +13,16 @@
     },
 
     {
+      "name": "Nodemon",
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/server.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\server.js"
+      "args": ["--inspect=9229"]
     }
   ]
 }

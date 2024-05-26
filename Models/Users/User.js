@@ -110,7 +110,6 @@ exports.includeActiveOnly = function (next) {
 exports.hashModifiedPassword = async function (next) {
   //if the password wasnt changed, we dont need to reencrypt the password
   if (!this.isModified('password')) {
-    console.log('not modified')
     next()
   }
 
@@ -126,7 +125,6 @@ exports.hashModifiedPassword = async function (next) {
 //token after password change
 exports.tokenTimeCheck = async function (next) {
   if (!this.isModified('password') || this.isNew) {
-    console.log('not modified')  
     return next()
   }
 

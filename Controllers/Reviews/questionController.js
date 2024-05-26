@@ -1,27 +1,33 @@
 const Question = require('../../Models/Exams/QuestionModel')
 const catchAsync = require('../../utils/catchAsync')
 const factory = require('../Handlers/handlerFactory')
+const authController = require('../Handlers/authController')
 
 exports.ids = factory.getIds(Question)
-exports.askQuestion = factory.createOneExclude(Question, ['answer'])
-exports.answerQuestion = factory.updateOneFields(Question, ['answer'])
+exports.askQuestion = catchAsync(async (req, res, next) => {
+  req.body.asker = req.student.id
+  const question = await Question.create(
+    factory.exclude(req.body, ['answer', 'FAQ']),
+  )
+
+  res.status(201).json({
+    status: 'Success',
+    data: question,
+  })
+})
+exports.answerQuestion = factory.updateOneFields(Question, ['answer', 'FAQ'])
 exports.updateQuestionAsker = catchAsync(async (req, res, next) => {
   const id = req.params.id
-  const doc = await Question.findByIdAndUpdate(
-    id,
+  const body = factory.exclude(req.body, ['asker', 'FAQ', 'answer'])
+  const doc = await Question.findOneAndUpdate(
     {
-      $and: [
-        { _id: id }, // Ensure that the Question ID matches
-        { asker: req.user.id }, // Ensure that the student matches
-      ],
-      ...factory.exclude(req.body, ['asker', 'FAQ', 'answer']), // Include other fields for update
+      _id: id, // Ensure that the Question ID matches
+      asker: req.student.id, // Ensure that the student matches
     },
+    body, // Include other fields for update
     {
-      // Return the updated doc not the original one
-      new: true,
-      // Will run validation on DB
-      // If set to false, the DB will accept anything
-      runValidators: true,
+      new: true, // Return the updated doc, not the original one
+      runValidators: true, // Will run validation on DB
     },
   )
 
@@ -46,7 +52,7 @@ exports.deleteQuestionAsker = catchAsync(async (req, res, next) => {
   }
 
   // Check if the asker matches the user id
-  if (question.asker.toString() !== req.user.id) {
+  if (question.asker.toString() !== req.student.id) {
     return next(
       new AppError('You are not authorized to delete this question', 403),
     )

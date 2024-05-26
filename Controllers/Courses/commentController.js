@@ -12,24 +12,18 @@ exports.getOneComment = factory.getOne(Comment)
 exports.deleteCommentAdmin = factory.deleteOne(Comment)
 exports.updateComment = catchAsync(async (req, res, next) => {
   const id = req.params.id
-  const doc = await Comment.findByIdAndUpdate(
-    id,
+  const body = factory.include(req.body, ['text'])
+  const doc = await Comment.findOneAndUpdate(
     {
-      $and: [
-        { _id: id }, // Ensure that the comment ID matches
-        { student: req.body.student }, // Ensure that the student matches
-      ],
-      ...factory.include(req.body, ['text']), // Include other fields for update
+      _id: id, // Ensure that the comment ID matches
+      student: req.student.id, // Ensure that the student matches
     },
+    body, // Include other fields for update
     {
-      // Return the updated doc not the original one
-      new: true,
-      // Will run validation on DB
-      // If set to false, the DB will accept anything
-      runValidators: true,
+      new: true, // Return the updated doc, not the original one
+      runValidators: true, // Will run validation on DB
     },
   )
-
   if (!doc) {
     return next(new AppError('No document found or No permission', 404))
   }
@@ -47,7 +41,7 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
   }
 
   // Check if the student matches the user id
-  if (comment.student.toString() !== req.user.id) {
+  if (comment.student.toString() !== req.student.id) {
     return next(
       new AppError('You are not authorized to delete this comment', 403),
     )

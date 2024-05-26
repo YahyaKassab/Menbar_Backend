@@ -7,18 +7,20 @@ const questionSchema = new mongoose.Schema(
       ref: 'Student',
     },
     imageURL: String,
-    time: Date,
     isTech: Boolean,
     title: String,
     description: String,
     FAQ: Boolean,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
     answer: {
       text: String,
       teacher: {
         type: mongoose.Schema.ObjectId,
         ref: 'Teacher',
       },
-      date: Date,
     },
   },
   {
