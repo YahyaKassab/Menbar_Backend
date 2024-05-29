@@ -11,6 +11,7 @@ const mcqSchema = new mongoose.Schema(
       ref: 'Course',
     },
     question: String,
+    page: Number,
     choices: [String],
     answer: Number,
   },

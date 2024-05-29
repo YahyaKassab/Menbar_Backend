@@ -29,21 +29,18 @@ router.use(
 // #region Teacher
 router
   .route('/')
-  .post(factory.setCourseIds, lectureController.createLecture)
+  .post(lectureController.createLecture)
   .get(lectureController.getAllLectures)
 router
   .route('/:id')
   .patch(lectureController.updateLecture)
   .delete(authController.restrictTo('admin'), lectureController.deleteLecture)
-router.get('/:id/admin', lectureController.getOneLectureTeacher)
-router
-  .route('/:lectureId/mcq')
-  .post(factory.setLectureIds, examController.createMcqOnLecture)
-  .get(factory.setLectureIds, examController.getAllMcqForLecture)
-router
-  .route('/:lectureId/mcq/:id')
-  .patch(examController.updateMcq)
-  .delete(examController.deleteMcq)
+router.get('/admin/:id', lectureController.getOneLectureTeacher)
+router.get(
+  '/mcq/:lectureId',
+  factory.setLectureIds,
+  examController.getAllMcqForLecture,
+)
 // #endregion
 
 module.exports = router

@@ -27,7 +27,7 @@ router
   .get(examController.getQuizTeacher)
 router.get('/all', examController.getAllQuizzes)
 router
-  .route('/:id')
+  .route('/')
   .patch(examController.updateQuiz)
   .delete(examController.deleteQuiz)
 // #endregion

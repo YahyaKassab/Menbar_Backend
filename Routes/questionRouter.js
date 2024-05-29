@@ -3,6 +3,7 @@ const questionController = require('../Controllers/Reviews/questionController')
 const authController = require('../Controllers/Handlers/authController')
 const studentController = require('../Controllers/Users/studentController')
 const Student = require('../Models/Users/StudentModel')
+const Teacher = require('../Models/Users/TeacherModel')
 
 const router = express.Router()
 router.get('/ids', questionController.ids)
@@ -30,14 +31,16 @@ router
 // #endregion
 
 // #region Teacher
-router.use(authController.restrictTo('teacher', 'admin'))
+router.use(
+  authController.protect(Teacher),
+  authController.restrictTo('Teacher', 'Admin'),
+)
 
 router.get('/', questionController.getAllQuestions)
+router.patch('/answer/:id', questionController.answerQuestion)
+router.delete('/:id/admin', questionController.deleteQuestion)
 router.route('/:id').get(questionController.getOneQuestion)
 
-router.delete('/:id/admin', questionController.deleteQuestion)
-
-router.patch('/:id/answer', questionController.answerQuestion)
 // #endregion
 
 module.exports = router

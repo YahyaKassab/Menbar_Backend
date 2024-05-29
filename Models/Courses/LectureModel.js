@@ -3,6 +3,7 @@ const Course = require('./CourseModel')
 const lectureSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, 'A lecture must have a name'] },
+    description: String,
     order: Number,
     course: {
       type: mongoose.Schema.ObjectId,

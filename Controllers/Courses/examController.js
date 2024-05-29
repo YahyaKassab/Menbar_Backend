@@ -132,7 +132,8 @@ exports.createQuiz = catchAsync(async (req, res, next) => {
 exports.getAllQuizzes = factory.getAll(LectureQuiz)
 exports.updateQuiz = catchAsync(async (req, res, next) => {
   const doc = await LectureQuiz.findOneAndUpdate(
-    { lecture: req.body.lecture },
+    { lecture: req.params.lectureId },
+    req.body,
     {
       new: true, // Return the updated document
       runValidators: true, // Run validators on update
@@ -149,7 +150,9 @@ exports.updateQuiz = catchAsync(async (req, res, next) => {
   })
 })
 exports.deleteQuiz = catchAsync(async (req, res, next) => {
-  const doc = await LectureQuiz.findOneAndDelete({ lecture: req.body.lecture })
+  const doc = await LectureQuiz.findOneAndDelete({
+    lecture: req.params.lectureId,
+  })
 
   if (!doc) {
     return next(new AppError('No document found with that ID', 404))
@@ -230,52 +233,27 @@ exports.getAllMeq = factory.getAll(MEQ)
 exports.getOneMeq = factory.getOne(MEQ)
 
 // #endregion
-exports.getAllQuestions = (Model, popOptions) =>
-  catchAsync(async (req, res, next) => {
-    const courseId = req.body.course
+exports.getAllQuestions = catchAsync(async (req, res, next) => {
+  const { courseId } = req.params
 
-    // Allow nested routes
-    let mcqQuery = MCQ.find({ course: courseId })
-    let meqQuery = MEQ.find({ course: courseId })
+  // Allow nested routes
+  const mcqDocs = await MCQ.find({ course: courseId })
+  const meqDocs = await MEQ.find({ course: courseId })
 
-    if (popOptions) {
-      mcqQuery = mcqQuery.populate(popOptions)
-      meqQuery = meqQuery.populate(popOptions)
-    }
+  // Calculate total number of questions
+  const totalQuestions = mcqDocs.length + meqDocs.length
 
-    // Apply pagination, filtering, sorting, etc.
-    const mcqFeatures = new APIFeatures(mcqQuery, req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate()
+  // Construct response object
+  const responseData = {
+    MCQ: mcqDocs,
+    MEQ: meqDocs,
+    totalQuestions: totalQuestions,
+  }
 
-    const meqFeatures = new APIFeatures(meqQuery, req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate()
-
-    // Execute MCQ query
-    const mcqDocs = await mcqFeatures.query
-
-    // Execute MEQ query
-    const meqDocs = await meqFeatures.query
-
-    // Calculate total number of questions
-    const totalQuestions = mcqDocs.length + meqDocs.length
-
-    // Construct response object
-    const responseData = {
-      MCQ: mcqDocs,
-      MEQ: meqDocs,
-      totalQuestions: totalQuestions,
-    }
-
-    // Send response
-    res.status(200).json({
-      status: 'Success',
-      result: totalQuestions,
-      data: responseData,
-    })
+  // Send response
+  res.status(200).json({
+    status: 'Success',
+    result: totalQuestions,
+    data: responseData,
   })
+})

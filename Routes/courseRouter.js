@@ -9,7 +9,6 @@ const Teacher = require('../Models/Users/TeacherModel')
 const router = express.Router()
 
 router.use('/:courseId/final', finalsRouter)
-router.use('/:courseId/lectures', lectureRouter)
 
 // #region Guest & Student
 router.route('/').get(courseController.getCourses)
@@ -25,15 +24,21 @@ router.get(
   courseController.getOneCourseTeacher,
 )
 router.use(factory.setCourseIds)
-router
-  .route('/:courseId/mcq')
-  .post(examController.createMcq)
-  .get(examController.getAllMcqForCourse)
-router
-  .route('/:courseId/meq')
-  .post(examController.createMeq)
-  .get(examController.getAllMeqForCourse)
-router.get('/:courseId/questions', examController.getAllQuestions)
+router.get(
+  '/mcq/:courseId',
+  authController.restrictTo('Admin', 'Teacher'),
+  examController.getAllMcqForCourse,
+)
+router.get(
+  '/meq/:courseId',
+  authController.restrictTo('Admin', 'Teacher'),
+  examController.getAllMeqForCourse,
+)
+router.get(
+  '/questions/:courseId',
+  authController.restrictTo('Admin', 'Teacher'),
+  examController.getAllQuestions,
+)
 // #endregion
 
 router.use(authController.restrictTo('Admin'))

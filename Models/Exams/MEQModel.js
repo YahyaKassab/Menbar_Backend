@@ -11,6 +11,7 @@ const meqSchema = new mongoose.Schema(
       ref: 'Course',
     },
     question: String,
+    page: Number,
     optimalAnswer: String,
     scoreFrom: Number,
   },

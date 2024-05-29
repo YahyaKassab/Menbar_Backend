@@ -73,14 +73,14 @@ exports.include = (reqBody, fieldsToInclude) => {
 exports.updateOne = (Model, excludedFields) =>
   catchAsync(async (req, res, next) => {
     const id = req.params.id
-    const doc = await Model.findByIdAndUpdate(
-      id,
-      this.exclude(req.body, excludedFields),
-      {
-        new: true, // Return the updated document
-        runValidators: true, // Run validators on update
-      },
-    )
+    const body = req.body
+    if (excludedFields) {
+      body = this.exclude(req.body, excludedFields)
+    }
+    const doc = await Model.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true,
+    })
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404))
@@ -340,9 +340,7 @@ exports.getIds = (Model) =>
   })
 exports.setLectureIds = (req, res, next) => {
   // Allow nested routes
-  console.log('params:', req.params)
   if (!req.body.lecture) req.body.lecture = req.params.lectureId
-  console.log('lecture: ', req.body.lecture)
 
   next()
 }

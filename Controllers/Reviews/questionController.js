@@ -15,7 +15,28 @@ exports.askQuestion = catchAsync(async (req, res, next) => {
     data: question,
   })
 })
-exports.answerQuestion = factory.updateOneFields(Question, ['answer', 'FAQ'])
+exports.answerQuestion = catchAsync(async (req, res, next) => {
+  const id = req.params.id
+  const answer = {
+    answer: {
+      text: req.body.text,
+      teacher: req.teacher.id,
+    },
+  }
+  const doc = await Question.findByIdAndUpdate(id, answer, {
+    new: true,
+    runValidators: true,
+  })
+
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: doc,
+  })
+})
 exports.updateQuestionAsker = catchAsync(async (req, res, next) => {
   const id = req.params.id
   const body = factory.exclude(req.body, ['asker', 'FAQ', 'answer'])

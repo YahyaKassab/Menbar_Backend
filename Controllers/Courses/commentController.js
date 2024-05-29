@@ -77,17 +77,7 @@ exports.addReply = catchAsync(async (req, res, next) => {
 })
 exports.getAllComments = factory.getAll(Comment)
 exports.assignUserToBody = (req, res, next) => {
-  // Check if req.user is a student
-  if (req.student) {
-    // Assign req.user to req.body.student
-    req.body.student = req.student._id
-  }
-  // Check if req.user is a teacher
-  else if (req.teacher) {
-    // Assign req.user to req.body.teacher
-    req.body.teacher = req.teacher._id
-  }
-  console.log('body', req.body)
-  // Continue to the next middleware
+  if (req.student) req.body.student = req.student._id
+  else if (req.teacher) req.body.teacher = req.teacher._id
   next()
 }
