@@ -124,7 +124,37 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
   const courseStat = await CourseStat.findOne({
     student: studentId,
     course: courseId,
-  }).populate(['lectureStats'])
+  }).populate(['lectureStats', 'course'])
+
+  // Check if course stat was found
+  if (!courseStat) {
+    return next(
+      new AppError('No course stat found for this student and course', 404),
+    )
+  }
+
+  // Send response with course stat
+  res.status(200).json({
+    status: 'success',
+    data: {
+      courseStat,
+    },
+  })
+})
+
+exports.getAllCoursesStats = catchAsync(async (req, res, next) => {
+  // Get student ID from request
+  const studentId = req.student.id
+
+  // Check if student ID and course ID are available
+  if (!studentId) {
+    return next(new AppError('Student ID and Course ID are required', 400))
+  }
+
+  // Find course stat where student ID matches and course ID matches
+  const courseStat = await CourseStat.find({
+    student: studentId,
+  }).populate(['lectureStats', 'course'])
 
   // Check if course stat was found
   if (!courseStat) {

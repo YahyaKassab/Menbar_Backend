@@ -50,6 +50,12 @@ router.get(
   studentController.getMe,
   studentController.getCourseStats,
 )
+router.get(
+  '/courses-stats',
+  authController.protect(Student),
+  studentController.getMe,
+  studentController.getAllCoursesStats,
+)
 // #endregion
 
 // #region Teacher
