@@ -124,7 +124,14 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
   const courseStat = await CourseStat.findOne({
     student: studentId,
     course: courseId,
-  }).populate(['lectureStats', 'course'])
+  })
+    .populate({
+      path: 'lectureStats',
+      populate: {
+        path: 'lecture',
+      },
+    })
+    .populate('course')
 
   // Check if course stat was found
   if (!courseStat) {
@@ -154,7 +161,14 @@ exports.getAllCoursesStats = catchAsync(async (req, res, next) => {
   // Find course stat where student ID matches and course ID matches
   const courseStat = await CourseStat.find({
     student: studentId,
-  }).populate(['lectureStats', 'course'])
+  })
+    .populate({
+      path: 'lectureStats',
+      populate: {
+        path: 'lecture',
+      },
+    })
+    .populate('course')
 
   // Check if course stat was found
   if (!courseStat) {
