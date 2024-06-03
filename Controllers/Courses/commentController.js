@@ -68,7 +68,7 @@ exports.addReply = catchAsync(async (req, res, next) => {
   }
 
   // Return the updated comment
-  res.status(200).json({
+  return res.status(200).json({
     status: 'success',
     data: {
       comment,
