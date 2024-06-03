@@ -127,9 +127,7 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
   })
     .populate({
       path: 'lectureStats',
-      populate: {
-        path: 'lecture',
-      },
+      populate: [{ path: 'lecture' }, { path: 'latestQuizGrade' }],
     })
     .populate('course')
 
@@ -164,12 +162,9 @@ exports.getAllCoursesStats = catchAsync(async (req, res, next) => {
   })
     .populate({
       path: 'lectureStats',
-      populate: {
-        path: 'lecture',
-      },
+      populate: [{ path: 'lecture' }, { path: 'latestQuizGrade' }],
     })
     .populate('course')
-
   // Check if course stat was found
   if (!courseStat) {
     return next(

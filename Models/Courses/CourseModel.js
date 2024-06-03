@@ -34,6 +34,13 @@ courseSchema.virtual('teachers', {
 })
 courseSchema.virtual('book', {
   ref: 'Book',
+  justOne: true,
+  localField: '_id',
+  foreignField: 'course',
+})
+courseSchema.virtual('final', {
+  ref: 'FinalExam',
+  justOne: true,
   localField: '_id',
   foreignField: 'course',
 })

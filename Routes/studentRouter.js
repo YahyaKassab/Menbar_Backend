@@ -3,6 +3,8 @@ const authController = require('../Controllers/Handlers/authController')
 const studentController = require('../Controllers/Users/studentController')
 const Student = require('../Models/Users/StudentModel')
 const Teacher = require('../Models/Users/TeacherModel')
+const upload = require('../multer')
+const { uploadIMG } = require('../utils/cloudinaryMiddleware')
 
 const router = express.Router()
 // #region Guest
@@ -21,6 +23,7 @@ router.get(
   authController.protect(Student),
   authController.restrictTo('Student'),
   studentController.getMe,
+
   studentController.getOneStudent,
 )
 router.patch(
@@ -28,6 +31,8 @@ router.patch(
   authController.protect(Student),
   authController.restrictTo('Student'),
   studentController.getMe,
+  upload.single('photo'),
+  uploadIMG,
   studentController.updateStudentByStudent,
 )
 router.patch(

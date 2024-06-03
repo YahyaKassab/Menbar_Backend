@@ -81,3 +81,53 @@ exports.assignUserToBody = (req, res, next) => {
   else if (req.teacher) req.body.teacher = req.teacher._id
   next()
 }
+exports.like = catchAsync(async (req, res, next) => {
+  const id = req.params.id
+
+  const doc = await Comment.findOneAndUpdate(
+    {
+      _id: id, // Ensure that the comment ID matches
+    },
+    {
+      $inc: { totalScore: 1 }, // Increment the totalScore by 1
+    },
+    {
+      new: true, // Return the updated doc, not the original one
+      runValidators: true, // Will run validation on DB
+    },
+  )
+
+  if (!doc) {
+    return next(new AppError('No document found or No permission', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: doc,
+  })
+})
+exports.disLike = catchAsync(async (req, res, next) => {
+  const id = req.params.id
+
+  const doc = await Comment.findOneAndUpdate(
+    {
+      _id: id, // Ensure that the comment ID matches
+    },
+    {
+      $inc: { totalScore: -1 }, // Decrement the totalScore by 1
+    },
+    {
+      new: true, // Return the updated doc, not the original one
+      runValidators: true, // Will run validation on DB
+    },
+  )
+
+  if (!doc) {
+    return next(new AppError('No document found or No permission', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: doc,
+  })
+})

@@ -16,7 +16,7 @@ const CourseStat = require('../../Models/Student/CourseStatModel')
 
 exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   const { body } = req
-  const { student: studentId } = body
+  req.body.student = req.student
 
   // Create and mark MCQ answers
   const answers = await MCQAnswer.create(body.mcqs)
@@ -24,18 +24,36 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
   // Update body with created MCQ answers
   body.mcqs = answers
-
+  const newBody = factory.exclude(body, [
+    'score',
+    'scoreFrom',
+    'marked',
+    'mcqScore',
+    'meqScore',
+  ])
   // Create final exam answer
-  const finalAnswer = await FinalExamStudentAnswer.createFinalAnswer(body)
+  const finalAnswer = await FinalExamStudentAnswer.create(newBody)
 
   // Find student and populate courseStats
-  const student = await Student.findById(studentId).populate('courseStats')
+  const student = await Student.findById(req.student).populate('courseStats')
 
   // Assign final answer to courseStats
-  await student.assignFinalAnswer(finalAnswer.id)
+
+  student.courseStats.finalAnswers = finalAnswer.id
+  await student.save()
 
   // Check if student has passed the course and create certificate if needed
   await student.checkAndCreateCertificate()
+
+  if (student.courseStats.passed) {
+    const certificate = await Certificate.create({
+      course: student.courseStats.course,
+      imageURL: 'URL_of_the_certificate_image',
+      Date: new Date(),
+    })
+    student.certificates.push(certificate)
+    await student.save()
+  }
 
   // Respond with success
   res.status(201).json({
@@ -89,9 +107,9 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   // #region Find the student and populate courseStats and lecturesStats
   const student = await Student.findById(req.body.student)
   const courseStats = await CourseStat.find({
-    _id: { $in: student.courseStats }
+    _id: { $in: student.courseStats },
   })
-  
+
   if (!student) {
     return next(new AppError('No student found with that ID', 404))
   }
@@ -102,7 +120,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   const lectureStat = await LectureStat.findOne({
     lecture: lectureId,
     student: req.body.student,
-  });
+  })
 
   if (!lectureStat || !lectureStat.open) {
     return next(new AppError('The lecture is not open for the student', 403))
@@ -120,12 +138,11 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   const mcqAnswers = await MCQAnswer.create(req.body.lectureQuizzesGrades)
   for (const answer of mcqAnswers) {
     await answer.mark()
-
   }
   // #endregion
 
   // #region Create the quiz answer
-  const fields = factory.exclude(req.body,['score'])
+  const fields = factory.exclude(req.body, ['score'])
   const body = {
     ...fields,
     lectureQuizzesGrades: mcqAnswers,
@@ -139,7 +156,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   lectureStat.latestQuizGrade = quizAnswer
   lectureStat.latestQuizScore = quizAnswer.score
   lectureStat.bestQuizScore = Math.max(
-    lectureStat.bestQuizScore || 0, 
+    lectureStat.bestQuizScore || 0,
     quizAnswer.score || 0,
   )
   lectureStat.done = lectureStat.bestQuizScore === quizAnswer.scoreFrom
@@ -148,15 +165,15 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   // #endregion
 
   // #region Update open property in the next lecture
-const lecture = await Lecture.findById(req.body.lecture)
+  const lecture = await Lecture.findById(req.body.lecture)
   const nextOrder = lecture.order + 1
   const nextLectureStat = await LectureStat.findOne({
     student: req.body.student,
     order: nextOrder,
-    courseStat:lectureStat.courseStat
-  });
+    courseStat: lectureStat.courseStat,
+  })
 
-  if (nextLectureStat && lectureStat.done ) {
+  if (nextLectureStat && lectureStat.done) {
     nextLectureStat.open = true
     await nextLectureStat.save()
   }
@@ -169,7 +186,6 @@ const lecture = await Lecture.findById(req.body.lecture)
   })
   // #endregion
 })
-
 
 // #endregion
 

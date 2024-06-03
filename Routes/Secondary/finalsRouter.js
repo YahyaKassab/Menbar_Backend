@@ -2,41 +2,43 @@ const express = require('express')
 const authController = require('../../Controllers/Handlers/authController')
 const examController = require('../../Controllers/Courses/examController')
 const answerController = require('../../Controllers/Courses/answerController')
+const Student = require('../../Models/Users/StudentModel')
+const Teacher = require('../../Models/Users/TeacherModel')
 
 const router = express.Router({ mergeParams: true })
 
-router.use(authController.protect)
 //params.courseId
 
 // #region Student
 router
   .route('/answers')
   .post(
-    authController.restrictTo('student'),
+    authController.protect(Student),
+    authController.restrictTo('Student'),
     answerController.submitFinalAnswer,
   )
 // #endregion
-
+router.use(authController.protect(Teacher))
 // #region Teacher
 router.get(
   '/',
-  authController.restrictTo('teacher', 'admin'),
+  authController.restrictTo('Teacher', 'Admin'),
   examController.getAllFinals,
 )
 router.get(
   '/answers',
-  authController.restrictTo('teacher', 'admin'),
+  authController.restrictTo('Teacher', 'Admin'),
   answerController.getAllFinalAnswers,
 )
 router
   .route('/answers/:id')
   .get(
-    authController.restrictTo('teacher', 'admin'),
+    authController.restrictTo('Teacher', 'Admin'),
     answerController.getFinalAnswer,
   )
 router.patch(
   '/answers/:id/mark',
-  authController.restrictTo('teacher', 'admin'),
+  authController.restrictTo('Teacher', 'Admin'),
   answerController.markMeq,
 )
 
@@ -44,7 +46,7 @@ router.patch(
 
 // #region Admin
 
-router.use(authController.restrictTo('admin'))
+router.use(authController.restrictTo('Admin'))
 
 router.route('/').post(examController.createFinal)
 router

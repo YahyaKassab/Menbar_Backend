@@ -9,6 +9,8 @@ const factory = require('../../Controllers/Handlers/handlerFactory')
 const router = express.Router({ mergeParams: true })
 
 // #region Student
+router.patch('/like/:id', commentController.like)
+router.patch('/dislike/:id', commentController.disLike)
 router.route('/:id').get(commentController.getOneComment)
 router
   .route('/')
@@ -18,16 +20,16 @@ router
     commentController.assignUserToBody,
     commentController.createComment,
   )
-router
-  .route('/:id')
-  .patch(authController.protect(Student), commentController.updateComment)
-  .delete(authController.protect(Student), commentController.deleteComment)
 router.post(
   '/:id/reply',
   authController.protect(Student),
   commentController.assignUserToBody,
   commentController.addReply,
 )
+router
+  .route('/:id')
+  .patch(authController.protect(Student), commentController.updateComment)
+  .delete(authController.protect(Student), commentController.deleteComment)
 
 // #endregion
 
@@ -35,6 +37,9 @@ router.use(
   authController.protect(Teacher),
   authController.restrictTo('Teacher', 'Admin'),
 )
+// #region Admin
+router.delete('/:id', commentController.deleteCommentAdmin)
+// #endregion
 // #region Teacher
 router.post(
   '/teacher',
@@ -50,9 +55,6 @@ router.post(
 )
 
 router.get('/', commentController.getAllComments)
-// #endregion
-// #region Admin
-router.delete('/:id', commentController.deleteCommentAdmin)
 // #endregion
 
 module.exports = router

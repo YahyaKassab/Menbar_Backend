@@ -15,6 +15,11 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'FinalExam',
       required: [true, 'An answer must have an exam'],
     },
+    course: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course',
+      required: [true, 'An answer must have a course'],
+    },
     mcqs: Array, //MCQAnswer
     meqs: Array, //MEQAsnwer
     scoreFrom: Number,
