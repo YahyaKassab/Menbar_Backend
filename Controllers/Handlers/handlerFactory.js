@@ -72,12 +72,21 @@ exports.include = (reqBody, fieldsToInclude) => {
 // #region Update
 exports.updateOne = (Model, excludedFields) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id
-    const body = req.body
-    if (excludedFields) {
-      body = this.exclude(req.body, excludedFields)
+    // console.log("Asdasdasdasd",req.params.id);
+    // const id = req.params.id
+
+    let body = req.body;
+
+    // Convert the req.body to a plain object if it has a null prototype
+    if (body && Object.getPrototypeOf(body) === null) {
+      body = Object.assign({}, body);
     }
-    const doc = await Model.findByIdAndUpdate(id, body, {
+
+    if (excludedFields) {
+      body = this.exclude(body, excludedFields);
+    }
+
+    const doc = await Model.findByIdAndUpdate(req.params.id, body, {
       new: true,
       runValidators: true,
     })
