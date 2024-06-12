@@ -47,15 +47,16 @@ commentSchema.path('student').validate(function (value) {
 commentSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'student',
-    select: 'Fname',
+    select: ['Fname', 'Lname', 'photo'],
   })
   this.populate({
     path: 'teacher',
-    select: 'Fname',
+    select: ['Fname', 'Lname', 'photo'],
   })
   this.populate({
     path: 'replies',
   })
+
   next()
 })
 

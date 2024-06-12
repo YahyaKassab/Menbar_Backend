@@ -12,6 +12,12 @@ const router = express.Router({ mergeParams: true })
 router.patch('/like/:id', commentController.like)
 router.patch('/dislike/:id', commentController.disLike)
 router.route('/:id').get(commentController.getOneComment)
+router.post(
+  '/:id/reply',
+  authController.protect(Student),
+  commentController.assignUserToBody,
+  commentController.addReply,
+)
 router
   .route('/')
   .post(
@@ -20,12 +26,7 @@ router
     commentController.assignUserToBody,
     commentController.createComment,
   )
-router.post(
-  '/:id/reply',
-  authController.protect(Student),
-  commentController.assignUserToBody,
-  commentController.addReply,
-)
+
 router
   .route('/:id')
   .patch(authController.protect(Student), commentController.updateComment)
