@@ -6,10 +6,10 @@ const Book = require('../../Models/Courses/BookModel')
 
 exports.createBook = catchAsync(async (req, res, next) => {
   // Extract courseId from request parameters
-  const { courseId } = req.params
-  console.log('courseId', courseId)
-  req.body.course = courseId
-  console.log('body', req.body)
+  // const { courseId } = req.params
+  // console.log('courseId', courseId)
+  // req.body.course = courseId
+  // console.log('body', req.body)
   // Create a new book using the request body
   const newBook = await Book.create(req.body)
 

@@ -10,6 +10,7 @@ const router = express.Router({ mergeParams: true })
 //params.courseId
 
 // #region Student
+router.get('/', authController.protect(Student), examController.getFinal)
 router
   .route('/answers')
   .post(
@@ -21,7 +22,12 @@ router
 router.use(authController.protect(Teacher))
 // #region Teacher
 router.get(
-  '/',
+  '/teacher',
+  authController.restrictTo('Teacher', 'Admin'),
+  examController.getFinalTeacher,
+)
+router.get(
+  '/all',
   authController.restrictTo('Teacher', 'Admin'),
   examController.getAllFinals,
 )
@@ -48,7 +54,14 @@ router.patch(
 
 router.use(authController.restrictTo('Admin'))
 
-router.route('/').post(examController.createFinal)
+router.post(
+  '/',
+  (req, res, next) => {
+    req.body.course = req.params.courseId
+    next()
+  },
+  examController.createFinal,
+)
 router
   .route('/:id')
   .patch(examController.updateFinal)

@@ -12,8 +12,20 @@ const finalExamSchema = new mongoose.Schema(
       required: [true, 'An answer must have a Course'],
     },
     durationInMins: Number,
-    mcqs: Array, //MCQ
-    meqs: Array, //MEQ
+    mcqs: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'MCQ',
+        required: [true, 'An answer must have mcqs'],
+      },
+    ], //MCQ
+    meqs: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'MEQ',
+        required: [true, 'An answer must have meqs'],
+      },
+    ], //MEQ
     opensAt: Date,
     closesAt: Date,
     year: Number,
@@ -22,21 +34,6 @@ const finalExamSchema = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
-)
-const fillEmbedded = (fieldToFill, Model) => {
-  catchAsync(async function (next) {
-    const fieldPromises = this.fieldToFill.map(
-      async (id) => await Model.findById(id),
-    )
-    this.field = await Promise.all(fieldPromises)
-    next()
-  })
-}
-
-finalExamSchema.pre(
-  'save',
-  () => fillEmbedded(this.mcqs, MCQ),
-  () => fillEmbedded(this.meqs, MEQ),
 )
 
 finalExamSchema.pre(/^find/, function (next) {

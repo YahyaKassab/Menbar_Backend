@@ -9,7 +9,36 @@ const FinalExam = require('../../Models/Exams/FinalExamModel')
 
 // #region Final
 exports.getAllFinals = factory.getAll(FinalExam)
-exports.getFinal = factory.getOne(FinalExam)
+exports.getFinal = catchAsync(async (req, res, next) => {
+  const exam = await FinalExam.findOne({ course: req.params.courseId })
+    .populate({
+      path: 'mcqs',
+      select: '-answer -page',
+    })
+    .populate({
+      path: 'meqs',
+      select: '-optimalAnswer -page',
+    })
+  if (!exam) return next(new AppError('Final exam not found', 404))
+  res.status(200).json({
+    status: 'Success',
+    data: exam,
+  })
+})
+exports.getFinalTeacher = catchAsync(async (req, res, next) => {
+  const exam = await FinalExam.findOne({ course: req.params.courseId })
+    .populate({
+      path: 'mcqs',
+    })
+    .populate({
+      path: 'meqs',
+    })
+  if (!exam) return next(new AppError('Final exam not found', 404))
+  res.status(200).json({
+    status: 'Success',
+    data: exam,
+  })
+})
 exports.createFinal = factory.createOne(FinalExam)
 
 exports.generateFinal = catchAsync(async (req, res, next) => {

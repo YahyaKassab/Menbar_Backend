@@ -63,7 +63,12 @@ exports.signUp = catchAsync(async (req, res, next) => {
     // Execute additional logic specific to students
 
     // Static course IDs (replace these with actual course IDs)
-    const courseIds = ['664a74f2ebbbd514dcef3189']
+    const courseIds = [
+      '6668e476d515ebb61d73c2f4', //Hadeeth
+      '6668e476d515ebb61d73c2f5', //Tafseer
+      '6668e476d515ebb61d73c2f6', //Aqeedah
+      '6668e476d515ebb61d73c2f7', //Fiqh
+    ]
 
     // Loop through each course ID
     for (const courseId of courseIds) {
