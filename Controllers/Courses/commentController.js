@@ -53,7 +53,8 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
 })
 
 exports.addReply = catchAsync(async (req, res, next) => {
-  req.body.lecture = req.params.lectureId
+  // req.body.lecture = req.params.lectureId
+
   const newReply = new Comment(req.body)
   await newReply.save()
 

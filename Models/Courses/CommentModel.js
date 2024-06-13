@@ -13,7 +13,6 @@ const commentSchema = new mongoose.Schema(
     lecture: {
       type: mongoose.Schema.ObjectId,
       ref: 'Lecture',
-      required: [true, 'A comment must have a lecture'],
     },
     replies: [
       {
