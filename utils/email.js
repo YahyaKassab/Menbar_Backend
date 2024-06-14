@@ -28,7 +28,7 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
-    //html:
+    html: options.html, // Add this line
   }
 
   //3) Send email with nodemailer

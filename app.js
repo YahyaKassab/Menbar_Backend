@@ -21,6 +21,7 @@ const mcqRouter = require('./Routes/mcqRouter')
 const meqRouter = require('./Routes/meqRouter')
 const bookRouter = require('./Routes/bookRouter')
 const quizRouter = require('./Routes/Secondary/quizRouter')
+const memberRouter = require('./Routes/memberRouter')
 
 const app = express()
 app.use(cors())
@@ -98,6 +99,7 @@ app.use('/api/v1/reviews', reviewRouter)
 app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/teachers', teacherRouter)
 app.use('/api/v1/quizzes', quizRouter)
+app.use('/api/v1/members', memberRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))

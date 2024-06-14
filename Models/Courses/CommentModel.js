@@ -20,7 +20,14 @@ const commentSchema = new mongoose.Schema(
         ref: 'Comment',
       },
     ],
-    totalScore: { type: Number, default: 0 },
+    likes: {
+      type: [String],
+      set: (likes) => [...new Set(likes)],
+    },
+    disLikes: {
+      type: [String],
+      set: (disLikes) => [...new Set(disLikes)],
+    },
 
     createdAt: {
       type: Date,
@@ -33,6 +40,10 @@ const commentSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+commentSchema.virtual('totalScore').get(function () {
+  return this.likes.length - this.disLikes.length
+})
 
 // Custom validator function to ensure either student or teacher is provided
 commentSchema.path('teacher').validate(function (value) {

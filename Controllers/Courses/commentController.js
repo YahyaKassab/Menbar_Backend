@@ -84,13 +84,18 @@ exports.assignUserToBody = (req, res, next) => {
 }
 exports.like = catchAsync(async (req, res, next) => {
   const id = req.params.id
+  if (req.student) {
+    userId = req.student.id
+  } else if (req.teacher) {
+    userId = req.teacher.id
+  }
 
   const doc = await Comment.findOneAndUpdate(
     {
       _id: id, // Ensure that the comment ID matches
     },
     {
-      $inc: { totalScore: 1 }, // Increment the totalScore by 1
+      $addToSet: { likes: userId }, // Add req.student.id to the likes array
     },
     {
       new: true, // Return the updated doc, not the original one
@@ -109,13 +114,18 @@ exports.like = catchAsync(async (req, res, next) => {
 })
 exports.disLike = catchAsync(async (req, res, next) => {
   const id = req.params.id
+  if (req.student) {
+    userId = req.student.id
+  } else if (req.teacher) {
+    userId = req.teacher.id
+  }
 
   const doc = await Comment.findOneAndUpdate(
     {
       _id: id, // Ensure that the comment ID matches
     },
     {
-      $inc: { totalScore: -1 }, // Decrement the totalScore by 1
+      $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
     },
     {
       new: true, // Return the updated doc, not the original one

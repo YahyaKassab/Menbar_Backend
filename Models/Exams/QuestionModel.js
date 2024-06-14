@@ -6,6 +6,8 @@ const questionSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Student',
     },
+    name: String,
+    email: String,
     imageURL: String,
     isTech: Boolean,
     title: String,

@@ -94,12 +94,19 @@ exports.signUp = catchAsync(async (req, res, next) => {
             courseStat: courseStat._id,
             open: true, // Set the open property to true
           })
+        } else {
+          await LectureStat.create({
+            lecture: lecture._id,
+            student: newUser._id,
+            courseStat: courseStat._id,
+            open: false, // Set the open property to true
+          })
         }
       }
     }
 
     // Send token and user data
-    authController.createSendToken(newUser, 201, res)
+    authController.createSendToken(newUser, 201, req, res)
   } catch (err) {
     next(err)
   }

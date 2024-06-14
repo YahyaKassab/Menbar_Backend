@@ -7,12 +7,44 @@ const sendEmail = require('../../utils/email')
 const Course = require('../../Models/Courses/CourseModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
+const Student = require('../../Models/Users/StudentModel')
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   })
 }
+
+exports.confirmEmail = catchAsync(async (req, res, next) => {
+  const token = req.params.token
+
+  let decoded
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET)
+  } catch (err) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid or expired token',
+    })
+  }
+
+  const student = await Student.findOneAndUpdate(
+    { _id: decoded.id },
+    { confirmed: true },
+    { new: true, runValidators: true },
+  )
+  if (!student) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User not found',
+    })
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Email confirmed successfully',
+  })
+})
 const cookieOptions = {
   // Convert days to milliseconds
   expires: new Date(
@@ -21,7 +53,7 @@ const cookieOptions = {
   // secure: true,
   httpOnly: true,
 }
-exports.createSendToken = (model, statusCode, res) => {
+exports.createSendToken = async (model, statusCode, req, res) => {
   // secret key must be at least 32 CHARS and UNIQUE
   //sending the token = automatically sign in with the created user
   console.log('before sign')
@@ -32,6 +64,32 @@ exports.createSendToken = (model, statusCode, res) => {
   res.cookie('jwt', token, cookieOptions)
   // Remove password from the output
   model.password = undefined
+  // Generate confirmation token
+  const confirmationToken = jwt.sign(
+    { id: model._id },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '1h',
+    },
+  )
+
+  const confirmationUrl = `${req.protocol}://${req.get('host')}/api/v1/students/confirmEmail/${confirmationToken}`
+
+  const message = `Please confirm your email by clicking on the following link: ${confirmationUrl}`
+  const htmlMessage = `
+    <div style="font-size: 16px;">
+      <strong>Please confirm your email by clicking on the following link:</strong><br><br>
+      <a href="${confirmationUrl}" style="font-size: 18px; font-weight: bold; color: white; background-color: #4CAF50; text-align: center; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px;">Confirm Email</a>
+    </div>
+  `
+
+  await sendEmail({
+    email: model.email,
+    subject: 'Email Confirmation',
+    message, // Fallback text version for non-HTML email clients
+    html: htmlMessage,
+  })
+
   res.status(statusCode).json({
     status: 'success',
     token,

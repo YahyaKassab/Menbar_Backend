@@ -19,3 +19,35 @@ exports.getLectureStudent = factory.getOne(Lecture, [
   'course',
   'quiz',
 ])
+exports.nextLecture = catchAsync(async (req, res, next) => {
+  const order = req.params.order * 1 + 1
+  const course = req.params.course
+  const nextLecture = await Lecture.findOne({
+    order,
+    course,
+  }).populate(['comments', 'course', 'quiz'])
+  if (!nextLecture) {
+    return next(new AppError('No nextLecture found with that ID', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: nextLecture,
+  })
+})
+exports.prevLecture = catchAsync(async (req, res, next) => {
+  const order = req.params.order * 1 - 1
+  const course = req.params.course
+  const prevLecture = await Lecture.findOne({
+    order,
+    course,
+  }).populate(['comments', 'course', 'quiz'])
+  if (!prevLecture) {
+    return next(new AppError('No prevLecture found with that ID', 404))
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: prevLecture,
+  })
+})

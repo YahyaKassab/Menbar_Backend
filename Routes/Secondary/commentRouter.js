@@ -9,8 +9,18 @@ const factory = require('../../Controllers/Handlers/handlerFactory')
 const router = express.Router({ mergeParams: true })
 
 // #region Student
-router.patch('/like/:id', commentController.like)
-router.patch('/dislike/:id', commentController.disLike)
+router.patch(
+  '/like/:id',
+  authController.protect(Student),
+  authController.protect(Teacher),
+  commentController.like,
+)
+router.patch(
+  '/dislike/:id',
+  authController.protect(Student),
+  authController.protect(Teacher),
+  commentController.disLike,
+)
 router.route('/:id').get(commentController.getOneComment)
 router.post(
   '/:id/reply',

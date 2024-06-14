@@ -12,6 +12,7 @@ router.post('/signup', studentController.signUp)
 router.post('/login', studentController.loginStudent)
 router.post('/forgot-password', studentController.forgetPasswordStudent)
 router.patch('/reset-password/:token', studentController.resetPasswordStudent)
+router.get('/confirmEmail/:token', authController.confirmEmail)
 
 // #endregion
 

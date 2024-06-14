@@ -13,6 +13,9 @@ const router = express.Router({ mergeParams: true })
 router.use('/:lectureId/comments', commentRouter)
 router.use('/:lectureId/quiz', quizRouter)
 
+router.get('/next/:order/:course', lectureController.nextLecture)
+router.get('/prev/:order/:course', lectureController.prevLecture)
+
 router.route('/ids').get(lectureController.ids)
 // #region Student
 router.get(

@@ -81,6 +81,10 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    confirmed: {
+      type: Boolean,
+      default: false,
+    },
     phone: {
       type: {
         countryCode: {
@@ -105,15 +109,6 @@ const studentSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-const fillEmbedded = (fieldToFill, Model) => {
-  catchAsync(async function (next) {
-    const fieldPromises = this.fieldToFill.map(
-      async (id) => await Model.findById(id),
-    )
-    this.field = await Promise.all(fieldPromises)
-    next()
-  })
-}
 
 studentSchema.virtual('courseStats', {
   ref: 'CourseStat',
