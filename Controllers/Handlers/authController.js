@@ -73,22 +73,23 @@ exports.createSendToken = async (model, statusCode, req, res) => {
     },
   )
 
-  const confirmationUrl = `${req.protocol}://${req.get('host')}/api/v1/students/confirmEmail/${confirmationToken}`
+  if (statusCode == 201) {
+    const confirmationUrl = `${req.protocol}://${req.get('host')}/api/v1/students/confirmEmail/${confirmationToken}`
 
-  const message = `Please confirm your email by clicking on the following link: ${confirmationUrl}`
-  const htmlMessage = `
+    const message = `Please confirm your email by clicking on the following link: ${confirmationUrl}`
+    const htmlMessage = `
     <div style="font-size: 16px;">
-      <strong>Please confirm your email by clicking on the following link:</strong><br><br>
-      <a href="${confirmationUrl}" style="font-size: 18px; font-weight: bold; color: white; background-color: #4CAF50; text-align: center; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px;">Confirm Email</a>
+    <strong>Please confirm your email by clicking on the following link:</strong><br><br>
+    <a href="${confirmationUrl}" style="font-size: 18px; font-weight: bold; color: white; background-color: #4CAF50; text-align: center; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px;">Confirm Email</a>
     </div>
-  `
-
-  await sendEmail({
-    email: model.email,
-    subject: 'Email Confirmation',
-    message, // Fallback text version for non-HTML email clients
-    html: htmlMessage,
-  })
+    `
+    await sendEmail({
+      email: model.email,
+      subject: 'Email Confirmation',
+      message, // Fallback text version for non-HTML email clients
+      html: htmlMessage,
+    })
+  }
 
   res.status(statusCode).json({
     status: 'success',
@@ -102,7 +103,7 @@ exports.signUp = (Model) => async (req, res, next) => {
     const newUser = await Model.create(req.body)
 
     // Send token and user data
-    this.createSendToken(newUser, 201, res)
+    this.createSendToken(newUser, 201, req, res)
   } catch (err) {
     next(err)
   }
@@ -129,7 +130,7 @@ exports.login = (Model) => async (req, res, next) => {
     console.log(_user)
 
     //3) SEND TOKEN TO CLIENT IF OK
-    this.createSendToken(_user, 200, res)
+    this.createSendToken(_user, 200, req, res)
   } catch (err) {
     next(err) // Pass any errors to the error handling middleware
   }
@@ -218,17 +219,26 @@ exports.forgotPassword = (Model) =>
     await user.save({ validateBeforeSave: false })
 
     //3) Send it to the user in an email
-    const resetUrl = `${req.protocol}://${req.get(
-      'host',
-    )}/api/v1/users/reset-password/${resetToken}`
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/${Model.modelName.toLowerCase()}s/reset-password/${resetToken}`
 
-    const message = `Forgot password? submit a patch request with your new password to ${resetUrl}. If you didn't forget your password, ignore the email.`
+    const message = `Forgot your password? Click the link below to reset your password:\n\n${resetUrl}\n\nIf you didn't forget your password, please ignore this email!`
 
+    ///
+    ///Message must go to Frontend page to write password
+    ///
+    const htmlMessage = `
+    <div>
+      <p>Forgot your password? Click the button below to reset your password:</p>
+      <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; font-size: 18px; color: white; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      <p>If you didn't forget your password, please ignore this email!</p>
+    </div>
+  `
     try {
       await sendEmail({
         email: user.email,
         subject: 'Your password reset token valid for 10 mins',
         message,
+        html: htmlMessage,
       })
 
       res.status(200).json({
@@ -253,11 +263,9 @@ exports.resetPassword = (Model) =>
       .update(req.params.token)
       .digest('hex')
 
-    console.log('hashedToken:', hashedToken)
-    console.log('token:', req.params.token)
     const user = await Model.findOne({
-      'user.passwordResetToken': hashedToken,
-      'user.passwordResetExpires': { $gt: Date.now() },
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
     })
     //2) If token is not expired && user => set new password
     if (!user) return next(new AppError('Token is invalid or expired', 400))
@@ -268,7 +276,6 @@ exports.resetPassword = (Model) =>
     user.passwordResetExpires = undefined
 
     await user.save()
-    console.log('user:')
 
     //3) Update changedPasswordAt property
     //in middleware
