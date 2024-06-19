@@ -5,54 +5,80 @@ const MCQAnswer = require('../../Models/Exams/Answers/MCQAnswerModel')
 const QuizAnswer = require('../../Models/Exams/Answers/QuizAnswerModel')
 const MEQAnswer = require('../../Models/Exams/Answers/MEQAnswerModel')
 const FinalExamStudentAnswer = require('../../Models/Exams/Answers/FinalExamStudentAnswerModel')
+const FinalExam = require('../../Models/Exams/FinalExamModel')
 const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const Student = require('../../Models/Users/StudentModel')
 const Certificate = require('../../Models/Student/CertificateModel')
 const Lecture = require('../../Models/Courses/LectureModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
+const Course = require('../../Models/Courses/CourseModel')
+
+exports.createCertificate = catchAsync(
+  async function (studentName, courseName, score) {},
+)
 
 // #region Final
 
 exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
+  //6- create certificates
+
   const { body } = req
-  req.body.student = req.student
+  req.body.student = req.student.id
 
-  // Create and mark MCQ answers
-  const answers = await MCQAnswer.create(body.mcqs)
-  await Promise.all(answers.map((answer) => answer.mark()))
+  //1- add mcq and meq to db------------------------
 
-  // Update body with created MCQ answers
-  body.mcqs = answers
-  const newBody = factory.exclude(body, [
+  //mcq
+  body.mcqs.forEach((mcq) => {
+    mcq.student = req.student.id
+  })
+  const mcqAnswers = await MCQAnswer.create(body.mcqs)
+  body.mcqs = mcqAnswers.map((answer) => answer.id)
+  body.meqs.forEach((meq) => {
+    meq.student = req.student.id
+  })
+
+  //meq
+  const meqAnswers = await MEQAnswer.create(body.meqs)
+  body.meqs = meqAnswers.map((answer) => answer.id)
+
+  //2- auto mark mcq and meq using AI ----------------
+  await Promise.all(mcqAnswers.map((answer) => answer.mark()))
+  await Promise.all(meqAnswers.map((answer) => answer.markAi()))
+
+  //3- create the body of answer-------------------
+  const answerBody = factory.exclude(body, [
     'score',
     'scoreFrom',
     'marked',
     'mcqScore',
     'meqScore',
   ])
-  // Create final exam answer
-  const finalAnswer = await FinalExamStudentAnswer.create(newBody)
+  const course = Course.findById(req.params.courseId)
+  const final = FinalExam.findOne({ course: course.id })
+  answerBody.student = req.student.id
+  answerBody.course = course.id
+  answerBody.exam = final.id
 
+  //4- submit------------
+  const finalAnswer = await FinalExamStudentAnswer.create(answerBody)
   // Find student and populate courseStats
-  const student = await Student.findById(req.student).populate('courseStats')
+
+  //5- edit courseStat
+  const courseStat = CourseStat.findOne({
+    student: req.student.id,
+    course: course.id,
+  })
+
+  courseStat.finalAnswers = finalAnswer.id
 
   // Assign final answer to courseStats
 
-  student.courseStats.finalAnswers = finalAnswer.id
-  await student.save()
+  await courseStat.save()
 
   // Check if student has passed the course and create certificate if needed
-  await student.checkAndCreateCertificate()
-
-  if (student.courseStats.passed) {
-    const certificate = await Certificate.create({
-      course: student.courseStats.course,
-      imageURL: 'URL_of_the_certificate_image',
-      Date: new Date(),
-    })
-    student.certificates.push(certificate)
-    await student.save()
+  if (courseStat.passed) {
+    this.createCertificate(req.student, course.text, courseStat.totalScore)
   }
 
   // Respond with success

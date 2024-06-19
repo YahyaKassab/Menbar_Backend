@@ -126,18 +126,6 @@ studentSchema.methods.assignFinalAnswer = async function (finalAnswerId) {
   await this.save()
 }
 
-studentSchema.methods.checkAndCreateCertificate = async function () {
-  if (this.courseStats.passed) {
-    const certificate = await Certificate.create({
-      course: this.courseStats.course,
-      imageURL: 'URL_of_the_certificate_image',
-      Date: new Date(),
-    })
-    this.certificates.push(certificate)
-    await this.save()
-  }
-}
-
 studentSchema.methods.executeStudentSignupLogic = async function () {
   // Populate this with courseStats and lectureStats
   await this.populate({

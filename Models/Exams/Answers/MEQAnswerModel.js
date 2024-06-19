@@ -12,7 +12,9 @@ const meqAnswerSchema = new mongoose.Schema(
       ref: 'MEQ',
     },
     answer: String,
-    score: Number,
+    scoreByTeacher: Number,
+    scoreByAi: Number,
+    keyWords: [String], //
     feedback: {
       text: String,
       date: {
@@ -25,6 +27,10 @@ const meqAnswerSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+meqAnswerSchema.methods.markAi = async function () {
+  //Mark using ai model
+}
 
 const MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
 module.exports = MEQAnswer

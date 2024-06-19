@@ -7,7 +7,7 @@ const certificateSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'A certificate must have a course'],
     },
-    
+
     student: {
       type: mongoose.Schema.ObjectId,
       ref: 'Student',
@@ -22,7 +22,6 @@ const certificateSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-
 
 const Certificate = mongoose.model('Certificate', certificateSchema)
 

@@ -13,13 +13,6 @@ const courseStatsSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'A stat must have a student'],
     },
-    //LectureStat
-    lecturesDone: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Lecture',
-      },
-    ], //Lecture
     finalAnswers: {
       type: mongoose.Schema.ObjectId,
       ref: 'FinalExamStudentAnswer',
@@ -39,17 +32,29 @@ courseStatsSchema.virtual('lectureStats', {
 })
 
 // Virtual for totalLecturesScore
-courseStatsSchema.virtual('totalLecturesScore').get(async function () {
+courseStatsSchema.virtual('totalLecturesScoreOutOf10').get(async function () {
   // Populate lecturesStats
   await this.populate('lecturesStats')
 
   // Check if lecturesStats exists and is populated
   if (this.lecturesStats && this.lecturesStats.length > 0) {
+    // Calculate the total possible score based on lecturesStats
+    const totalPossibleScore = this.lecturesStats.length * 3 // Each lectureQuiz is out of 3 points
+
     // Sum up the bestQuizScore of each lectureStat
-    return this.lecturesStats.reduce((total, lectureStat) => {
+    const totalScore = this.lecturesStats.reduce((total, lectureStat) => {
       return total + (lectureStat.bestQuizScore || 0)
     }, 0)
+
+    // Calculate percentage score out of 100
+    const percentageScore = (totalScore / totalPossibleScore) * 100
+
+    // Scale the percentage score to a score out of 10
+    const scoreOutOf10 = (percentageScore / 10).toFixed(1) // Round to one decimal place
+
+    return parseFloat(scoreOutOf10) // Convert to float (if needed) and return
   }
+
   // If lecturesStats doesn't exist or is empty, return 0
   return 0
 })

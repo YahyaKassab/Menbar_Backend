@@ -56,9 +56,7 @@ const cookieOptions = {
 exports.createSendToken = async (model, statusCode, req, res) => {
   // secret key must be at least 32 CHARS and UNIQUE
   //sending the token = automatically sign in with the created user
-  console.log('before sign')
   const token = signToken(model._id)
-  console.log('tokenSigned:', token)
   // we still are not using https
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
   res.cookie('jwt', token, cookieOptions)

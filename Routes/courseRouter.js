@@ -11,6 +11,35 @@ const router = express.Router()
 router.use('/:courseId/final', finalsRouter)
 
 // #region Guest & Student
+router.route('/cer').get(async (req, res) => {
+  try {
+    const score = 70
+    const courseName = 'Hadeeth'
+    const studentName = 'yaya'
+
+    if (!score || !courseName || !studentName) {
+      return res.status(400).send('Missing required fields')
+    }
+
+    const buffer = await courseController.createCertificate(
+      score,
+      courseName,
+      studentName,
+    )
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${studentName}_certificate.docx`,
+    )
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    )
+    res.send(buffer)
+  } catch (error) {
+    res.status(500).send('Internal Server Error')
+  }
+})
 router.route('/').get(courseController.getCourses)
 router.route('/guest/:id').get(courseController.getOneCourseGuests)
 // #endregion
