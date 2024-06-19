@@ -59,17 +59,20 @@ commentSchema.pre(/^find/, function (next) {
     path: 'student',
     select: ['Fname', 'Lname', 'photo'],
   })
-  this.populate({
-    path: 'teacher',
-    select: ['Fname', 'Lname', 'photo'],
-  })
-  this.populate({
-    path: 'replies',
-  })
+    .populate({
+      path: 'teacher',
+      select: ['Fname', 'Lname', 'photo'],
+    })
+    .populate({
+      path: 'replies',
+      populate: {
+        path: 'student',
+        select: ['Fname', 'Lname', 'photo'],
+      },
+    })
 
   next()
 })
-
 const Comment = mongoose.model('Comment', commentSchema)
 
 module.exports = Comment

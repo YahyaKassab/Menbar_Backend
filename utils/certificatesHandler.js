@@ -1,6 +1,5 @@
 const fs = require('fs')
 const PDFDocument = require('pdfkit')
-const fs = require('fs')
 exports.createCertificate = async (name, score, course) => {
   // Create the PDF document
   const doc = new PDFDocument({
