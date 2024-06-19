@@ -3,11 +3,18 @@ const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Comment = require('../../Models/Courses/CommentModel')
 
-exports.createComment = factory.createOneExclude(Comment, [
-  'replies',
-  'totalScore',
-  'createdAt',
-])
+exports.createComment = catchAsync(async (req, res, next) => {
+  const newDoc = await Comment.create(
+    factory.exclude(req.body, ['replies', 'totalScore', 'createdAt']),
+  )
+  await newDoc.populate({ path: 'student', select: 'Fname Lname photo' })
+  res.status(201).json({
+    status: 'Success',
+    data: newDoc,
+  })
+})
+
+factory.createOneExclude(Comment, ['replies', 'totalScore', 'createdAt'])
 exports.getOneComment = factory.getOne(Comment)
 exports.deleteCommentAdmin = factory.deleteOne(Comment)
 exports.updateComment = catchAsync(async (req, res, next) => {
