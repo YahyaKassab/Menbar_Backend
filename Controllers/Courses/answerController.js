@@ -19,8 +19,6 @@ const { uploadPdf } = require('../../utils/cloudinaryMiddleware')
 // #region Final
 
 exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
-  //6- create certificates
-
   const { body } = req
   req.body.student = req.student.id
 
@@ -75,13 +73,28 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   await courseStat.save()
 
   // Check if student has passed the course and create certificate if needed
+
+  //6- create certificates
+
   if (courseStat.passed) {
     const name = req.student.Fname + ' ' + req.student.Lname
-    const certificatePath = createCertificate(name, courseStat.totalScore, course.subject)
-    await uploadPdf
-    
+    createCertificate(name, courseStat.totalScore, course.subject)
+      .then((pdfBuffer) => {
+        return uploadPdf(req, pdfBuffer)
+      })
+      .then(() => {
+        next()
+      })
+      .catch((err) => {
+        console.error('Error uploading PDF:', err)
+        next(err) // Pass the error to the next middleware
+      })
+    await Certificate.create({
+      student: req.student.id,
+      course: course.id,
+      pdfURL: req.body.pdfURL,
+    })
   }
-
   // Respond with success
   res.status(201).json({
     status: 'Success',

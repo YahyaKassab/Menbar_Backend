@@ -25,11 +25,18 @@ exports.uploadBookIMG = catchAsync(async (req, res, next) => {
   }
   next()
 })
-exports.uploadPdf =  catchAsync(async (req, res, next, filePath) => {
-  const result = await cloudinary.uploader.upload(filePath, {
-    resource_type: 'raw', // Because PDF is not an image
-    folder:'certificates/'
-  });
-  req.body.pdfURL = result.secure_url
-next()
-})
+exports.uploadPdf = async (req, fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: 'raw', folder: 'certificates/' },
+      (error, result) => {
+        if (error) {
+          return reject(error)
+        }
+        req.body.pdfURL = result.secure_url
+        resolve(result)
+      },
+    )
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream)
+  })
+}
