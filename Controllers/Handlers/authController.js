@@ -159,7 +159,7 @@ exports.protect = (Model) => async (req, res, next) => {
     req.userId = decoded.id
 
     // 3) Check if user exists
-    const currentUser = await Model.findOne({ _id: req.userId })
+    const currentUser = await Model.findById(req.userId)
     if (!currentUser) throw new AppError('The user no longer exists', 401)
 
     // 4) Check if user changed password after token was issued

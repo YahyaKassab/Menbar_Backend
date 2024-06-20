@@ -89,95 +89,83 @@ exports.assignUserToBody = (req, res, next) => {
   else if (req.teacher) req.body.teacher = req.teacher._id
   next()
 }
+
 exports.like = catchAsync(async (req, res, next) => {
   const id = req.params.id
-  let doc = null
+  let userId = null
+
   if (req.student) {
     userId = req.student.id
-
-    doc = await Comment.findOneAndUpdate(
-      {
-        _id: id, // Ensure that the comment ID matches
-      },
-      {
-        $addToSet: { likes: userId }, // Add req.student.id to the likes array
-      },
-      {
-        new: true, // Return the updated doc, not the original one
-        runValidators: true, // Will run validation on DB
-      },
-    )
-
-    if (!doc) {
-      return next(new AppError('No document found or No permission', 404))
-    }
   } else if (req.teacher) {
     userId = req.teacher.id
-
-    doc = await Comment.findOneAndUpdate(
-      {
-        _id: id, // Ensure that the comment ID matches
-      },
-      {
-        $addToSet: { likes: userId }, // Add req.student.id to the likes array
-      },
-      {
-        new: true, // Return the updated doc, not the original one
-        runValidators: true, // Will run validation on DB
-      },
-    )
-
-    if (!doc) {
-      return next(new AppError('No document found or No permission', 404))
-    }
   }
 
-  res.status(200).json({
-    status: 'Success',
-    data: doc,
-  })
+  if (!userId) {
+    return next(new AppError('User not authenticated', 401))
+  }
+
+  try {
+    const comment = await Comment.findById(id)
+
+    if (!comment) {
+      return next(new AppError('No comment found', 404))
+    }
+
+    const isLiked = comment.likes.includes(userId)
+    const update = isLiked
+      ? { $pull: { likes: userId } }
+      : { $addToSet: { likes: userId } }
+
+    const updatedComment = await Comment.findByIdAndUpdate(id, update, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure schema validation
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: updatedComment,
+    })
+  } catch (error) {
+    return next(new AppError('Error processing request', 500))
+  }
 })
+
 exports.disLike = catchAsync(async (req, res, next) => {
   const id = req.params.id
-  let doc = null
+  let userId = null
+
   if (req.student) {
     userId = req.student.id
-
-    doc = await Comment.findOneAndUpdate(
-      {
-        _id: id, // Ensure that the comment ID matches
-      },
-      {
-        $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
-      },
-      {
-        new: true, // Return the updated doc, not the original one
-        runValidators: true, // Will run validation on DB
-      },
-    )
   } else if (req.teacher) {
     userId = req.teacher.id
-
-    doc = await Comment.findOneAndUpdate(
-      {
-        _id: id, // Ensure that the comment ID matches
-      },
-      {
-        $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
-      },
-      {
-        new: true, // Return the updated doc, not the original one
-        runValidators: true, // Will run validation on DB
-      },
-    )
   }
 
-  if (!doc) {
-    return next(new AppError('No document found or No permission', 404))
+  if (!userId) {
+    return next(new AppError('User not authenticated', 401))
   }
 
-  res.status(200).json({
-    status: 'Success',
-    data: doc,
-  })
+  try {
+    const comment = await Comment.findById(id)
+
+    if (!comment) {
+      return next(new AppError('No comment found', 404))
+    }
+
+    const isDisliked = comment.disLikes.includes(userId)
+    const update = isDisliked
+      ? { $pull: { disLikes: userId } }
+      : { $addToSet: { disLikes: userId } }
+
+    const updatedComment = await Comment.findByIdAndUpdate(id, update, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure schema validation
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: updatedComment,
+    })
+  } catch (error) {
+    return next(new AppError('Error processing request', 500))
+  }
 })

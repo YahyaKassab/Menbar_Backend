@@ -11,13 +11,11 @@ const router = express.Router({ mergeParams: true })
 // #region Student
 router.patch(
   '/like/:id',
-  authController.protect(Teacher),
   authController.protect(Student),
   commentController.like,
 )
 router.patch(
   '/dislike/:id',
-  authController.protect(Teacher),
   authController.protect(Student),
   commentController.disLike,
 )
@@ -57,6 +55,17 @@ router.post(
   factory.setLectureIds,
   commentController.assignUserToBody,
   commentController.createComment,
+)
+
+router.patch(
+  '/likeTeacher/:id',
+  authController.protect(Teacher),
+  commentController.like,
+)
+router.patch(
+  '/dislikeTeacher/:id',
+  authController.protect(Teacher),
+  commentController.disLike,
 )
 
 router.post(
