@@ -27,6 +27,11 @@ router.get(
 
   studentController.getOneStudent,
 )
+router.get(
+  '/certificates',
+  authController.protect(Student),
+  studentController.getCertificates,
+)
 router.patch(
   '/update-me',
   authController.protect(Student),

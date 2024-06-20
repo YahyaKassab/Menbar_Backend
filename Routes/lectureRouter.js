@@ -13,6 +13,8 @@ const router = express.Router({ mergeParams: true })
 router.use('/:lectureId/comments', commentRouter)
 router.use('/:lectureId/quiz', quizRouter)
 
+router.post('/allQuizzes', examController.createAllFinals)
+
 router.get('/next/:order/:course', lectureController.nextLecture)
 router.get('/prev/:order/:course', lectureController.prevLecture)
 

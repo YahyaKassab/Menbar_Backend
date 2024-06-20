@@ -75,15 +75,15 @@ exports.updateOne = (Model, excludedFields) =>
     // console.log("Asdasdasdasd",req.params.id);
     // const id = req.params.id
 
-    let body = req.body;
+    let body = req.body
 
     // Convert the req.body to a plain object if it has a null prototype
     if (body && Object.getPrototypeOf(body) === null) {
-      body = Object.assign({}, body);
+      body = Object.assign({}, body)
     }
 
     if (excludedFields) {
-      body = this.exclude(body, excludedFields);
+      body = this.exclude(body, excludedFields)
     }
 
     const doc = await Model.findByIdAndUpdate(req.params.id, body, {

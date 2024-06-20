@@ -192,6 +192,8 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
 
   const quiz = await LectureQuiz.findById(quizAnswer.quiz)
 
+  quizAnswer.scoreFrom = quiz.scoreFrom
+
   // #region Update lecture grades, scores, done?
   lectureStat.latestQuizGrade = quizAnswer
   lectureStat.latestQuizScore = quizAnswer.score
@@ -199,7 +201,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
     lectureStat.bestQuizScore || 0,
     quizAnswer.score || 0,
   )
-  lectureStat.done = lectureStat.bestQuizScore === quizAnswer.scoreFrom
+  lectureStat.done = lectureStat.bestQuizScore === quiz.scoreFrom
 
   await lectureStat.save()
   // #endregion
@@ -207,10 +209,15 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   // #region Update open property in the next lecture
   const lecture = await Lecture.findById(req.body.lecture)
   const nextOrder = lecture.order + 1
+  const courseStatId = lectureStat.courseStat.toString()
+  const nextLecture = await Lecture.findOne({
+    course: lecture.course,
+    order: nextOrder,
+  })
   const nextLectureStat = await LectureStat.findOne({
     student: req.body.student,
-    order: nextOrder,
-    courseStat: lectureStat.courseStat,
+    lecture: nextLecture.id,
+    courseStat: courseStatId,
   })
 
   if (nextLectureStat && lectureStat.done) {

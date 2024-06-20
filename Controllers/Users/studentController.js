@@ -6,6 +6,7 @@ const authController = require('../Handlers/authController')
 const Course = require('../../Models/Courses/CourseModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
+const Certificate = require('../../Models/Student/CertificateModel')
 
 //middleware to set the input id from the logged in user
 exports.getMe = (req, res, next) => {
@@ -119,6 +120,17 @@ exports.createStudent = factory.createOneExclude(Student)
 exports.getAllStudents = factory.getAll(Student)
 exports.getOneStudent = factory.getOne(Student)
 exports.updateStudent = factory.updateOne(Student)
+
+exports.getCertificates = catchAsync(async (req, res, next) => {
+  console.log('getAll:')
+  const certificates = await Certificate.find({ student: req.student.id })
+  //SEND RESPONSE
+  res.status(200).json({
+    status: 'Success',
+    results: certificates.length,
+    data: { data: certificates },
+  })
+})
 
 exports.getCourseStats = catchAsync(async (req, res, next) => {
   // Get student ID from request

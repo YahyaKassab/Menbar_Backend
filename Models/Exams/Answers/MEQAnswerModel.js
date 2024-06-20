@@ -14,7 +14,7 @@ const meqAnswerSchema = new mongoose.Schema(
     answer: String,
     scoreByTeacher: Number,
     scoreByAi: Number,
-    keyWords: [String], //
+
     feedback: {
       text: String,
       date: {

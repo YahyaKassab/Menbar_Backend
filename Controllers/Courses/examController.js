@@ -6,6 +6,7 @@ const MCQ = require('../../Models/Exams/MCQModel')
 const MEQ = require('../../Models/Exams/MEQModel')
 const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
 const FinalExam = require('../../Models/Exams/FinalExamModel')
+const Course = require('../../Models/Courses/CourseModel')
 
 // #region Final
 exports.getAllFinals = factory.getAll(FinalExam)
@@ -158,6 +159,99 @@ exports.createQuiz = catchAsync(async (req, res, next) => {
     data: newDoc,
   })
 })
+
+exports.createAllQuizzes = catchAsync(async (req, res, next) => {
+  // Fetch all lectures
+  const lectures = await Lecture.find()
+
+  const quizzes = []
+
+  // Iterate through each lecture
+  for (const lecture of lectures) {
+    // Fetch MCQs for the current lecture
+    const mcqs = await MCQ.find({ lecture: lecture._id })
+
+    if (mcqs.length > 0) {
+      // Randomly select 3 MCQs
+      const selectedMCQs = getRandomElements(mcqs, 3)
+
+      // Create a new quiz
+      const quiz = new LectureQuiz({
+        lecture: lecture._id,
+        mcq: selectedMCQs.map((mcq) => mcq._id),
+      })
+
+      await quiz.save()
+      quizzes.push(quiz)
+    }
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      quizzes,
+    },
+  })
+})
+
+// Utility function to get 'n' random elements from an array
+function getRandomElements(arr, n) {
+  const result = new Array(n)
+  let len = arr.length
+  const taken = new Array(len)
+
+  if (n > len) {
+    throw new RangeError(
+      'getRandomElements: more elements taken than available',
+    )
+  }
+
+  while (n--) {
+    const x = Math.floor(Math.random() * len)
+    result[n] = arr[x in taken ? taken[x] : x]
+    taken[x] = --len in taken ? taken[len] : len
+  }
+
+  return result
+}
+
+exports.createAllFinals = catchAsync(async (req, res, next) => {
+  // Fetch all courses
+  const courses = await Course.find()
+
+  const finals = []
+
+  // Iterate through each course
+  for (const course of courses) {
+    // Fetch MCQs for the current course
+    const mcqs = await MCQ.find({ course: course._id })
+
+    // Fetch MEQs for the current course
+    const meqs = await MEQ.find({ course: course._id })
+
+    // Create a new final exam
+    const finalExam = new FinalExam({
+      course: course._id,
+      durationInMins: 120, // Example duration
+      mcqs: mcqs.map((mcq) => mcq._id),
+      meqs: meqs.map((meq) => meq._id),
+      opensAt: new Date(), // Example opens at current date/time
+      closesAt: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // Example closes after 7 days
+      year: new Date().getFullYear(), // Example year
+    })
+
+    await finalExam.save()
+    finals.push(finalExam)
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      finals,
+    },
+  })
+})
+
 exports.getAllQuizzes = factory.getAll(LectureQuiz)
 exports.updateQuiz = catchAsync(async (req, res, next) => {
   const doc = await LectureQuiz.findOneAndUpdate(
