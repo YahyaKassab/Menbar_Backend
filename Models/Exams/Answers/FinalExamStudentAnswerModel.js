@@ -83,6 +83,8 @@ finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
   return 0 // Return 0 if meqs array is empty or undefined
 })
 
+
+//Score of 90
 finalExamStudentAnswerSchema.virtual('score').get(function () {
   // Retrieve the scoreFrom value from the document
   const scoreFrom = this.scoreFrom || 1 // Default to 1 if scoreFrom is not defined (to prevent division by zero)
@@ -95,7 +97,7 @@ finalExamStudentAnswerSchema.virtual('score').get(function () {
   const totalScore = totalMcqScore + totalMeqScore
 
   // Calculate percentage
-  const percentageScore = (totalScore / scoreFrom) * 100
+  const percentageScore = (totalScore / scoreFrom) * 90
 
   return percentageScore
 })

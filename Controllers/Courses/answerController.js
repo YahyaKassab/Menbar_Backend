@@ -13,10 +13,8 @@ const Certificate = require('../../Models/Student/CertificateModel')
 const Lecture = require('../../Models/Courses/LectureModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
 const Course = require('../../Models/Courses/CourseModel')
-
-exports.createCertificate = catchAsync(
-  async function (studentName, courseName, score) {},
-)
+const { createCertificate } = require('../../utils/certificatesHandler')
+const { uploadPdf } = require('../../utils/cloudinaryMiddleware')
 
 // #region Final
 
@@ -78,7 +76,10 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
   // Check if student has passed the course and create certificate if needed
   if (courseStat.passed) {
-    this.createCertificate(req.student, course.text, courseStat.totalScore)
+    const name = req.student.Fname + ' ' + req.student.Lname
+    const certificatePath = createCertificate(name, courseStat.totalScore, course.subject)
+    await uploadPdf
+    
   }
 
   // Respond with success

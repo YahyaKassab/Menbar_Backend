@@ -14,8 +14,11 @@ const certificateSchema = new mongoose.Schema(
       required: [true, 'A certificate must have a student'],
     },
 
-    imageURL: String,
-    Date: Date,
+    pdfURL: String,
+    Date: {
+      type: Date,
+      default: Date.now(),
+    },
   },
   {
     toJSON: { virtuals: true },
