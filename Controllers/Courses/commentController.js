@@ -89,7 +89,6 @@ exports.assignUserToBody = (req, res, next) => {
   else if (req.teacher) req.body.teacher = req.teacher._id
   next()
 }
-
 exports.like = catchAsync(async (req, res, next) => {
   const id = req.params.id
   let userId = null
@@ -114,7 +113,10 @@ exports.like = catchAsync(async (req, res, next) => {
     const isLiked = comment.likes.includes(userId)
     const update = isLiked
       ? { $pull: { likes: userId } }
-      : { $addToSet: { likes: userId } }
+      : {
+          $addToSet: { likes: userId },
+          $pull: { disLikes: userId }, // Ensure the user is not in dislikes
+        }
 
     const updatedComment = await Comment.findByIdAndUpdate(id, update, {
       new: true, // Return the updated document
@@ -129,7 +131,6 @@ exports.like = catchAsync(async (req, res, next) => {
     return next(new AppError('Error processing request', 500))
   }
 })
-
 exports.disLike = catchAsync(async (req, res, next) => {
   const id = req.params.id
   let userId = null
@@ -154,7 +155,10 @@ exports.disLike = catchAsync(async (req, res, next) => {
     const isDisliked = comment.disLikes.includes(userId)
     const update = isDisliked
       ? { $pull: { disLikes: userId } }
-      : { $addToSet: { disLikes: userId } }
+      : {
+          $addToSet: { disLikes: userId },
+          $pull: { likes: userId }, // Ensure the user is not in likes
+        }
 
     const updatedComment = await Comment.findByIdAndUpdate(id, update, {
       new: true, // Return the updated document
