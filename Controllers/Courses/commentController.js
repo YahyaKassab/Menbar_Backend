@@ -91,27 +91,45 @@ exports.assignUserToBody = (req, res, next) => {
 }
 exports.like = catchAsync(async (req, res, next) => {
   const id = req.params.id
+  let doc = null
   if (req.student) {
     userId = req.student.id
+
+    doc = await Comment.findOneAndUpdate(
+      {
+        _id: id, // Ensure that the comment ID matches
+      },
+      {
+        $addToSet: { likes: userId }, // Add req.student.id to the likes array
+      },
+      {
+        new: true, // Return the updated doc, not the original one
+        runValidators: true, // Will run validation on DB
+      },
+    )
+
+    if (!doc) {
+      return next(new AppError('No document found or No permission', 404))
+    }
   } else if (req.teacher) {
     userId = req.teacher.id
-  }
 
-  const doc = await Comment.findOneAndUpdate(
-    {
-      _id: id, // Ensure that the comment ID matches
-    },
-    {
-      $addToSet: { likes: userId }, // Add req.student.id to the likes array
-    },
-    {
-      new: true, // Return the updated doc, not the original one
-      runValidators: true, // Will run validation on DB
-    },
-  )
+    doc = await Comment.findOneAndUpdate(
+      {
+        _id: id, // Ensure that the comment ID matches
+      },
+      {
+        $addToSet: { likes: userId }, // Add req.student.id to the likes array
+      },
+      {
+        new: true, // Return the updated doc, not the original one
+        runValidators: true, // Will run validation on DB
+      },
+    )
 
-  if (!doc) {
-    return next(new AppError('No document found or No permission', 404))
+    if (!doc) {
+      return next(new AppError('No document found or No permission', 404))
+    }
   }
 
   res.status(200).json({
@@ -121,24 +139,38 @@ exports.like = catchAsync(async (req, res, next) => {
 })
 exports.disLike = catchAsync(async (req, res, next) => {
   const id = req.params.id
+  let doc = null
   if (req.student) {
     userId = req.student.id
+
+    doc = await Comment.findOneAndUpdate(
+      {
+        _id: id, // Ensure that the comment ID matches
+      },
+      {
+        $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
+      },
+      {
+        new: true, // Return the updated doc, not the original one
+        runValidators: true, // Will run validation on DB
+      },
+    )
   } else if (req.teacher) {
     userId = req.teacher.id
-  }
 
-  const doc = await Comment.findOneAndUpdate(
-    {
-      _id: id, // Ensure that the comment ID matches
-    },
-    {
-      $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
-    },
-    {
-      new: true, // Return the updated doc, not the original one
-      runValidators: true, // Will run validation on DB
-    },
-  )
+    doc = await Comment.findOneAndUpdate(
+      {
+        _id: id, // Ensure that the comment ID matches
+      },
+      {
+        $addToSet: { disLikes: userId }, // Add req.student.id to the likes array
+      },
+      {
+        new: true, // Return the updated doc, not the original one
+        runValidators: true, // Will run validation on DB
+      },
+    )
+  }
 
   if (!doc) {
     return next(new AppError('No document found or No permission', 404))

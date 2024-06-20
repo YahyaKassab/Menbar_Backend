@@ -11,14 +11,14 @@ const router = express.Router({ mergeParams: true })
 // #region Student
 router.patch(
   '/like/:id',
-  authController.protect(Student),
   authController.protect(Teacher),
+  authController.protect(Student),
   commentController.like,
 )
 router.patch(
   '/dislike/:id',
-  authController.protect(Student),
   authController.protect(Teacher),
+  authController.protect(Student),
   commentController.disLike,
 )
 router.route('/:id').get(commentController.getOneComment)
