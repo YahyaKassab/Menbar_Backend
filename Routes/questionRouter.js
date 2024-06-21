@@ -4,7 +4,8 @@ const authController = require('../Controllers/Handlers/authController')
 const studentController = require('../Controllers/Users/studentController')
 const Student = require('../Models/Users/StudentModel')
 const Teacher = require('../Models/Users/TeacherModel')
-
+const { uploadQuestionImage } = require('../utils/cloudinaryMiddleware')
+const upload = require('../multer')
 const router = express.Router()
 router.get('/ids', questionController.ids)
 
@@ -14,8 +15,11 @@ router.post(
   authController.protect(Student),
   authController.restrictTo('Student'),
   studentController.setStudentId,
+  upload.single('imageURL'),
+  uploadQuestionImage,
   questionController.askQuestion,
 )
+
 router
   .route('/:id')
   .patch(

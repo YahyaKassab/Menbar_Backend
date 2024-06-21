@@ -40,3 +40,15 @@ exports.uploadPdf = async (req, fileBuffer) => {
     streamifier.createReadStream(fileBuffer).pipe(uploadStream)
   })
 }
+
+exports.uploadQuestionImage = catchAsync(async (req, res, next) => {
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'questions/',
+    })
+
+    req.body.imageURL = result.secure_url
+    console.log(result.secure_url)
+  }
+  next()
+})

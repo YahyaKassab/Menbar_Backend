@@ -11,6 +11,7 @@ const router = express.Router({ mergeParams: true })
 
 // #region Student
 router.get('/', authController.protect(Student), examController.getFinal)
+router.post('/report-ai/:answerId', answerController.reportAi)
 router
   .route('/answers')
   .post(

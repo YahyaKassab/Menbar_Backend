@@ -94,9 +94,9 @@ const teacherSchema = new mongoose.Schema(
       },
       required: false,
     },
-  // #endregion
-    
-  examsMarked: [
+    // #endregion
+
+    examsMarked: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'FinalExamStudentAnswer',

@@ -10,7 +10,7 @@ const router = express.Router()
 router
   .route('/')
   .get(bookController.getAllBooks)
-  .post(upload.single('photo'), uploadBookIMG, bookController.createBook)
+  .post(upload.single('imageURL'), uploadBookIMG, bookController.createBook)
 router.use(
   authController.protect(Teacher),
   authController.restrictTo('Admin', 'Teacher'),

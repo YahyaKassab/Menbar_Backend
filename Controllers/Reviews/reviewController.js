@@ -4,7 +4,7 @@ const factory = require('../Handlers/handlerFactory')
 const catchAsync = require('../../utils/catchAsync')
 
 exports.createReview = catchAsync(async (req, res, next) => {
-  req.body.student = req.student.id
+  // req.body.student = req.student.id
   newDoc = await Review.create(req.body)
   res.status(201).json({
     status: 'Success',

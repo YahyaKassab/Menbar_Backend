@@ -1,6 +1,6 @@
 const fs = require('fs')
 const PDFDocument = require('pdfkit')
-exports.createCertificate = async (name, score, course) => {
+exports.createCertificate = async (name, subject) => {
   // Create the PDF document
   const doc = new PDFDocument({
     layout: 'landscape',
@@ -21,11 +21,11 @@ exports.createCertificate = async (name, score, course) => {
   doc.pipe(stream)
 
   // Draw the first certificate image on top (if needed)
-  const certificatePath = `Certificates/certificate${course}.png`
+  const certificatePath = `Certificates/${subject}.png`
   doc.image(certificatePath, 0, 0, { width: 900, height: 600 })
 
   // Load an Arabic font (Amiri-Regular in this case)
-  doc.font('fonts/Amiri-Regular.ttf')
+  doc.font('Fonts/DTHULUTH.ttf')
 
   // Function to reverse the order of words in Arabic text
   function reverseArabicText(text) {
@@ -42,25 +42,8 @@ exports.createCertificate = async (name, score, course) => {
   const reversedName = reverseArabicText(name)
 
   // Draw the name with reversed order
-  doc.fontSize(60).text(reversedName, 15, 200, {
+  doc.fontSize(60).text(reversedName, 100, 315, {
     align: 'center',
-  })
-
-  // Draw the score
-  doc.fontSize(60).text(`${score}%`, 20, 330, {
-    align: 'center',
-  })
-
-  const today = new Date()
-  const day = String(today.getDate()).padStart(2, '0')
-  const month = String(today.getMonth() + 1).padStart(2, '0') // Months are zero-indexed
-  const year = String(today.getFullYear()).slice(-2)
-
-  // Format the date as dd/mm/yy
-  const formattedDate = `${day}/${month}/${year}`
-
-  doc.fontSize(30).text(formattedDate, 2, 430, {
-    align: 'left',
   })
 
   // Finalize the PDF and end the stream

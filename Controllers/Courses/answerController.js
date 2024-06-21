@@ -13,6 +13,7 @@ const Certificate = require('../../Models/Student/CertificateModel')
 const Lecture = require('../../Models/Courses/LectureModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
 const Course = require('../../Models/Courses/CourseModel')
+const ReportAi = require('../../Models/Exams/Answers/ReportAiModel')
 const { createCertificate } = require('../../utils/certificatesHandler')
 const { uploadPdf } = require('../../utils/cloudinaryMiddleware')
 
@@ -78,7 +79,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
   if (courseStat.passed) {
     const name = req.student.Fname + ' ' + req.student.Lname
-    createCertificate(name, courseStat.totalScore, course.subject)
+    createCertificate(name, course.subject)
       .then((pdfBuffer) => {
         return uploadPdf(req, pdfBuffer)
       })
@@ -276,3 +277,12 @@ exports.setQuizAnswerIds = async (req, res, next) => {
     next(error)
   }
 }
+
+exports.reportAi = catchAsync(async (req, res, next) => {
+  req.body.answer = req.params.answerId
+  newDoc = await ReportAi.create(req.body)
+  res.status(201).json({
+    status: 'Success',
+    data: newDoc,
+  })
+})

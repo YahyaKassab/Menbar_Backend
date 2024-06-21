@@ -83,7 +83,6 @@ finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
   return 0 // Return 0 if meqs array is empty or undefined
 })
 
-
 //Score of 90
 finalExamStudentAnswerSchema.virtual('score').get(function () {
   // Retrieve the scoreFrom value from the document
@@ -91,7 +90,7 @@ finalExamStudentAnswerSchema.virtual('score').get(function () {
 
   // Calculate the total score based on actual scores
   const totalMcqScore = this.mcqScore || 0
-  const totalMeqScore = this.meqScoreTeacher || this.meqScoreAi || 0
+  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0
 
   // Calculate total score
   const totalScore = totalMcqScore + totalMeqScore

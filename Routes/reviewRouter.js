@@ -11,9 +11,8 @@ router.get('/ids', reviewController.ids)
 // #region Student
 router.post(
   '/',
-  authController.protect(Student),
-  authController.restrictTo('Student'),
-  studentController.getMe,
+  // authController.protect(Student),
+  // studentController.getMe,
   reviewController.createReview,
 )
 // #endregion
