@@ -51,6 +51,10 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       select: false,
     },
     durationInMins: Number,
+    mcqScore: Number,
+    meqScoreTeacher: Number,
+    meqScoreAi: Number,
+    score: Number,
   },
   {
     toJSON: { virtuals: true },
@@ -58,70 +62,6 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
   },
 )
 
-// finalExamStudentAnswerSchema.statics.createFinalAnswer = async function (body) {
-//   const newBody = factory.exclude(body, ['score', 'scoreFrom', 'marked'])
-//   return await this.create(newBody)
-// }
-// Virtual for mcqScore
-finalExamStudentAnswerSchema.virtual('mcqScore').get(function () {
-  if (this.mcqs && this.mcqs.length > 0) {
-    const score = this.mcqs.filter((mcq) => mcq.correct).length
-    const percentage = score / this.mcqs.length
-    return percentage
-  }
-  return 0
-})
-
-finalExamStudentAnswerSchema.virtual('meqScoreTeacher').get(function () {
-  if (this.meqs && this.meqs.length > 0) {
-    return this.meqs.reduce((totalScore, meq) => {
-      const score = totalScore + (meq.scoreByTeacher || 0)
-
-      return score / (this.meqs.length * 5)
-    }, 0)
-  }
-  return 0
-})
-
-finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
-  if (this.meqs && this.meqs.length > 0) {
-    const totalScore = this.meqs.reduce(
-      (total, meq) => total + (meq.scoreByAi || 0),
-      0,
-    )
-    const maximumScore = this.meqs.length * 5 // Maximum score for all MEQs
-    const normalizedScore = totalScore / maximumScore
-
-    return normalizedScore // Normalized score out of 1
-  }
-  return 0
-})
-
-//Score of 90
-finalExamStudentAnswerSchema.virtual('score').get(function () {
-  const totalMcqScore = this.mcqScore || 0
-  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0
-
-  const scoreOutOf90 = (totalMcqScore + totalMeqScore) * 45
-
-  return scoreOutOf90
-})
-
-// const fillEmbedded = (fieldToFill, Model) => {
-//   catchAsync(async function (next) {
-//     const fieldPromises = this.fieldToFill.map(
-//       async (id) => await Model.findById(id),
-//     )
-//     this.field = await Promise.all(fieldPromises)
-//     next()
-//   })
-// }
-
-// finalExamStudentAnswerSchema.pre(
-//   'save',
-//   () => fillEmbedded(this.mcqs, MCQAnswer),
-//   () => fillEmbedded(this.meqs, MEQAnswer),
-// )
 const FinalExamStudentAnswer = mongoose.model(
   'FinalExamStudentAnswer',
   finalExamStudentAnswerSchema,

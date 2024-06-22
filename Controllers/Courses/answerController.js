@@ -23,7 +23,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   const { body } = req
   req.body.student = req.student.id
 
-  //1- add mcq and meq to db------------------------
+  // #region 1- add mcq and meq to db
 
   //mcq
   body.mcqs.forEach((mcq) => {
@@ -38,12 +38,12 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   //meq
   const meqAnswers = await MEQAnswer.create(body.meqs)
   body.meqs = meqAnswers.map((answer) => answer.id)
-
-  //2- auto mark mcq and meq using AI ----------------
+  // #endregion
+  // #region 2- auto mark mcq and meq using AI ----------------
   await Promise.all(mcqAnswers.map((answer) => answer.mark()))
   await Promise.all(meqAnswers.map((answer) => answer.markAi()))
-
-  //3- create the body of answer-------------------
+  // #endregion
+  // #region 3- create the body of answer-------------------
   const answerBody = factory.exclude(body, [
     'score',
     'scoreFrom',
@@ -56,23 +56,62 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   const courseStat = await CourseStat.findOne({
     student: req.student.id,
     course: course.id,
-  }).populate(['lectureStats'])
+  }).populate({ path: 'lectureStats', select: 'bestQuizScore done' })
 
   answerBody.student = req.student.id
   answerBody.course = course.id
   answerBody.exam = final.id
   answerBody.durationInMins = 30
   answerBody.courseStat = courseStat.id
-
-  //4- submit------------
+  // #endregion
+  // #region 4- submit------------
 
   const finalAnswer = await FinalExamStudentAnswer.create(answerBody)
   await finalAnswer.populate(['mcqs', 'meqs']) // Find student and populate courseStats
+  // #endregion
+  // #region 5- assign scores in finalAnswer
+  // #region assign mcqScore
+  if (finalAnswer.mcqs && finalAnswer.mcqs.length > 0) {
+    const score = finalAnswer.mcqs.filter((mcq) => mcq.correct).length
+    const percentage = score / finalAnswer.mcqs.length
+    finalAnswer.mcqScore = percentage
+  } else finalAnswer.mcqScore = 0
+  // #endregion
+  // #region assign meqScoreTeacher
+  if (finalAnswer.meqs && finalAnswer.meqs.length > 0) {
+    finalAnswer.meqScoreTeacher = finalAnswer.meqs.reduce((totalScore, meq) => {
+      const score = totalScore + (meq.scoreByTeacher || 0)
 
-  //5- edit courseStat
+      return score / (finalAnswer.meqs.length * 5)
+    }, 0)
+  } else finalAnswer.meqScoreTeacher = 0
+  // #endregion
+  // #region assign meqScoreAi
+  if (finalAnswer.meqs && finalAnswer.meqs.length > 0) {
+    const totalScore = finalAnswer.meqs.reduce(
+      (total, meq) => total + (meq.scoreByAi || 0),
+      0,
+    )
+    const maximumScore = finalAnswer.meqs.length * 5 // Maximum score for all MEQs
+    const normalizedScore = totalScore / maximumScore
 
-  // Assign final answer to courseStats
+    finalAnswer.meqScoreAi = normalizedScore // Normalized score out of 1
+  } else finalAnswer.meqScoreAi = 0
+  // #endregion
+  // #region assign score (out of 90)
+  const totalMcqScore = finalAnswer.mcqScore || 0
+  const totalMeqScore =
+    finalAnswer.meqScoreAi || finalAnswer.meqScoreTeacher || 0
 
+  const scoreOutOf90 = (totalMcqScore + totalMeqScore) * 45
+
+  finalAnswer.score = scoreOutOf90
+
+  await finalAnswer.save()
+  // #endregion
+  // #endregion
+  // #region 6- assign scores in courseStat
+  // #region assign totalLecturesScoreOutOf10
   if (courseStat.lectureStats && courseStat.lectureStats.length > 0) {
     const totalPossibleScore = courseStat.lectureStats.length * 3 // Each lectureQuiz is out of 3 points
 
@@ -89,18 +128,22 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
     courseStat.totalLecturesScoreOutOf10 = parseFloat(scoreOutOf10) // Convert to float (if needed) and return
   } else courseStat.totalLecturesScoreOutOf10 = 0
-
+  // #endregion
+  // #region assign totalScore and passed
   const finalAnswersScore = finalAnswer.score
   const totalLecturesScore = courseStat.totalLecturesScoreOutOf10 || 0
 
   courseStat.totalScore = totalLecturesScore + finalAnswersScore
 
   courseStat.passed = courseStat.totalScore >= 50
+  await courseStat.save()
+  // #endregion
+  // #endregion
 
   if (courseStat.passed) {
-    const name = `${req.student.Fname} ${req.student.Lname}`
-
     try {
+      // #region 7- create Certificate
+      const name = `${req.student.Fname} ${req.student.Lname}`
       const pdfBuffer = await createCertificate(name, course.subject)
       await uploadPdf(req, pdfBuffer)
 
@@ -109,21 +152,22 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
         course: course.id,
         pdfURL: req.body.pdfURL,
       })
-
+      await courseStat.populate({ path: 'finalAnswers' })
       res.status(201).json({
         status: 'Success',
         data: { courseStat, certificate },
       })
+      // #endregion
     } catch (err) {
       console.error('Error handling certificate:', err)
     }
   } else {
+    // Failed the course
     res.status(201).json({
       status: 'Success',
       data: courseStat,
     })
   }
-  // Respond with success
 })
 
 exports.getAllFinalAnswers = factory.getAll(FinalExamStudentAnswer, {
