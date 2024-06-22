@@ -2,6 +2,7 @@ const fs = require('fs')
 const PDFDocument = require('pdfkit')
 const axios = require('axios')
 const { PassThrough } = require('stream')
+const path = require('path')
 
 exports.createCertificate = async (name, subject) => {
   const doc = new PDFDocument({
