@@ -217,7 +217,7 @@ exports.forgotPassword = (Model) =>
     await user.save({ validateBeforeSave: false })
 
     //3) Send it to the user in an email
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/${Model.modelName.toLowerCase()}s/reset-password/${resetToken}`
+    const resetUrl = `https://almenbar.vercel.app/reset-password/${resetToken}`
 
     const message = `Forgot your password? Click the link below to reset your password:\n\n${resetUrl}\n\nIf you didn't forget your password, please ignore this email!`
 
@@ -255,19 +255,21 @@ exports.forgotPassword = (Model) =>
 exports.resetPassword = (Model) =>
   catchAsync(async (req, res, next) => {
     //1) Get user based on the token
-
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(req.params.token)
-      .digest('hex')
-
+    const token = req.params.token
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+    console.log('hashedToken:', hashedToken)
     const user = await Model.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     })
     //2) If token is not expired && user => set new password
     if (!user) return next(new AppError('Token is invalid or expired', 400))
+    console.log('user:', user)
 
+    if (req.body.password !== req.body.passwordConfirm)
+      return next(new AppError('Passwords do not match', 400))
+    if (req.body.password.length < 5)
+      return next(new AppError('Password must be at least 5 characters', 400))
     user.password = req.body.password
     user.passwordConfirm = req.body.passwordConfirm
     user.passwordResetToken = undefined
@@ -275,11 +277,11 @@ exports.resetPassword = (Model) =>
 
     await user.save()
 
-    //3) Update changedPasswordAt property
-    //in middleware
+    // //3) Update changedPasswordAt property
+    // //in middleware
 
-    //4) Log user in
-    this.createSendToken(user, 200, res)
+    // //4) Log user in
+    this.createSendToken(user, 200, req, res)
   })
 
 exports.updatePassword = catchAsync((Model) => async (req, res, next) => {
