@@ -30,6 +30,8 @@ const meqAnswerSchema = new mongoose.Schema(
 
 meqAnswerSchema.methods.markAi = async function () {
   //Mark using ai model
+  this.scoreByAi = 4
+  await this.save()
 }
 
 const MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
