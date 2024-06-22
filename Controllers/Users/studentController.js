@@ -162,7 +162,10 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
         { path: 'latestQuizGrade' },
       ],
     })
-    .populate({ path: 'course', populate: { path: 'final' } })
+    .populate({
+      path: 'course',
+      populate: { path: 'final', populate: ['mcqs', 'meqs'] },
+    })
 
   // Check if course stat was found
   if (!courseStat) {
