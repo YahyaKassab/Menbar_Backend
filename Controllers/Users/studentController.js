@@ -151,7 +151,9 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
   })
     .populate({
       path: 'lectureStats',
-      populate: [{ path: 'lecture' }, { path: 'latestQuizGrade' }],
+      populate: [{ path: 'lecture',populate:{
+        path: 'quiz',
+    }, }, { path: 'latestQuizGrade' }],
     })
     .populate('course')
 
