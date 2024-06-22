@@ -13,7 +13,7 @@ const meqSchema = new mongoose.Schema(
     question: String,
     page: Number,
     optimalAnswer: String,
-    keyWords: [String],
+    keywords: [String],
     scoreFrom: Number,
   },
   {

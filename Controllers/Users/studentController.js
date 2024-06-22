@@ -122,7 +122,9 @@ exports.getOneStudent = factory.getOne(Student)
 exports.updateStudent = factory.updateOne(Student)
 
 exports.getCertificates = catchAsync(async (req, res, next) => {
-  const certificates = await Certificate.find({ student: req.student.id }).populate({path:"course"})
+  const certificates = await Certificate.find({
+    student: req.student.id,
+  }).populate({ path: 'course' })
   //SEND RESPONSE
   res.status(200).json({
     status: 'Success',
@@ -160,7 +162,7 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
         { path: 'latestQuizGrade' },
       ],
     })
-    .populate('course')
+    .populate({ path: 'course', populate: { path: 'final' } })
 
   // Check if course stat was found
   if (!courseStat) {
