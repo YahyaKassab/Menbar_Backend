@@ -155,7 +155,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
       await courseStat.populate({ path: 'finalAnswers' })
       res.status(201).json({
         status: 'Success',
-        data: { courseStat, certificate },
+        data: { courseStat, finalAnswer, certificate },
       })
       // #endregion
     } catch (err) {

@@ -12,10 +12,5 @@ router.get(
   authController.protect(Student),
   certificatesController.downloadCertificatePdf,
 )
-router.get(
-  '/png',
-  authController.protect(Student),
-  certificatesController.downloadCertificatePng,
-)
 
 module.exports = router
