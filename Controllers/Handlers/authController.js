@@ -217,7 +217,7 @@ exports.forgotPassword = (Model) =>
     await user.save({ validateBeforeSave: false })
 
     //3) Send it to the user in an email
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/${Model.modelName.toLowerCase()}s/reset-password/${resetToken}`
+    const resetUrl = `https://almenbar.vercel.app/reset-password/${resetToken}`
 
     const message = `Forgot your password? Click the link below to reset your password:\n\n${resetUrl}\n\nIf you didn't forget your password, please ignore this email!`
 

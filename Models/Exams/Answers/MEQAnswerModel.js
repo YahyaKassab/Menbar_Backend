@@ -30,8 +30,26 @@ const meqAnswerSchema = new mongoose.Schema(
 
 meqAnswerSchema.methods.markAi = async function () {
   //Mark using ai model
-  this.scoreByAi = 4
-  await this.save()
+  try {
+    // Ensure that the mcq field is populated
+    await this.populate('meq')
+
+    // Check if the student's answer matches the correct answer
+    if (this.answer === this.meq.optimalAnswer) {
+      this.scoreByAi = 5
+    } else {
+      this.scoreByAi = 3
+    }
+    // console.log('correct:', this.correct)
+
+    // Save the updated thisument
+    await this.save()
+  } catch (error) {
+    // Handle errors here if needed
+    console.error('Error occurred during marking:', error)
+    throw error // Rethrow the error for the caller to handle
+  }
+
 }
 
 const MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
