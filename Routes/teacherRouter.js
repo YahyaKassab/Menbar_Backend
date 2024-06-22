@@ -2,6 +2,8 @@ const express = require('express')
 const authController = require('../Controllers/Handlers/authController')
 const teacherController = require('../Controllers/Users/teacherController')
 const Teacher = require('../Models/Users/TeacherModel')
+const upload = require('../multer')
+const { uploadTeacherIMG } = require('../utils/cloudinaryMiddleware')
 
 const router = express.Router()
 
@@ -17,7 +19,29 @@ router.get('/:id', teacherController.getTeacherGuest)
 // router.use(authController.protect(Teacher), authController.restrictTo('Admin'))
 
 router.get('/ids', teacherController.ids)
-
+router.get(
+  '/me',
+  authController.protect(Teacher),
+  authController.restrictTo('Teacher','Admin'),
+  teacherController.getMe,
+  teacherController.getTeacher,
+)
+router.patch(
+  '/update-me',
+  authController.protect(Teacher),
+  authController.restrictTo('Teacher','Admin'),
+  teacherController.getMe,
+  upload.single('photo'),
+  uploadTeacherIMG,
+  teacherController.updateTeacherByTeacher,
+)
+router.patch(
+  '/delete-me',
+  authController.protect(Teacher),
+  authController.restrictTo('Teacher'),
+  teacherController.getMe,
+  teacherController.deleteMe,
+)
 // #region Admin
 router.get('/admin', teacherController.getAllTeachers)
 router.post('/signup', teacherController.createTeacher)

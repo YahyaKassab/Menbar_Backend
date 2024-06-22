@@ -13,6 +13,17 @@ exports.uploadStudentIMG = catchAsync(async (req, res, next) => {
   }
   next()
 })
+exports.uploadTeacherIMG = catchAsync(async (req, res, next) => {
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'teachers/',
+    })
+
+    req.body.photo = result.secure_url
+    console.log(result.secure_url)
+  }
+  next()
+})
 
 exports.uploadBookIMG = catchAsync(async (req, res, next) => {
   if (req.file) {
