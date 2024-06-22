@@ -32,7 +32,7 @@ exports.updateComment = catchAsync(async (req, res, next) => {
     },
   )
   if (!doc) {
-    return next(new AppError('No document found or No permission', 404))
+    return next(new AppError('لم يوجد أو لا يسمح لك', 404))
   }
 
   res.status(200).json({
@@ -44,14 +44,12 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
   const comment = await Comment.findById(req.params.id)
 
   if (!comment) {
-    return next(new AppError('No comment found with that ID', 404))
+    return next(new AppError('لا يوجد تعليق بهذا ال id', 404))
   }
 
   // Check if the student matches the user id
   if (comment.student.id !== req.student.id) {
-    return next(
-      new AppError('You are not authorized to delete this comment', 403),
-    )
+    return next(new AppError('لا يمكنك مسح هذا الكومنت', 403))
   }
 
   await Comment.findByIdAndDelete(req.params.id)
@@ -100,14 +98,14 @@ exports.like = catchAsync(async (req, res, next) => {
   }
 
   if (!userId) {
-    return next(new AppError('User not authenticated', 401))
+    return next(new AppError('لم نجد حسابك', 401))
   }
 
   try {
     const comment = await Comment.findById(id)
 
     if (!comment) {
-      return next(new AppError('No comment found', 404))
+      return next(new AppError('لا يوجد هذا التعليق', 404))
     }
 
     const isLiked = comment.likes.includes(userId)
@@ -128,7 +126,7 @@ exports.like = catchAsync(async (req, res, next) => {
       data: updatedComment,
     })
   } catch (error) {
-    return next(new AppError('Error processing request', 500))
+    return next(new AppError('مشكلة في الطلب', 500))
   }
 })
 exports.disLike = catchAsync(async (req, res, next) => {
@@ -142,14 +140,14 @@ exports.disLike = catchAsync(async (req, res, next) => {
   }
 
   if (!userId) {
-    return next(new AppError('User not authenticated', 401))
+    return next(new AppError('لم نجد حسابك', 401))
   }
 
   try {
     const comment = await Comment.findById(id)
 
     if (!comment) {
-      return next(new AppError('No comment found', 404))
+      return next(new AppError('لا يوجد تعليق', 404))
     }
 
     const isDisliked = comment.disLikes.includes(userId)
@@ -170,6 +168,6 @@ exports.disLike = catchAsync(async (req, res, next) => {
       data: updatedComment,
     })
   } catch (error) {
-    return next(new AppError('Error processing request', 500))
+    return next(new AppError('مشكلة في الطلب', 500))
   }
 })

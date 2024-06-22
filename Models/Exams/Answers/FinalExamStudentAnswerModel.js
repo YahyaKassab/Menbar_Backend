@@ -10,7 +10,7 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'An answer must have a student'],
     },
-    courseStat:{
+    courseStat: {
       type: mongoose.Schema.ObjectId,
       ref: 'CourseStat',
       required: [true, 'A stat must have a courseStat'],
@@ -25,16 +25,20 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'An answer must have a course'],
     },
-    mcqs: [{
-      type: mongoose.Schema.ObjectId,
-      ref: 'MCQAnswer',
-      required: [true, 'An answer must have an mcq answers'],
-    }], //MCQAnswer
-    meqs: [{
-      type: mongoose.Schema.ObjectId,
-      ref: 'MEQAnswer',
-      required: [true, 'An answer must have an meq answers'],
-    }], //MEQAsnwer
+    mcqs: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'MCQAnswer',
+        required: [true, 'An answer must have an mcq answers'],
+      },
+    ], //MCQAnswer
+    meqs: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'MEQAnswer',
+        required: [true, 'An answer must have an meq answers'],
+      },
+    ], //MEQAsnwer
     marked: Boolean,
     beginAtTime: {
       type: Date,
@@ -61,43 +65,47 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
 // Virtual for mcqScore
 finalExamStudentAnswerSchema.virtual('mcqScore').get(function () {
   if (this.mcqs && this.mcqs.length > 0) {
-    const score = this.mcqs.filter((mcq) => mcq.correct).length;
-    const percentage = score / (this.mcqs.length + this.meqs.length)
+    const score = this.mcqs.filter((mcq) => mcq.correct).length
+    const percentage = score / this.mcqs.length
     return percentage
   }
-  return 0;
-});
+  return 0
+})
 
 finalExamStudentAnswerSchema.virtual('meqScoreTeacher').get(function () {
   if (this.meqs && this.meqs.length > 0) {
     return this.meqs.reduce((totalScore, meq) => {
-      const score = totalScore + (meq.scoreByTeacher || 0);
-      return score / (this.mcqs.length + this.meqs.length)
-    }, 0);
+      const score = totalScore + (meq.scoreByTeacher || 0)
+
+      return score / (this.meqs.length * 5)
+    }, 0)
   }
-  return 0;
-});
+  return 0
+})
 
 finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
   if (this.meqs && this.meqs.length > 0) {
-    return this.meqs.reduce((totalScore, meq) => {
-      const score =  totalScore + (meq.scoreByAi || 0);
-      return score / (this.mcqs.length + this.meqs.length)
-    }, 0);
+    const totalScore = this.meqs.reduce(
+      (total, meq) => total + (meq.scoreByAi || 0),
+      0,
+    )
+    const maximumScore = this.meqs.length * 5 // Maximum score for all MEQs
+    const normalizedScore = totalScore / maximumScore
+
+    return normalizedScore // Normalized score out of 1
   }
-  return 0;
-});
+  return 0
+})
 
 //Score of 90
 finalExamStudentAnswerSchema.virtual('score').get(function () {
+  const totalMcqScore = this.mcqScore || 0
+  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0
 
-  const totalMcqScore = this.mcqScore || 0;
-  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0;
+  const scoreOutOf90 = (totalMcqScore + totalMeqScore) * 45
 
-  const percentageScore = (totalMcqScore + totalMeqScore) * 90;
-
-  return percentageScore;
-});
+  return scoreOutOf90
+})
 
 // const fillEmbedded = (fieldToFill, Model) => {
 //   catchAsync(async function (next) {

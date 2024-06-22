@@ -113,7 +113,7 @@ exports.login = (Model) => async (req, res, next) => {
 
     //1) Check if email and password
     if (!email || !password) {
-      return next(new AppError('Please provide email and password', 400))
+      return next(new AppError('أدخل البريد الإلكتروني وكلمة السر', 400))
     }
 
     //2) Check if user exists and password is correct
@@ -122,7 +122,7 @@ exports.login = (Model) => async (req, res, next) => {
 
     //!user checks email, second one checks only after user is found(correct email), checks password
     if (!_user || !(await _user.correctPassword(password, _user.password))) {
-      return next(new AppError('Incorrect email or password', 401))
+      return next(new AppError('بريد إلكتروني  خاطئ أو كلمة سر خاطئة', 401))
     }
 
     console.log(_user)
@@ -160,14 +160,11 @@ exports.protect = (Model) => async (req, res, next) => {
 
     // 3) Check if user exists
     const currentUser = await Model.findById(req.userId)
-    if (!currentUser) throw new AppError('The user no longer exists', 401)
+    if (!currentUser) throw new AppError('لا يوجد حساب', 401)
 
     // 4) Check if user changed password after token was issued
     if (currentUser.changedPasswordAfter(decoded.iat)) {
-      throw new AppError(
-        'User recently changed password. Please login again.',
-        401,
-      )
+      throw new AppError('غيرت كلمة السر مؤخرا, من فضلك سجل الدخول مجددا', 401)
     }
 
     // GRANT ACCESS TO PROTECTED ROUTE
@@ -193,9 +190,7 @@ exports.restrictTo = (...roles) => {
     else userRole = req.teacher.role
     console.log('role:', userRole)
     if (!roles.includes(userRole)) {
-      return next(
-        new AppError("You don't have permission to perform this action", 403),
-      )
+      return next(new AppError('لا يسمح لك', 403))
     }
 
     next()
@@ -208,7 +203,7 @@ exports.forgotPassword = (Model) =>
     const user = await Model.findOne({ email: req.body.email })
 
     if (!user)
-      return next(new AppError('There is no user with that email address', 404))
+      return next(new AppError('لا يوجد حساب بهذا البريد الإلكتروني', 404))
     console.log('user:', user)
     //2) Generate the random reset token
     const resetToken = user.createPasswordResetToken()
@@ -248,7 +243,7 @@ exports.forgotPassword = (Model) =>
       user.passwordResetExpires = undefined
       await user.save({ validateBeforeSave: false })
 
-      return next(new AppError('There was an error sending the email', 500))
+      return next(new AppError('خطأ في إرسال البريد الإلكتروني', 500))
     }
   })
 
@@ -263,13 +258,13 @@ exports.resetPassword = (Model) =>
       passwordResetExpires: { $gt: Date.now() },
     })
     //2) If token is not expired && user => set new password
-    if (!user) return next(new AppError('Token is invalid or expired', 400))
+    if (!user) return next(new AppError('انتهى وقت جلسة تسجيل الدخول ', 400))
     console.log('user:', user)
 
     if (req.body.password !== req.body.passwordConfirm)
-      return next(new AppError('Passwords do not match', 400))
+      return next(new AppError('كلمتا السر ليستا متطابقتان', 400))
     if (req.body.password.length < 5)
-      return next(new AppError('Password must be at least 5 characters', 400))
+      return next(new AppError('كلمة السر يجب أن تقول 5 أحرف على الأقل', 400))
     user.password = req.body.password
     user.passwordConfirm = req.body.passwordConfirm
     user.passwordResetToken = undefined
@@ -290,7 +285,7 @@ exports.updatePassword = catchAsync((Model) => async (req, res, next) => {
 
   //2) Check if POSTed password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError('Your current password is wrong', 401))
+    return next(new AppError('كلمة السر القديمة خاطئة', 401))
   }
 
   //3) If so, update password

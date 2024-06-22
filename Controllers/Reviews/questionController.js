@@ -29,7 +29,7 @@ exports.answerQuestion = catchAsync(async (req, res, next) => {
   })
 
   if (!doc) {
-    return next(new AppError('No document found with that ID', 404))
+    return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
   }
 
   res.status(200).json({
@@ -53,7 +53,12 @@ exports.updateQuestionAsker = catchAsync(async (req, res, next) => {
   )
 
   if (!doc) {
-    return next(new AppError('No document found or No permission', 404))
+    return next(
+      new AppError(
+        'لم يتم العثور على الملف المطلوب أو لا يسمح لك الحصول عليه',
+        404,
+      ),
+    )
   }
 
   res.status(200).json({
@@ -69,14 +74,12 @@ exports.deleteQuestionAsker = catchAsync(async (req, res, next) => {
   const question = await Question.findById(req.params.id)
 
   if (!question) {
-    return next(new AppError('No question found with that ID', 404))
+    return next(new AppError('لم يتم العثور على السؤال المطلوب', 404))
   }
 
   // Check if the asker matches the user id
   if (question.asker.toString() !== req.student.id) {
-    return next(
-      new AppError('You are not authorized to delete this question', 403),
-    )
+    return next(new AppError('لا يسمح لك بمسح هذا السؤال', 403))
   }
 
   await Question.findByIdAndDelete(req.params.id)

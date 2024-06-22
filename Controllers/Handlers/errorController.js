@@ -1,11 +1,11 @@
 const AppError = require('../../utils/appError')
 
 const handleCastErrorDB = (err) => {
-  const message = `Invalid ${err.path}: ${err.value}.`
+  const message = `غير صحيح ${err.path}: ${err.value}.`
   return new AppError(message, 400)
 }
 const handleCastFieldsDB = (err) => {
-  const message = `Duplicate field value: "${err.keyValue.name}".Please use another value.`
+  const message = `تكرار: "${err.keyValue.name}".من فضلك ضع قيمة أخرى.`
   return new AppError(message, 400)
 }
 const handleCastValidationDB = (err) => {
@@ -42,11 +42,10 @@ const sendErrorProd = (err, res) => {
   }
 }
 
-const handleJWTError = () =>
-  new AppError('Invalid token. Please login again.', 401)
+const handleJWTError = () => new AppError('مشكلة في التوكن', 401)
 
 const handleJWTExpiredError = () =>
-  new AppError('Your token has expired. Please login again.', 401)
+  new AppError('انتهى وقت جلسة تسجيل الدخول', 401)
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500

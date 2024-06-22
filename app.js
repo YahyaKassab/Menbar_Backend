@@ -102,7 +102,7 @@ app.use('/api/v1/quizzes', quizRouter)
 app.use('/api/v1/members', memberRouter)
 
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))
+  next(new AppError(`لم نجد ${req.originalUrl}`, 404))
 })
 
 app.use(globalErrorHandler)

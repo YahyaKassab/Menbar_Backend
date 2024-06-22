@@ -27,7 +27,7 @@ exports.nextLecture = catchAsync(async (req, res, next) => {
     course,
   }).populate(['comments', 'course', 'quiz'])
   if (!nextLecture) {
-    return next(new AppError('No nextLecture found with that ID', 404))
+    return next(new AppError('هذه اخر محاضرة', 404))
   }
 
   res.status(200).json({
@@ -43,7 +43,7 @@ exports.prevLecture = catchAsync(async (req, res, next) => {
     course,
   }).populate(['comments', 'course', 'quiz'])
   if (!prevLecture) {
-    return next(new AppError('No prevLecture found with that ID', 404))
+    return next(new AppError('هذه أول محاضرة', 404))
   }
 
   res.status(200).json({

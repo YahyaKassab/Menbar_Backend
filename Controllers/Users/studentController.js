@@ -151,17 +151,21 @@ exports.getCourseStats = catchAsync(async (req, res, next) => {
   })
     .populate({
       path: 'lectureStats',
-      populate: [{ path: 'lecture',populate:{
-        path: 'quiz',
-    }, }, { path: 'latestQuizGrade' }],
+      populate: [
+        {
+          path: 'lecture',
+          populate: {
+            path: 'quiz',
+          },
+        },
+        { path: 'latestQuizGrade' },
+      ],
     })
     .populate('course')
 
   // Check if course stat was found
   if (!courseStat) {
-    return next(
-      new AppError('No course stat found for this student and course', 404),
-    )
+    return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
   }
 
   // Send response with course stat
@@ -193,9 +197,7 @@ exports.getAllCoursesStats = catchAsync(async (req, res, next) => {
     .populate('course')
   // Check if course stat was found
   if (!courseStat) {
-    return next(
-      new AppError('No course stat found for this student and course', 404),
-    )
+    return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
   }
 
   // Send response with course stat

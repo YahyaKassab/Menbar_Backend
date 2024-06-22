@@ -20,7 +20,7 @@ exports.getFinal = catchAsync(async (req, res, next) => {
       path: 'meqs',
       select: '-optimalAnswer -page',
     })
-  if (!exam) return next(new AppError('Final exam not found', 404))
+  if (!exam) return next(new AppError('لم نجد الإمتحان', 404))
   res.status(200).json({
     status: 'Success',
     data: exam,
@@ -34,7 +34,7 @@ exports.getFinalTeacher = catchAsync(async (req, res, next) => {
     .populate({
       path: 'meqs',
     })
-  if (!exam) return next(new AppError('Final exam not found', 404))
+  if (!exam) return next(new AppError('لم نجد الإمتحان', 404))
   res.status(200).json({
     status: 'Success',
     data: exam,
@@ -100,7 +100,7 @@ exports.getQuizTeacher = catchAsync(async (req, res, next) => {
   const lectureQuiz = await LectureQuiz.findOne({ lecture: lectureId })
 
   if (!lectureQuiz) {
-    return next(new AppError('No document found with that ID', 404))
+    return next(new AppError('لا يوجدامتحان', 404))
   }
 
   res.status(200).json({
@@ -142,7 +142,7 @@ exports.createQuiz = catchAsync(async (req, res, next) => {
   // Check if the lecture exists
   const lecture = await Lecture.findById(req.body.lecture)
   if (!lecture) {
-    return next(new AppError('No lecture found with that ID', 404))
+    return next(new AppError('لم نجد محاضرة', 404))
   }
 
   // Check if the lecture already has a quiz
@@ -264,7 +264,7 @@ exports.updateQuiz = catchAsync(async (req, res, next) => {
   )
 
   if (!doc) {
-    return next(new AppError('No document found with that ID', 404))
+    return next(new AppError('لا يوجد امتحان', 404))
   }
 
   res.status(200).json({
@@ -278,7 +278,7 @@ exports.deleteQuiz = catchAsync(async (req, res, next) => {
   })
 
   if (!doc) {
-    return next(new AppError('No document found with that ID', 404))
+    return next(new AppError('لا يوجد امتحان', 404))
   }
   res.status(204).json({ status: 'success', data: null })
 })
@@ -294,7 +294,7 @@ exports.createMcqOnLecture = catchAsync(async (req, res, next) => {
 
   // If the lecture is not found, throw an error
   if (!lecture) {
-    return next(new AppError('Lecture not found', 404))
+    return next(new AppError('لا يوجد محاضرة', 404))
   }
 
   // Set the course ID in the request body to be the same as the lecture's course

@@ -22,20 +22,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   //1) Error if trying to update the password
 
   if (req.body.password || req.body.passwordConfirm)
-    return next(
-      new AppError(
-        'You cant change password from here. Please use /update-password',
-        400,
-      ),
-    )
+    return next(new AppError('لا يسمح لك بتغيير كلمة السر من هنا', 400))
 
   //2) Filter out unwanted fields
   const filteredBody = filterObj(req.body, 'name', 'email')
   //3 ) Update user document
-  const updatedUser = await Student.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true,
-  })
+  const updatedUser = await Student.findByIdAndUpdate(
+    req.user.id,
+    filteredBody,
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
 
   res.status(200).json({
     status: 'Success',

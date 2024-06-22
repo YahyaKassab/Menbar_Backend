@@ -92,7 +92,7 @@ exports.updateOne = (Model, excludedFields) =>
     })
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
 
     res.status(200).json({
@@ -117,7 +117,7 @@ exports.updateOneFields = (Model, fields) =>
     )
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
 
     res.status(200).json({
@@ -174,7 +174,7 @@ exports.getOne = (Model, popOptions) =>
     const doc = await query
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
 
     res.status(200).json({
@@ -193,7 +193,7 @@ exports.getOneExclude = (Model, popOptions, excludedFields) =>
     const doc = await query
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
 
     // Convert Mongoose document to plain object and filter the document
@@ -216,7 +216,7 @@ exports.getOneInclude = (Model, popOptions, includedFields) =>
     const doc = await query
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
 
     // Convert Mongoose document to plain object and filter the document
@@ -328,7 +328,7 @@ exports.deleteOne = (Model) =>
     const doc = await Model.findByIdAndDelete(req.params.id)
 
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404))
+      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     }
     res.status(204).json({ status: 'success', data: null })
   })
@@ -337,7 +337,7 @@ exports.deleteOne = (Model) =>
 exports.getIds = (Model) =>
   catchAsync(async (req, res, next) => {
     const docs = await Model.find({}, '_id')
-    if (!docs) return next(new AppError('No document found with that ID', 404))
+    if (!docs) return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
     const ids = docs.map((doc) => doc._id.toString())
     const modelName = Model.modelName.toLowerCase()
 

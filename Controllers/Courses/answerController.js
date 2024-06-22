@@ -56,8 +56,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   const courseStat = await CourseStat.findOne({
     student: req.student.id,
     course: course.id,
-  })
-  .populate(['lectureStats'])
+  }).populate(['lectureStats'])
 
   answerBody.student = req.student.id
   answerBody.course = course.id
@@ -67,70 +66,64 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
   //4- submit------------
 
-  
-  const finalAnswer = await FinalExamStudentAnswer.create(answerBody);
-  await finalAnswer.populate(['mcqs','meqs'])  // Find student and populate courseStats
+  const finalAnswer = await FinalExamStudentAnswer.create(answerBody)
+  await finalAnswer.populate(['mcqs', 'meqs']) // Find student and populate courseStats
 
   //5- edit courseStat
 
-
   // Assign final answer to courseStats
 
-  
   if (courseStat.lectureStats && courseStat.lectureStats.length > 0) {
-    const totalPossibleScore = courseStat.lectureStats.length * 3; // Each lectureQuiz is out of 3 points
+    const totalPossibleScore = courseStat.lectureStats.length * 3 // Each lectureQuiz is out of 3 points
 
     // Sum up the bestQuizScore of each lectureStat
     const totalScore = courseStat.lectureStats.reduce((total, lectureStat) => {
-      return total + (lectureStat.bestQuizScore || 0);
-    }, 0);
+      return total + (lectureStat.bestQuizScore || 0)
+    }, 0)
 
     // Calculate percentage score out of 100
-    const percentageScore = (totalScore / totalPossibleScore) * 100;
+    const percentageScore = (totalScore / totalPossibleScore) * 100
 
     // Scale the percentage score to a score out of 10
-    const scoreOutOf10 = (percentageScore / 10).toFixed(1); // Round to one decimal place
+    const scoreOutOf10 = (percentageScore / 10).toFixed(1) // Round to one decimal place
 
-    courseStat.totalLecturesScoreOutOf10 = parseFloat(scoreOutOf10); // Convert to float (if needed) and return
-  }
-  else courseStat.totalLecturesScoreOutOf10 = 0;
+    courseStat.totalLecturesScoreOutOf10 = parseFloat(scoreOutOf10) // Convert to float (if needed) and return
+  } else courseStat.totalLecturesScoreOutOf10 = 0
 
-    const finalAnswersScore = finalAnswer.score;
-    const totalLecturesScore = courseStat.totalLecturesScoreOutOf10 || 0;
-    
-    courseStat.totalScore = totalLecturesScore + finalAnswersScore;
+  const finalAnswersScore = finalAnswer.score
+  const totalLecturesScore = courseStat.totalLecturesScoreOutOf10 || 0
 
-    courseStat.passed = courseStat.totalScore >= 50
+  courseStat.totalScore = totalLecturesScore + finalAnswersScore
 
+  courseStat.passed = courseStat.totalScore >= 50
 
   if (courseStat.passed) {
-    const name = req.student.Fname + ' ' + req.student.Lname
-   createCertificate(name, course.subject)
-      .then((pdfBuffer) => {
-        return uploadPdf(req, pdfBuffer)
+    const name = `${req.student.Fname} ${req.student.Lname}`
+
+    try {
+      const pdfBuffer = await createCertificate(name, course.subject)
+      await uploadPdf(req, pdfBuffer)
+
+      const certificate = await Certificate.create({
+        student: req.student.id,
+        course: course.id,
+        pdfURL: req.body.pdfURL,
       })
-      .then((url) => {
-        req.body.pdfURL = url
+
+      res.status(201).json({
+        status: 'Success',
+        data: { courseStat, certificate },
       })
-      .catch((err) => {
-        console.error('Error uploading PDF:', err)
-        next(err) // Pass the error to the next middleware
-      })
-    const certificate = await Certificate.create({
-      student: req.student.id,
-      course: course.id,
-      pdfURL: req.body.pdfURL,
-    })
+    } catch (err) {
+      console.error('Error handling certificate:', err)
+    }
+  } else {
     res.status(201).json({
       status: 'Success',
-      data: {courseStat, certificate},
+      data: courseStat,
     })
   }
   // Respond with success
-  res.status(201).json({
-    status: 'Success',
-    data: courseStat,
-  })
 })
 
 exports.getAllFinalAnswers = factory.getAll(FinalExamStudentAnswer, {
@@ -182,7 +175,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   })
 
   if (!student) {
-    return next(new AppError('No student found with that ID', 404))
+    return next(new AppError('لا يوجد طالب بهذا ال id', 404))
   }
   // #endregion
 
@@ -194,7 +187,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   })
 
   if (!lectureStat || !lectureStat.open) {
-    return next(new AppError('The lecture is not open for the student', 403))
+    return next(new AppError('المحاضرة ليست مفتوحة لك', 403))
   }
   // #endregion
 

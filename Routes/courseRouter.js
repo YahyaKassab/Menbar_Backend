@@ -6,9 +6,11 @@ const examController = require('../Controllers/Courses/examController')
 const finalsRouter = require('./Secondary/finalsRouter')
 const lectureRouter = require('./lectureRouter')
 const Teacher = require('../Models/Users/TeacherModel')
+const certificatesRouter = require('./Secondary/certificatesRouter')
 const router = express.Router()
 
 router.use('/:courseId/final', finalsRouter)
+router.use('/:courseId/certificates', certificatesRouter)
 
 // #region Guest & Student
 router.route('/cer').get(async (req, res) => {
