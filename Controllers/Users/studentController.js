@@ -122,8 +122,7 @@ exports.getOneStudent = factory.getOne(Student)
 exports.updateStudent = factory.updateOne(Student)
 
 exports.getCertificates = catchAsync(async (req, res, next) => {
-  console.log('getAll:')
-  const certificates = await Certificate.find({ student: req.student.id })
+  const certificates = await Certificate.find({ student: req.student.id }).populate({path:"course"})
   //SEND RESPONSE
   res.status(200).json({
     status: 'Success',
