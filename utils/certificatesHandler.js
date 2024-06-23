@@ -47,12 +47,15 @@ exports.createCertificate = async (name, subject) => {
   }
 
   function setFontAndText(text) {
+    const arabicPath = path.join(__dirname, 'Fonts', 'DTHULUTH.ttf')
+    const englishPath = path.join(__dirname, 'Fonts', 'Amiri-Regular.ttf')
     const isArabic = /[\u0600-\u06FF\u0750-\u077F]/.test(text)
     if (isArabic) {
-      doc.font('./Fonts/DTHULUTH.ttf')
+      console.log(arabicPath)
+      doc.font(arabicPath)
       return reverseArabicText(text)
     } else {
-      doc.font('./Fonts/Amiri-Regular.ttf')
+      doc.font(englishPath)
       return text
     }
   }
