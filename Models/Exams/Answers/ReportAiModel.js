@@ -7,6 +7,7 @@ const reportAiSchema = new mongoose.Schema({
     required: [true, 'A report must have an answer'],
   },
   description: String,
+  viewed: { type: Boolean, default: false },
 })
 
 const ReportAi = mongoose.model('ReportAi', reportAiSchema)

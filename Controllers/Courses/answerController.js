@@ -16,6 +16,7 @@ const Course = require('../../Models/Courses/CourseModel')
 const ReportAi = require('../../Models/Exams/Answers/ReportAiModel')
 const { createCertificate } = require('../../utils/certificatesHandler')
 const { uploadPdf } = require('../../utils/cloudinaryMiddleware')
+const sendEmail = require('../../utils/email')
 
 // #region Final
 
@@ -354,5 +355,82 @@ exports.reportAi = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: 'Success',
     data: newDoc,
+  })
+})
+
+exports.getAllReports = factory.getAll(ReportAi, {
+  path: 'answer',
+  populate: [
+    { path: 'meq' },
+    { path: 'student', select: 'Fname Mname Lname email photo phone' },
+  ],
+})
+exports.getReport = factory.getOne(ReportAi, {
+  path: 'answer',
+  populate: [
+    { path: 'meq' },
+    { path: 'student', select: 'Fname Mname Lname email photo phone' },
+  ],
+})
+exports.deleteReport = factory.deleteOne(ReportAi)
+
+exports.resolveReport = catchAsync(async (req, res, next) => {
+  const newDoc = await ReportAi.findByIdAndUpdate(
+    req.params.id,
+    { viewed: true },
+    {
+      new: true,
+    },
+  )
+  await newDoc.populate({
+    path: 'answer',
+    populate: { path: 'meq', populate: { path: 'course' } },
+  })
+  const student = await Student.findById(newDoc.answer.student)
+  const answer = newDoc.answer
+  answer.scoreByTeacher = req.body.score
+  await answer.save()
+  const meq = answer.meq
+  const htmlMessage = `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+  
+    <div style="background: #fff; padding: 20px; border-radius: 8px;">
+      <h2 style="color: #333; font-size: 24px; margin-bottom: 20px;">Review Notification</h2>
+  
+      <p style="font-size: 16px;">Dear <strong>${student.Fname}</strong>,</p>
+  
+      <p style="font-size: 16px; margin-bottom: 15px;">We have reviewed your answer to the question "<strong>${meq.question}</strong>" for the course "<strong>${meq.course.text}</strong>".</p>
+  
+      <p style="font-size: 16px; margin-bottom: 15px;">The AI assessment gave you a score of <strong>${answer.scoreByAi}</strong>. After careful consideration, here is our feedback:</p>
+  
+      <blockquote style="font-size: 16px; font-style: italic; background-color: #f7f7f7; padding: 10px; border-left: 5px solid #3498db; margin: 15px 0;">
+        Our chosen score is <strong>${answer.scoreByTeacher}</strong>
+      </blockquote>
+  
+      <p style="font-size: 16px;">Thank you for your effort. If you have any questions or need further clarification, please do not hesitate to contact us.</p>
+  
+      <p style="font-size: 16px;">Best regards,<br>Your Course Team</p>
+    </div>
+  
+  </div>
+  `
+
+  await sendEmail({
+    email: student.email,
+    subject: 'Report resolved',
+    html: htmlMessage,
+  })
+  res.status(201).json({
+    status: 'Success',
+    data: answer,
+  })
+})
+exports.deleteViewed = catchAsync(async (req, res, next) => {
+  const viewedReports = await ReportAi.find({ viewed: true })
+  await ReportAi.deleteMany({ viewed: true })
+  res.status(200).json({
+    status: 'success',
+    deletedCount: viewedReports.length,
+    message: `${viewedReports.length} viewed reports deleted successfully.`,
   })
 })

@@ -10,9 +10,9 @@ const router = express.Router({ mergeParams: true })
 //params.courseId
 
 // #region Student
-router.get('/', authController.protect(Student), examController.getFinal)
-router.post('/report-ai/:answerId', answerController.reportAi)
 router
+  .get('/', authController.protect(Student), examController.getFinal)
+
   .route('/answers')
   .post(
     authController.protect(Student),

@@ -9,13 +9,16 @@ exports.getMe = (req, res, next) => {
   next()
 }
 
-
 exports.loginTeacher = authController.login(Teacher)
 exports.forgetPasswordTeacher = authController.forgotPassword(Teacher)
 exports.resetPasswordTeacher = authController.resetPassword(Teacher)
 
 exports.createTeacher = factory.createOne(Teacher)
 exports.getAllTeachers = factory.getAll(Teacher, { path: 'coursesToTeach' })
+exports.getTeacher = factory.getOne(Teacher, { path: 'coursesToTeach' })
+exports.updateTeacher = factory.updateOne(Teacher)
+exports.deleteTeacher = factory.deleteOne(Teacher)
+
 exports.getAllTeachersGuest = factory.getAll(
   Teacher,
   {
@@ -30,10 +33,6 @@ exports.getTeacherGuest = factory.getOneExclude(
   ['examsMarked'],
 )
 
-exports.getTeacher = factory.getOne(Teacher, { path: 'coursesToTeach' })
-
-exports.updateTeacher = factory.updateOne(Teacher)
-exports.deleteTeacher = factory.deleteOne(Teacher)
 exports.ids = factory.getIds(Teacher)
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
@@ -42,8 +41,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   })
   res.status(204).json({ status: 'success', data: null })
 })
-
-
 
 exports.updateTeacherByTeacher = factory.updateOne(Teacher, [
   'role',
@@ -54,4 +51,5 @@ exports.updateTeacherByTeacher = factory.updateOne(Teacher, [
   'passwordResetToken',
   'passwordChangedAt',
   'passwordConfirm',
-  'email',])
+  'email',
+])

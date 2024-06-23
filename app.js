@@ -22,6 +22,7 @@ const meqRouter = require('./Routes/meqRouter')
 const bookRouter = require('./Routes/bookRouter')
 const quizRouter = require('./Routes/Secondary/quizRouter')
 const memberRouter = require('./Routes/memberRouter')
+const reportRouter = require('./Routes/reportRouter')
 
 const app = express()
 app.use(cors())
@@ -100,6 +101,7 @@ app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/teachers', teacherRouter)
 app.use('/api/v1/quizzes', quizRouter)
 app.use('/api/v1/members', memberRouter)
+app.use('/api/v1/reports', reportRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`لم نجد ${req.originalUrl}`, 404))
