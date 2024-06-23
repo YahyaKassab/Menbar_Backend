@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const axios = require('axios')
 
 const meqAnswerSchema = new mongoose.Schema(
   {
@@ -33,23 +34,20 @@ meqAnswerSchema.methods.markAi = async function () {
   try {
     // Ensure that the mcq field is populated
     await this.populate('meq')
-
-    // Check if the student's answer matches the correct answer
-    if (this.answer === this.meq.optimalAnswer) {
-      this.scoreByAi = 5
-    } else {
-      this.scoreByAi = 3
+    const formattedData = {
+      answerId: this._id, // Assuming _id of MeqAnswer is used as answerId
+      question: this.meq.question,
+      optimalAnswer: this.meq.optimalAnswer,
+      keywords: this.meq.keywords,
+      student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
     }
-    // console.log('correct:', this.correct)
-
-    // Save the updated thisument
+    await axios.get()
     await this.save()
   } catch (error) {
     // Handle errors here if needed
     console.error('Error occurred during marking:', error)
     throw error // Rethrow the error for the caller to handle
   }
-
 }
 
 const MEQAnswer = mongoose.model('MEQAnswer', meqAnswerSchema)
