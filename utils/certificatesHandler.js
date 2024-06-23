@@ -47,7 +47,7 @@ exports.createCertificate = async (name, subject) => {
   }
 
   function setFontAndText(text) {
-    const arabicPath = path.join(__dirname, 'Fonts', 'DTHULUTH.ttf')
+    const arabicPath = path.join(__dirname, 'Fonts', 'DTHULUTH.TTF')
     const englishPath = path.join(__dirname, 'Fonts', 'Amiri-Regular.ttf')
     const isArabic = /[\u0600-\u06FF\u0750-\u077F]/.test(text)
     if (isArabic) {
