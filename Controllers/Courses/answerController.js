@@ -67,7 +67,10 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   // #region 4- submit------------
 
   const finalAnswer = await FinalExamStudentAnswer.create(answerBody)
-  await finalAnswer.populate([{ path: 'mcqs' }, { path: 'meqs' }]) // Find student and populate courseStats
+  await finalAnswer.populate([
+    { path: 'mcqs', populate: 'mcq' },
+    { path: 'meqs', populate: 'meq' },
+  ]) // Find student and populate courseStats
   // #endregion
   // #region 5- assign scores in finalAnswer
   // #region assign mcqScore

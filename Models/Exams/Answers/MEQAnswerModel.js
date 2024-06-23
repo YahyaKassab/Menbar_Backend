@@ -41,7 +41,11 @@ meqAnswerSchema.methods.markAi = async function () {
       keywords: this.meq.keywords,
       student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
     }
-    await axios.get()
+    const score = await axios.get(
+      'https://ai-m3lb.onrender.com/mark',
+      formattedData,
+    )
+    this.scoreByAi = float(score)
     await this.save()
   } catch (error) {
     // Handle errors here if needed
