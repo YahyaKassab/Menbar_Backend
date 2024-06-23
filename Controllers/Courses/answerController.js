@@ -51,55 +51,85 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
     'mcqScore',
     'meqScore',
   ])
-  const course = Course.findById(req.params.courseId)
-  const final = FinalExam.findOne({ course: course.id })
-  answerBody.student = req.student.id
-  answerBody.course = course.id
-  answerBody.exam = final.id
-
-  //4- submit------------
-  const finalAnswer = await FinalExamStudentAnswer.create(answerBody)
-  // Find student and populate courseStats
-
-  //5- edit courseStat
-  const courseStat = CourseStat.findOne({
+  const course = await Course.findById(req.params.courseId)
+  const final = await FinalExam.findOne({ course: course.id })
+  const courseStat = await CourseStat.findOne({
     student: req.student.id,
     course: course.id,
   })
+  .populate(['lectureStats'])
 
-  courseStat.finalAnswers = finalAnswer.id
+  answerBody.student = req.student.id
+  answerBody.course = course.id
+  answerBody.exam = final.id
+  answerBody.durationInMins = 30
+  answerBody.courseStat = courseStat.id
+
+  //4- submit------------
+
+  
+  const finalAnswer = await FinalExamStudentAnswer.create(answerBody);
+  await finalAnswer.populate(['mcqs','meqs'])  // Find student and populate courseStats
+
+  //5- edit courseStat
+
 
   // Assign final answer to courseStats
 
-  await courseStat.save()
+  
+  if (courseStat.lectureStats && courseStat.lectureStats.length > 0) {
+    const totalPossibleScore = courseStat.lectureStats.length * 3; // Each lectureQuiz is out of 3 points
 
-  // Check if student has passed the course and create certificate if needed
+    // Sum up the bestQuizScore of each lectureStat
+    const totalScore = courseStat.lectureStats.reduce((total, lectureStat) => {
+      return total + (lectureStat.bestQuizScore || 0);
+    }, 0);
 
-  //6- create certificates
+    // Calculate percentage score out of 100
+    const percentageScore = (totalScore / totalPossibleScore) * 100;
+
+    // Scale the percentage score to a score out of 10
+    const scoreOutOf10 = (percentageScore / 10).toFixed(1); // Round to one decimal place
+
+    courseStat.totalLecturesScoreOutOf10 = parseFloat(scoreOutOf10); // Convert to float (if needed) and return
+  }
+  else courseStat.totalLecturesScoreOutOf10 = 0;
+
+    const finalAnswersScore = finalAnswer.score;
+    const totalLecturesScore = courseStat.totalLecturesScoreOutOf10 || 0;
+    
+    courseStat.totalScore = totalLecturesScore + finalAnswersScore;
+
+    courseStat.passed = courseStat.totalScore >= 50
+
 
   if (courseStat.passed) {
     const name = req.student.Fname + ' ' + req.student.Lname
-    createCertificate(name, course.subject)
+   createCertificate(name, course.subject)
       .then((pdfBuffer) => {
         return uploadPdf(req, pdfBuffer)
       })
-      .then(() => {
-        next()
+      .then((url) => {
+        req.body.pdfURL = url
       })
       .catch((err) => {
         console.error('Error uploading PDF:', err)
         next(err) // Pass the error to the next middleware
       })
-    await Certificate.create({
+    const certificate = await Certificate.create({
       student: req.student.id,
       course: course.id,
       pdfURL: req.body.pdfURL,
+    })
+    res.status(201).json({
+      status: 'Success',
+      data: {courseStat, certificate},
     })
   }
   // Respond with success
   res.status(201).json({
     status: 'Success',
-    data: finalAnswer,
+    data: courseStat,
   })
 })
 

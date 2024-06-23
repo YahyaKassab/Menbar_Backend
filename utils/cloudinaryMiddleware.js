@@ -1,6 +1,8 @@
 const catchAsync = require('./catchAsync')
 const cloudinary = require('../cloudinary')
 const Certificate = require('../Models/Student/CertificateModel')
+const streamifier = require('streamifier');
+
 
 exports.uploadStudentIMG = catchAsync(async (req, res, next) => {
   if (req.file) {
@@ -39,15 +41,23 @@ exports.uploadBookIMG = catchAsync(async (req, res, next) => {
 exports.uploadPdf = async (req, fileBuffer) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: 'raw', folder: 'certificates/' },
+      {
+        resource_type: 'auto', // Let Cloudinary determine the resource type
+        folder: 'certificates/',
+        use_filename: true, // Use the original filename if available
+        unique_filename: false, // Do not append unique identifier to filename
+        overwrite: true, // Overwrite if file with the same name exists
+        allowed_formats: ['pdf'], // Restrict to PDF format
+      },
       (error, result) => {
         if (error) {
-          return reject(error)
+          return reject(error);
         }
-        req.body.pdfURL = result.secure_url
-        resolve(result)
-      },
+        req.body.pdfURL = result.secure_url;
+        resolve(result.secure_url);
+      }
     )
+
     streamifier.createReadStream(fileBuffer).pipe(uploadStream)
   })
 }

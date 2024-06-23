@@ -46,10 +46,10 @@ exports.createCertificate = async (name, subject) => {
     // Check if the text contains Arabic characters
     const isArabic = /[\u0600-\u06FF\u0750-\u077F]/.test(text);
     if (isArabic) {
-      doc.font('Fonts/DTHULUTH.ttf'); // Custom Arabic font
+      doc.font('/utils/Fonts/DTHULUTH.ttf'); // Custom Arabic font
       return reverseArabicText(text);
     } else {
-      doc.font('Fonts/Amiri-Regular.ttf'); // Custom English font that also supports Arabic
+      doc.font('utils/Fonts/Amiri-Regular.ttf'); // Custom English font that also supports Arabic
       return text;
     }
   }

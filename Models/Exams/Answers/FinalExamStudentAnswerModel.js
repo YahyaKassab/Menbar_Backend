@@ -10,6 +10,11 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'An answer must have a student'],
     },
+    courseStat:{
+      type: mongoose.Schema.ObjectId,
+      ref: 'CourseStat',
+      required: [true, 'A stat must have a courseStat'],
+    },
     exam: {
       type: mongoose.Schema.ObjectId,
       ref: 'FinalExam',
@@ -20,17 +25,16 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'An answer must have a course'],
     },
-    mcqs: {
+    mcqs: [{
       type: mongoose.Schema.ObjectId,
       ref: 'MCQAnswer',
       required: [true, 'An answer must have an mcq answers'],
-    }, //MCQAnswer
-    meqs: {
+    }], //MCQAnswer
+    meqs: [{
       type: mongoose.Schema.ObjectId,
       ref: 'MEQAnswer',
       required: [true, 'An answer must have an meq answers'],
-    }, //MEQAsnwer
-    scoreFrom: Number,
+    }], //MEQAsnwer
     marked: Boolean,
     beginAtTime: {
       type: Date,
@@ -56,50 +60,44 @@ const finalExamStudentAnswerSchema = new mongoose.Schema(
 // }
 // Virtual for mcqScore
 finalExamStudentAnswerSchema.virtual('mcqScore').get(function () {
-  if (this.mcqs && Array.isArray(this.mcqs)) {
-    return this.mcqs.filter((mcq) => mcq.correct).length
+  if (this.mcqs && this.mcqs.length > 0) {
+    const score = this.mcqs.filter((mcq) => mcq.correct).length;
+    const percentage = score / (this.mcqs.length + this.meqs.length)
+    return percentage
   }
-  return 0
-})
-// Define the virtual field
-finalExamStudentAnswerSchema.virtual('meqScoreTeacher').get(function () {
-  // Ensure meqs is an array and not empty
-  if (this.meqs && this.meqs.length > 0) {
-    return this.meqs.reduce((totalScore, meq) => {
-      return totalScore + (meq.scoreByTeacher || 0)
-    }, 0)
-  }
-  return 0 // Return 0 if meqs array is empty or undefined
-})
+  return 0;
+});
 
-// Define the virtual field
-finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
-  // Ensure meqs is an array and not empty
+finalExamStudentAnswerSchema.virtual('meqScoreTeacher').get(function () {
   if (this.meqs && this.meqs.length > 0) {
     return this.meqs.reduce((totalScore, meq) => {
-      return totalScore + (meq.scoreByAi || 0)
-    }, 0)
+      const score = totalScore + (meq.scoreByTeacher || 0);
+      return score / (this.mcqs.length + this.meqs.length)
+    }, 0);
   }
-  return 0 // Return 0 if meqs array is empty or undefined
-})
+  return 0;
+});
+
+finalExamStudentAnswerSchema.virtual('meqScoreAi').get(function () {
+  if (this.meqs && this.meqs.length > 0) {
+    return this.meqs.reduce((totalScore, meq) => {
+      const score =  totalScore + (meq.scoreByAi || 0);
+      return score / (this.mcqs.length + this.meqs.length)
+    }, 0);
+  }
+  return 0;
+});
 
 //Score of 90
 finalExamStudentAnswerSchema.virtual('score').get(function () {
-  // Retrieve the scoreFrom value from the document
-  const scoreFrom = this.scoreFrom || 1 // Default to 1 if scoreFrom is not defined (to prevent division by zero)
 
-  // Calculate the total score based on actual scores
-  const totalMcqScore = this.mcqScore || 0
-  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0
+  const totalMcqScore = this.mcqScore || 0;
+  const totalMeqScore = this.meqScoreAi || this.meqScoreTeacher || 0;
 
-  // Calculate total score
-  const totalScore = totalMcqScore + totalMeqScore
+  const percentageScore = (totalMcqScore + totalMeqScore) * 90;
 
-  // Calculate percentage
-  const percentageScore = (totalScore / scoreFrom) * 90
-
-  return percentageScore
-})
+  return percentageScore;
+});
 
 // const fillEmbedded = (fieldToFill, Model) => {
 //   catchAsync(async function (next) {
