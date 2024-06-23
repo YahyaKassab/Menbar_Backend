@@ -16,6 +16,7 @@ const Course = require('../../Models/Courses/CourseModel')
 const ReportAi = require('../../Models/Exams/Answers/ReportAiModel')
 const { createCertificate } = require('../../utils/certificatesHandler')
 const { uploadPdf } = require('../../utils/cloudinaryMiddleware')
+const axios = require('axios')
 
 // #region Final
 
@@ -37,11 +38,23 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
 
   //meq
   const meqAnswers = await MEQAnswer.create(body.meqs)
+  await MEQAnswer.populate(meqAnswers, { path: 'meq' })
+  const formattedData = meqAnswers.map((answer) => ({
+    answerId: answer._id, // Assuming _id of MeqAnswer is used as answerId
+    question: answer.meq.question,
+    optimalAnswer: answer.meq.optimalAnswer,
+    keywords: answer.meq.keywords,
+    student_answer: answer.answer, // Assuming answer field in MeqAnswer represents student's answer
+  }))
+  const response = await axios.post(
+    'https://ai-m3lb.onrender.com/mark',
+    formattedData,
+  )
+
   body.meqs = meqAnswers.map((answer) => answer.id)
   // #endregion
   // #region 2- auto mark mcq and meq using AI ----------------
   await Promise.all(mcqAnswers.map((answer) => answer.mark()))
-  await Promise.all(meqAnswers.map((answer) => answer.markAi()))
   // #endregion
   // #region 3- create the body of answer-------------------
   const answerBody = factory.exclude(body, [
@@ -165,7 +178,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
     // Failed the course
     res.status(201).json({
       status: 'Success',
-      data: courseStat,
+      data: { courseStat, finalAnswer },
     })
   }
 })
