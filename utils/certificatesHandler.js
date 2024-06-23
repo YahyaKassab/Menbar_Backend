@@ -51,10 +51,10 @@ exports.createCertificate = async (name, subject) => {
     const englishPath = path.join(__dirname, 'Fonts', 'Amiri-Regular.ttf')
     const isArabic = /[\u0600-\u06FF\u0750-\u077F]/.test(text)
     if (isArabic) {
-      doc.font(arabicPath)
+      doc.font('./Fonts/DTHULUTH.ttf')
       return reverseArabicText(text)
     } else {
-      doc.font(englishPath)
+      doc.font('./Fonts/Amiri-Regular.ttf')
       return text
     }
   }
