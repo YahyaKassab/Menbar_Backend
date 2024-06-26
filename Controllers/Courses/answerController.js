@@ -47,7 +47,6 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   // #region 3- create the body of answer-------------------
   const answerBody = factory.exclude(body, [
     'score',
-    'scoreFrom',
     'marked',
     'mcqScore',
     'meqScore',
@@ -264,8 +263,6 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
 
   const quiz = await LectureQuiz.findById(quizAnswer.quiz)
 
-  quizAnswer.scoreFrom = quiz.scoreFrom
-
   // #region Update lecture grades, scores, done?
   lectureStat.latestQuizGrade = quizAnswer
   lectureStat.latestQuizScore = quizAnswer.score
@@ -273,7 +270,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
     lectureStat.bestQuizScore || 0,
     quizAnswer.score || 0,
   )
-  lectureStat.done = lectureStat.bestQuizScore === quiz.scoreFrom
+  lectureStat.done = lectureStat.bestQuizScore === quiz.mcq.length
 
   await lectureStat.save()
   // #endregion

@@ -35,6 +35,10 @@ const finalExamSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+finalExamSchema.virtual('numberOfAnswers').get(async function () {
+  const count = await FinalExamStudentAnswer.countDocuments({ exam: this._id })
+  return count
+})
 
 finalExamSchema.pre(/^find/, function (next) {
   this.populate({
@@ -43,10 +47,6 @@ finalExamSchema.pre(/^find/, function (next) {
   })
 
   next()
-})
-finalExamSchema.virtual('numberOfAnswers').get(async function () {
-  const count = await FinalExamStudentAnswer.countDocuments({ exam: this._id })
-  return count
 })
 const FinalExam = mongoose.model('FinalExam', finalExamSchema)
 module.exports = FinalExam

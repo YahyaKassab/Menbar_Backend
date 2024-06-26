@@ -116,6 +116,7 @@ const teacherSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+teacherSchema.virtual('age').get(User.calcAge)
 
 teacherSchema.pre(/^find/, User.includeActiveOnly)
 teacherSchema.pre('save', User.hashModifiedPassword, User.tokenTimeCheck)
@@ -123,7 +124,6 @@ teacherSchema.pre('save', User.hashModifiedPassword, User.tokenTimeCheck)
 teacherSchema.methods.correctPassword = User.correctPassword
 teacherSchema.methods.changedPasswordAfter = User.changedPasswordAfter
 teacherSchema.methods.createPasswordResetToken = User.createPasswordResetToken
-teacherSchema.virtual('age').get(User.calcAge)
 
 const Teacher = mongoose.model('Teacher', teacherSchema)
 

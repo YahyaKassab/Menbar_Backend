@@ -11,6 +11,7 @@ const bookSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Course',
       required: [true, 'A Book must have a Course'],
+      unique: true,
     },
   },
   {
