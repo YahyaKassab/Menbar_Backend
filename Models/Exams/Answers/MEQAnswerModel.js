@@ -42,7 +42,6 @@ meqAnswerSchema.methods.markAi = async function () {
     // Create formatted data object
     const keywordsString = this.meq.keywords.join(', ')
     const formattedData = {
-      answerId: this.id.toString(), // Assuming _id of MeqAnswer is used as answerId
       question: this.meq.question,
       optimalAnswer: this.meq.optimalAnswer,
       keywords: keywordsString,
@@ -50,7 +49,7 @@ meqAnswerSchema.methods.markAi = async function () {
     }
 
     // Make GET request to AI service
-    const response = await axios.get('https://ai-m3lb.onrender.com/mark', {
+    const response = await axios.post('https://ai-m3lb.onrender.com/mark', {
       data: formattedData,
     })
 
