@@ -116,7 +116,7 @@ exports.submitFinalAnswer = catchAsync(async function (req, res, next) {
   // #region 6- assign scores in courseStat
   // #region assign totalLecturesScoreOutOf10
   if (courseStat.lectureStats && courseStat.lectureStats.length > 0) {
-    const totalPossibleScore = courseStat.lectureStats.length * 3 // Each lectureQuiz is out of 3 points
+    const totalPossibleScore = courseStat.lectureStats.length * 6 // Each lectureQuiz is out of 3 points
 
     // Sum up the bestQuizScore of each lectureStat
     const totalScore = courseStat.lectureStats.reduce((total, lectureStat) => {
