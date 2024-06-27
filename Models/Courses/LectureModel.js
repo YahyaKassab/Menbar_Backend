@@ -24,6 +24,7 @@ lectureSchema.virtual('quiz', {
   ref: 'LectureQuiz',
   foreignField: 'lecture',
   localField: '_id',
+  justOne: true,
 })
 
 lectureSchema.virtual('comments', {

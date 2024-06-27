@@ -22,7 +22,6 @@ const quizAnswerSchema = new mongoose.Schema(
     //MCQAnswer[]
     durationInMins: Number,
     lectureQuizzesGrades: Array, //MCQAnswer
-    scoreFrom: Number,
   },
   {
     toJSON: { virtuals: true },

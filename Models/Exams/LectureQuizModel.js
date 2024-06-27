@@ -23,9 +23,6 @@ const LectureQuizSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
-LectureQuizSchema.virtual('scoreFrom').get(function () {
-  return this.mcq.length
-})
 
 LectureQuizSchema.pre('findOne', async function (next) {
   this.populate([{ path: 'lecture', select: 'name' }, { path: 'mcq' }])

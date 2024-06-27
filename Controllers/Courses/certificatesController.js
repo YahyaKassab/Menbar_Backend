@@ -15,6 +15,7 @@ exports.downloadCertificatePdf = catchAsync(async (req, res, next) => {
     student: req.student.id,
     pdfURL: { $ne: null },
   })
+
   await downloadPdfFromCloudinary(certificate.pdfURL, `./${name}.pdf`)
   res.status(201).json({
     status: 'success',

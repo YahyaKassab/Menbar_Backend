@@ -14,7 +14,6 @@ const meqSchema = new mongoose.Schema(
     page: Number,
     optimalAnswer: String,
     keywords: [String],
-    scoreFrom: Number,
   },
   {
     toJSON: { virtuals: true },
