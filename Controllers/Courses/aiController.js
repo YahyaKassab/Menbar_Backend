@@ -32,7 +32,7 @@ This is an example of how you have to respond: 4`;
         { role: "user", content: prompt },
       ],
       max_tokens: 2, // Small max_tokens to ensure short response
-      temperature: 0.7,
+      temperature: 0.0,
       top_p: 1.0,
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
