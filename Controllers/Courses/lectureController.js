@@ -5,6 +5,7 @@ const Lecture = require('../../Models/Courses/LectureModel')
 const Student = require('../../Models/Users/StudentModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
+const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
 
 exports.createLecture =  catchAsync(async (req, res, next) => {
   if(!req.body.order){
@@ -33,7 +34,24 @@ exports.getOneLectureTeacher = factory.getOne(Lecture, [
   'quiz',
 ])
 exports.updateLecture = factory.updateOne(Lecture)
-exports.deleteLecture = factory.deleteOne(Lecture)
+exports.deleteLecture = catchAsync(async (req, res, next) => {
+  const lectureId = req.params.id
+  const lecture = await Lecture.findOneById(lectureId)
+  const lectureMcqs = await MCQ.find({lecture:lectureId})
+  const lectureMeqs = await MEQ.find({lecture:lectureId})
+  const lectureQuiz = await LectureQuiz.find({ lecture:lectureId });
+   if (!course) {
+     return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
+   }
+  await Lecture.deleteMany(lecture)
+  await MCQ.deleteMany(lectureMcqs)
+  await MEQ.deleteMany(lectureMeqs)
+  await LectureQuiz.deleteMany(lectureQuiz)
+
+
+    res.status(204).json({ status: 'success', data: null })
+  }
+)
 exports.ids = factory.getIds(Lecture)
 
 exports.getLectureStudent = factory.getOne(Lecture, [

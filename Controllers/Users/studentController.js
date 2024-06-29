@@ -7,6 +7,13 @@ const Course = require('../../Models/Courses/CourseModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
 const Certificate = require('../../Models/Student/CertificateModel')
+const MCQAnswer = require('../../Models/Exams/Answers/MCQAnswerModel')
+const MEQAnswer = require('../../Models/Exams/Answers/MEQAnswerModel')
+const Comment = require('../../Models/Courses/CommentModel')
+const Review = require('../../Models/Courses/reviewModel')
+const FinalExamStudentAnswer = require('../../Models/Exams/Answers/FinalExamStudentAnswerModel')
+const QuizAnswer = require('../../Models/Exams/Answers/QuizAnswerModel')
+const ReportAi = require('../../Models/Exams/Answers/ReportAiModel')
 
 //middleware to set the input id from the logged in user
 exports.getMe = (req, res, next) => {
@@ -225,11 +232,39 @@ exports.updateStudentByStudent = factory.updateOne(Student, [
   'email',
   'courseStats',
 ])
-exports.deleteStudent = factory.deleteOne(Student)
-exports.deleteMe = catchAsync(async (req, res, next) => {
-  await Student.findByIdAndUpdate(req.student.id, {
+exports.deleteStudent = catchAsync(async (req, res, next) => {
+  const studentId = req.params.id
+  await Student.findByIdAndUpdate(studentId, {
     $set: { active: false },
   })
+  //courseStats, lectureStats, mcqAnswers, meqAnswers, comments, reviews, finalExamanswers, quizAnswers
+  res.status(204).json({ status: 'success', data: null })
+})
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  const studentId = req.student.id
+  await Student.findByIdAndUpdate(studentId, {
+    $set: { active: false },
+  })
+  //courseStats, lectureStats, mcqAnswers, meqAnswers, comments, reviews, finalExamanswers, quizAnswers
+  const courseStats = await CourseStat.find({student:studentId})
+  const lectureStats = await LectureStat.find({student:studentId})
+  const mcqAnswers = await MCQAnswer.find({student:studentId})
+  const meqAnswers = await MEQAnswer.find({student:studentId})
+  const comments = await Comment.find({student:studentId})
+  const reviews = await Review.find({student:studentId})
+  const finalExamAnswers = await FinalExamStudentAnswer.find({student:studentId})
+  const quizAnswers = await QuizAnswer.find({student:studentId})
+  await CourseStat.deleteMany(courseStats)
+  await LectureStat.deleteMany(lectureStats)
+  await MCQAnswer.deleteMany(mcqAnswers)
+  await MEQAnswer.deleteMany(meqAnswers)
+  await Comment.deleteMany(comments)
+  await Review.deleteMany(reviews)
+  await FinalExamStudentAnswer.deleteMany(finalExamAnswers)
+  await QuizAnswer.deleteMany(quizAnswers)
+
+
+
   res.status(204).json({ status: 'success', data: null })
 })
 

@@ -5,6 +5,12 @@ const Course = require('../../Models/Courses/CourseModel')
 
 const fs = require('fs')
 const PDFDocument = require('pdfkit')
+const Book = require('../../Models/Courses/BookModel')
+const FinalExam = require('../../Models/Exams/FinalExamModel')
+const Lecture = require('../../Models/Courses/LectureModel')
+const MCQ = require('../../Models/Exams/MCQModel')
+const MEQ = require('../../Models/Exams/MEQModel')
+const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
 exports.createCourse = catchAsync(async (req, res, next) => {
   const newCourse = await Course.create(req.body)
   res.status(201).json({
@@ -21,7 +27,32 @@ exports.getOneCourseTeacher = factory.getOne(Course, [
   'lectures',
   'students',
 ])
-exports.deleteCourse = factory.deleteOne(Course)
+exports.deleteCourse =  catchAsync(async (req, res, next) => {
+  const courseId = req.params.id
+  const course = await Course.findById(courseId)
+  const book = await Book.findOne({course:courseId})
+  const final = await FinalExam.findOne({course:courseId})
+  const lectures = await Lecture.find({course:courseId})
+  const lectureIds = lectures.map(lecture => lecture.id);
+  const courseMcqs = await MCQ.find({course:courseId})
+  const courseMeqs = await MEQ.find({course:courseId})
+  const courseQuizzes = await LectureQuiz.find({ lecture: { $in: lectureIds }
+   });
+   if (!course) {
+     return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
+   }
+  await Course.deleteOne(course)
+  await Book.deleteOne(book)
+  await Lecture.deleteMany(lectures)
+  await MCQ.deleteMany(courseMcqs)
+  await MEQ.deleteMany(courseMeqs)
+  await LectureQuiz.deleteMany(courseQuizzes)
+  await FinalExam.deleteOne(final)
+
+
+    res.status(204).json({ status: 'success', data: null })
+  }
+)
 exports.updateCourse = factory.updateOne(Course)
 
 exports.getCourses = factory.getAllInclude(
