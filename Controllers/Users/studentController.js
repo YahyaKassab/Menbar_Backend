@@ -238,6 +238,24 @@ exports.deleteStudent = catchAsync(async (req, res, next) => {
     $set: { active: false },
   })
   //courseStats, lectureStats, mcqAnswers, meqAnswers, comments, reviews, finalExamanswers, quizAnswers
+  const courseStats = await CourseStat.find({student:studentId})
+  const lectureStats = await LectureStat.find({student:studentId})
+  const mcqAnswers = await MCQAnswer.find({student:studentId})
+  const meqAnswers = await MEQAnswer.find({student:studentId})
+  const comments = await Comment.find({student:studentId})
+  const reviews = await Review.find({student:studentId})
+  const finalExamAnswers = await FinalExamStudentAnswer.find({student:studentId})
+  const quizAnswers = await QuizAnswer.find({student:studentId})
+  await CourseStat.deleteMany(courseStats)
+  await LectureStat.deleteMany(lectureStats)
+  await MCQAnswer.deleteMany(mcqAnswers)
+  await MEQAnswer.deleteMany(meqAnswers)
+  await Comment.deleteMany(comments)
+  await Review.deleteMany(reviews)
+  await FinalExamStudentAnswer.deleteMany(finalExamAnswers)
+  await QuizAnswer.deleteMany(quizAnswers)
+
+
   res.status(204).json({ status: 'success', data: null })
 })
 exports.deleteMe = catchAsync(async (req, res, next) => {
