@@ -287,7 +287,7 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
     student: req.body.student,
     lecture: nextLecture.id,
     courseStat: courseStatId,
-  })
+  }).populate({path:'lecture'})
 
   if (nextLectureStat && lectureStat.done) {
     nextLectureStat.open = true
@@ -296,10 +296,17 @@ exports.submitQuiz = catchAsync(async (req, res, next) => {
   // #endregion
 
   // #region Respond with success
+ if(lectureStat.done){
+  res.status(201).json({
+    status: 'Success',
+    data: {answer:quizAnswer, nextLecture:nextLectureStat}, // Assuming you want to return the created quiz in the response
+  })
+ }else{
   res.status(201).json({
     status: 'Success',
     data: quizAnswer, // Assuming you want to return the created quiz in the response
   })
+ }
   // #endregion
 })
 
