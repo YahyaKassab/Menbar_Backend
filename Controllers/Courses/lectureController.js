@@ -2,8 +2,30 @@ const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Lecture = require('../../Models/Courses/LectureModel')
+const Student = require('../../Models/Users/StudentModel')
+const CourseStat = require('../../Models/Student/CourseStatModel')
+const LectureStat = require('../../Models/Student/LectureStatModel')
 
-exports.createLecture = factory.createOne(Lecture)
+exports.createLecture =  catchAsync(async (req, res, next) => {
+  if(!req.body.order){
+    const lastLecture = await Lecture.findOne({ course: req.body.course }).sort({ order: -1 });
+    req.body.order = lastLecture.order + 1
+    }
+  const lecture = await Lecture.create(req.body)
+  const courseStats = await CourseStat.find({course:lecture.course})
+  courseStats.forEach(async courseStat => {
+    await LectureStat.create({
+      lecture:lecture.id,
+      student:courseStat.student,
+      courseStat:courseStat.id,
+    })
+  });
+      res.status(201).json({
+      status: 'Success',
+      data: lecture,
+    })
+})
+factory.createOne(Lecture)
 exports.getAllLectures = factory.getAll(Lecture, { path: 'course' })
 exports.getOneLectureTeacher = factory.getOne(Lecture, [
   'comments',
