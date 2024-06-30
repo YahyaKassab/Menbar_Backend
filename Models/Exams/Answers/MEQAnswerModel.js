@@ -40,18 +40,20 @@ meqAnswerSchema.methods.markAi = async function () {
       throw new Error('meq is not populated')
     }
 
-    // Create formatted data object
-    const keywordsString = this.meq.keywords.join(', ')
-    const formattedData = {
-      question: this.meq.question,
-      optimalAnswer: this.meq.optimalAnswer,
-      keywords: keywordsString,
-      student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
-    }
+    if(!this.answer) this.scoreByAi = 0
+    else{    // Create formatted data object
+      const keywordsString = this.meq.keywords.join(', ')
+      const formattedData = {
+        question: this.meq.question,
+        optimalAnswer: this.meq.optimalAnswer,
+        keywords: keywordsString,
+        student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
+      }
 
-  const score = await predictScore(formattedData)
-  // Assign score to meqAnswer and save
-  this.scoreByAi = parseInt(score)
+    const score = await predictScore(formattedData)
+    // Assign score to meqAnswer and save
+    this.scoreByAi = parseInt(score)
+    }
   await this.save()
 
 

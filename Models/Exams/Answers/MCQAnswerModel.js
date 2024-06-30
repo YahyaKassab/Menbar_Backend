@@ -27,11 +27,14 @@ mcqAnswerSchema.methods.mark = async function () {
     await this.populate('mcq')
 
     // Check if the student's answer matches the correct answer
+    if(!this.answer)this.correct = false
+    else{
     if (this.answer === this.mcq.answer) {
       this.correct = true
     } else {
       this.correct = false
     }
+  }
     // console.log('correct:', this.correct)
 
     // Save the updated thisument
