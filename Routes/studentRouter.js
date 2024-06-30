@@ -4,7 +4,7 @@ const studentController = require('../Controllers/Users/studentController')
 const Student = require('../Models/Users/StudentModel')
 const Teacher = require('../Models/Users/TeacherModel')
 const upload = require('../multer')
-const { uploadStudentIMG } = require('../utils/cloudinaryMiddleware')
+const { uploadStudentIMG, deletePdfFromCloudinary } = require('../utils/cloudinaryMiddleware')
 
 const router = express.Router()
 // #region Guest

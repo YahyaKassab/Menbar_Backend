@@ -2,10 +2,13 @@ const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Lecture = require('../../Models/Courses/LectureModel')
+const Comment = require('../../Models/Courses/CommentModel')
 const Student = require('../../Models/Users/StudentModel')
 const CourseStat = require('../../Models/Student/CourseStatModel')
 const LectureStat = require('../../Models/Student/LectureStatModel')
 const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
+const MCQ = require('../../Models/Exams/MCQModel')
+const MEQ = require('../../Models/Exams/MEQModel')
 
 exports.createLecture =  catchAsync(async (req, res, next) => {
   if(!req.body.order){
@@ -40,6 +43,8 @@ exports.deleteLecture = catchAsync(async (req, res, next) => {
   const lectureMcqs = await MCQ.find({lecture:lectureId})
   const lectureMeqs = await MEQ.find({lecture:lectureId})
   const lectureQuiz = await LectureQuiz.find({ lecture:lectureId });
+  const lectureStats = await LectureStat.find({lecture:lectureId})
+  const comments = await Comment.find({lecture:lectureId})
    if (!course) {
      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
    }
@@ -47,6 +52,9 @@ exports.deleteLecture = catchAsync(async (req, res, next) => {
   await MCQ.deleteMany(lectureMcqs)
   await MEQ.deleteMany(lectureMeqs)
   await LectureQuiz.deleteMany(lectureQuiz)
+  await LectureStat.deleteMany(lectureStats)
+  await Comment.deleteMany(comments)
+
 
 
     res.status(204).json({ status: 'success', data: null })

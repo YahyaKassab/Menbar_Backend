@@ -13,6 +13,7 @@ const Comment = require('../../Models/Courses/CommentModel')
 const Review = require('../../Models/Courses/reviewModel')
 const FinalExamStudentAnswer = require('../../Models/Exams/Answers/FinalExamStudentAnswerModel')
 const QuizAnswer = require('../../Models/Exams/Answers/QuizAnswerModel')
+const {deletePdfFromCloudinary} = require('../../utils/cloudinaryMiddleware')
 const ReportAi = require('../../Models/Exams/Answers/ReportAiModel')
 
 //middleware to set the input id from the logged in user
@@ -272,6 +273,13 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   const reviews = await Review.find({student:studentId})
   const finalExamAnswers = await FinalExamStudentAnswer.find({student:studentId})
   const quizAnswers = await QuizAnswer.find({student:studentId})
+  const certificates = await Certificate.find({student:studentId})
+  
+  if(certificates.length > 0){
+    certificates.forEach(async cert => {
+      await deletePdfFromCloudinary(cert.pdfURL)
+      });
+    }
   await CourseStat.deleteMany(courseStats)
   await LectureStat.deleteMany(lectureStats)
   await MCQAnswer.deleteMany(mcqAnswers)
@@ -280,6 +288,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   await Review.deleteMany(reviews)
   await FinalExamStudentAnswer.deleteMany(finalExamAnswers)
   await QuizAnswer.deleteMany(quizAnswers)
+  await Certificate.deleteMany(certificates)
 
 
 

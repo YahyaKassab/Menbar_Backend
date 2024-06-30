@@ -11,6 +11,11 @@ const Lecture = require('../../Models/Courses/LectureModel')
 const MCQ = require('../../Models/Exams/MCQModel')
 const MEQ = require('../../Models/Exams/MEQModel')
 const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
+const CourseStat = require('../../Models/Student/CourseStatModel')
+const FinalExamStudentAnswer = require('../../Models/Exams/Answers/FinalExamStudentAnswerModel')
+const {deletePdfFromCloudinary} = require('../../utils/cloudinaryMiddleware')
+const Certificate = require('../../Models/Student/CertificateModel')
+
 exports.createCourse = catchAsync(async (req, res, next) => {
   const newCourse = await Course.create(req.body)
   res.status(201).json({
@@ -36,8 +41,16 @@ exports.deleteCourse =  catchAsync(async (req, res, next) => {
   const lectureIds = lectures.map(lecture => lecture.id);
   const courseMcqs = await MCQ.find({course:courseId})
   const courseMeqs = await MEQ.find({course:courseId})
-  const courseQuizzes = await LectureQuiz.find({ lecture: { $in: lectureIds }
-   });
+  const courseQuizzes = await LectureQuiz.find({ lecture: { $in: lectureIds }});
+  const courseStats = await CourseStat.find({course:courseId})
+  const finalAnswers = await FinalExamStudentAnswer.find({course:courseId})
+  const certificates = await Certificate.find({course:courseId})
+  if(certificates.length > 0){
+    certificates.forEach(async cert => {
+      await deletePdfFromCloudinary(cert.pdfURL)
+      });
+    }
+
    if (!course) {
      return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
    }
@@ -48,6 +61,9 @@ exports.deleteCourse =  catchAsync(async (req, res, next) => {
   await MEQ.deleteMany(courseMeqs)
   await LectureQuiz.deleteMany(courseQuizzes)
   await FinalExam.deleteOne(final)
+  await CourseStat.deleteMany(courseStats)
+  await FinalExamStudentAnswer.deleteMany(finalAnswers)
+  await Certificate.deleteMany(certificates)
 
 
     res.status(204).json({ status: 'success', data: null })
