@@ -4,10 +4,10 @@ const factory = require('../Controllers/Handlers/handlerFactory')
 const examController = require('../Controllers/Courses/examController')
 const Teacher = require('../Models/Users/TeacherModel')
 const router = express.Router()
-router.use(
-  authController.protect(Teacher),
-  authController.restrictTo('Teacher', 'Admin'),
-)
+// router.use(
+//   authController.protect(Teacher),
+//   authController.restrictTo('Teacher', 'Admin'),
+// )
 router.get('/ids', examController.mcqIds)
 // #region Teacher
 
