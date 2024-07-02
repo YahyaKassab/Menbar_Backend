@@ -67,7 +67,6 @@ const studentSchema = new mongoose.Schema(
     },
     country: {
       type: String,
-      required: [true, 'Please Enter Your Country'],
     },
     nationality: String,
     city: String,
@@ -76,7 +75,7 @@ const studentSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
-    birthDate: { type: Date, required: [true, 'Please enter Your birthdate'] },
+    birthDate: { type: Date },
     isSingle: {
       type: Boolean,
       default: true,
@@ -89,11 +88,9 @@ const studentSchema = new mongoose.Schema(
       type: {
         countryCode: {
           type: String,
-          required: [true, 'Please enter the country code'],
         },
         number: {
           type: String,
-          required: [true, 'Please enter your phone number'],
         },
       },
       required: false,

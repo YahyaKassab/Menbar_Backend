@@ -42,12 +42,12 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))
 // Limit requests from same API
 const limiter = rateLimit({
   // Max number of requests per ip per hour
-  max: 100,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour.',
 })
 
-// app.use('/api', limiter)
+app.use('/api', limiter)
 
 // Body parser, reading data from body into req.body
 app.use(
@@ -65,22 +65,9 @@ app.use(xss())
 
 // Prevent parameter pollution (removes query duplication)
 
-// 🚨apply later
-/*
 app.use(
-  hpp({
-    // properties to allow duplicates ex:duration
-    whitelist: [
-      'duration',
-      'ratingsAverage',
-      'ratingsQuantity',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-    ],
-  }),
+  hpp(),
 )
-*/
 // Serving static files
 app.use(express.static(`${__dirname}/public`))
 

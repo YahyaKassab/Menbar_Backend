@@ -2,8 +2,34 @@ const catchAsync = require('../../utils/catchAsync')
 const AppError = require('../../utils/appError')
 const factory = require('../Handlers/handlerFactory')
 const Lecture = require('../../Models/Courses/LectureModel')
+const Comment = require('../../Models/Courses/CommentModel')
+const Student = require('../../Models/Users/StudentModel')
+const CourseStat = require('../../Models/Student/CourseStatModel')
+const LectureStat = require('../../Models/Student/LectureStatModel')
+const LectureQuiz = require('../../Models/Exams/LectureQuizModel')
+const MCQ = require('../../Models/Exams/MCQModel')
+const MEQ = require('../../Models/Exams/MEQModel')
 
-exports.createLecture = factory.createOne(Lecture)
+exports.createLecture =  catchAsync(async (req, res, next) => {
+  if(!req.body.order){
+    const lastLecture = await Lecture.findOne({ course: req.body.course }).sort({ order: -1 });
+    req.body.order = lastLecture.order + 1
+    }
+  const lecture = await Lecture.create(req.body)
+  const courseStats = await CourseStat.find({course:lecture.course})
+  courseStats.forEach(async courseStat => {
+    await LectureStat.create({
+      lecture:lecture.id,
+      student:courseStat.student,
+      courseStat:courseStat.id,
+    })
+  });
+      res.status(201).json({
+      status: 'Success',
+      data: lecture,
+    })
+})
+factory.createOne(Lecture)
 exports.getAllLectures = factory.getAll(Lecture, { path: 'course' })
 exports.getOneLectureTeacher = factory.getOne(Lecture, [
   'comments',
@@ -11,7 +37,29 @@ exports.getOneLectureTeacher = factory.getOne(Lecture, [
   'quiz',
 ])
 exports.updateLecture = factory.updateOne(Lecture)
-exports.deleteLecture = factory.deleteOne(Lecture)
+exports.deleteLecture = catchAsync(async (req, res, next) => {
+  const lectureId = req.params.id
+  const lecture = await Lecture.findOneById(lectureId)
+  const lectureMcqs = await MCQ.find({lecture:lectureId})
+  const lectureMeqs = await MEQ.find({lecture:lectureId})
+  const lectureQuiz = await LectureQuiz.find({ lecture:lectureId });
+  const lectureStats = await LectureStat.find({lecture:lectureId})
+  const comments = await Comment.find({lecture:lectureId})
+   if (!course) {
+     return next(new AppError('لم يتم العثور على الملف المطلوب', 404))
+   }
+  await Lecture.deleteMany(lecture)
+  await MCQ.deleteMany(lectureMcqs)
+  await MEQ.deleteMany(lectureMeqs)
+  await LectureQuiz.deleteMany(lectureQuiz)
+  await LectureStat.deleteMany(lectureStats)
+  await Comment.deleteMany(comments)
+
+
+
+    res.status(204).json({ status: 'success', data: null })
+  }
+)
 exports.ids = factory.getIds(Lecture)
 
 exports.getLectureStudent = factory.getOne(Lecture, [

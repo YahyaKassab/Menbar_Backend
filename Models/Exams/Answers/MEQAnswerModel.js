@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const axios = require('axios')
+const {predictScore} = require('../../../Controllers/Courses/aiController')
 
 const meqAnswerSchema = new mongoose.Schema(
   {
@@ -39,28 +40,25 @@ meqAnswerSchema.methods.markAi = async function () {
       throw new Error('meq is not populated')
     }
 
-    // Create formatted data object
-    const keywordsString = this.meq.keywords.join(', ')
-    const formattedData = {
-      question: this.meq.question,
-      optimalAnswer: this.meq.optimalAnswer,
-      keywords: keywordsString,
-      student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
-    }
+    if(!this.answer) this.scoreByAi = 0
+    else{    // Create formatted data object
+      const keywordsString = this.meq.keywords.join(', ')
+      const formattedData = {
+        question: this.meq.question,
+        optimalAnswer: this.meq.optimalAnswer,
+        keywords: keywordsString,
+        student_answer: this.answer, // Assuming answer field in MeqAnswer represents student's answer
+      }
 
-    // Make GET request to AI service
-    const response = await axios.post('https://ai-m3lb.onrender.com/mark', {
-      data: formattedData,
-    })
-
-    // Extract and parse score from response data
-    const score = parseFloat(response.data) // Assuming response data is an array with one object { answerId: 'nigga2', score: 5.0 }
-
+    const score = await predictScore(formattedData)
     // Assign score to meqAnswer and save
-    this.scoreByAi = score
-    await this.save()
+    this.scoreByAi = parseInt(score)
+    }
+  await this.save()
 
-    console.log('Score updated successfully:', this)
+
+
+    console.log('Score updated successfully:', this.scoreByAi)
     return this // Optionally return the updated document
   } catch (error) {
     // Handle errors

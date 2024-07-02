@@ -88,6 +88,35 @@ exports.downloadPdfFromCloudinary = async function (publicId, outputFilePath) {
     throw error
   }
 }
+function extractPublicId(url) {
+  // Use regex to extract the part of the URL after '/upload/' and before the file extension
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return match ? match[1] : null;
+}
+
+
+
+exports.deletePdfFromCloudinary = async function (url) {
+  try {
+        // Example usage
+    const publicId = extractPublicId(url);
+    // Call Cloudinary API to delete the file
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    // Check if the deletion was successful
+    if (result.result === 'ok') {
+      console.log('PDF deleted successfully');
+      return { success: true, message: 'PDF deleted successfully' };
+    } else {
+      console.log('Failed to delete PDF');
+      return{ success: false, message: 'Failed to delete PDF' };
+    }
+  } catch (error) {
+    console.error('Error deleting PDF from Cloudinary:', error);
+    return{ success: false, message: 'Error deleting PDF from Cloudinary', error };
+  }
+};
+
 
 exports.uploadQuestionImage = catchAsync(async (req, res, next) => {
   if (req.file) {
