@@ -16,7 +16,7 @@ The **Almenbar Islamic E-Learning Site** is an educational platform designed to 
 
 Watch the demo of the **Almenbar Islamic E-Learning Site** here:
 
-[![Almenbar Islamic E-Learning Demo]](https://www.youtube.com/watch?v=zYRBzxtuB08)
+[![Almenbar Islamic E-Learning Demo]](https://youtu.be/41zqD9uRbVg)
 
 ## Technologies Used
 - **Backend:** Node.js, Express.js
