@@ -18,6 +18,56 @@ Watch the demo of the **Almenbar Islamic E-Learning Site** here:
 
 [![Almenbar Islamic E-Learning Demo]](https://youtu.be/41zqD9uRbVg)
 
+## 🖼 Website Screenshots
+
+### 🔍 Home Page
+![Home Page](https://mostaql.hsoubcdn.com/uploads/thumbnails/2827086/66b917a676ba9/1.png)
+
+### 🔍 Curriculum Page
+![Curriculum Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a703454/3.png)
+
+### 🔍 Subjects Page
+![Subjects Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a73491f/2.png)
+
+### 🔍 Lecture Page
+![Lecture Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a79351f/4.png)
+
+### 🔍 Certificates Page
+![Certificates Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a7c1002/7.png)
+
+### 🔍 Library Page
+![Library Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a7f035a/6.png)
+
+### 🔍 Profile Page
+![Profile Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a82e9ad/8.png)
+
+### 🔍 Comments Page
+![Comments Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b9f9fa49043/5.png)
+
+### 🔍 MCQ Page
+![MCQ Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b9f9fa9c590/9.png)
+
+### 🔍 MEQ Page
+![MEQ Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b9f9faca148/10.png)
+
+### 🔍 Academic Support ChatBot Page
+![Academic Support ChatBot Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b9f9fb0891f/110.png)
+
+## 🖼 Admin Panel Screenshots
+
+### 🔍 Subjects Page
+![Subjects Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a858aa4/17.png)
+
+### 🔍 Lectures Page
+![Lectures Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a8811a6/18.png)
+
+### 🔍 Lecture Details Page
+![Lecture Details Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a8a901c/19.png)
+
+### 🔍 Lecture Book Page
+![Lecture Book Page](https://mostaql.hsoubcdn.com/uploads/portfolios/2827086/66b917a8d55e1/20.png)
+
+
 ## Technologies Used
 - **Backend:** Node.js, Express.js
 - **Authentication:** JWT (JSON Web Tokens)
